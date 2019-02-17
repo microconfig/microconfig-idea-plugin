@@ -18,7 +18,7 @@
             <add-to-group group-id="EditorPopupMenu" anchor="first"/>
             <action id="Microconfig.ResolveAction" class="io.microconfig.plugin.ResolveAction" text="Resolve"
                     description="Resolves a placeholder">
-                <keyboard-shortcut first-keystroke="F13" keymap="$default"/>
+                <keyboard-shortcut first-keystroke="F10" keymap="$default"/>
             </action>
 
         </group>
