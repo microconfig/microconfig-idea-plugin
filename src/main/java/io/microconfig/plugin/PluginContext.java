@@ -10,11 +10,11 @@ import static com.intellij.openapi.actionSystem.CommonDataKeys.CARET;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
 
-class PluginContext {
-    final Project project;
-    final Editor editor;
-    final Caret caret;
-    final VirtualFile editorFile;
+public class PluginContext {
+    public final Project project;
+    public final Editor editor;
+    public final Caret caret;
+    public final VirtualFile editorFile;
 
     PluginContext(AnActionEvent event) {
         project = event.getProject();
