@@ -48,11 +48,9 @@ public class ResolveAction extends AnAction {
         Document doc = editor.getDocument();
         int lineNum = caret.getLogicalPosition().line;
 
-        CharSequence line = doc.getCharsSequence().subSequence(
-                doc.getLineStartOffset(lineNum),
-                doc.getLineEndOffset(lineNum)
-        ).toString();
-        return of(line.toString());
+        int start = doc.getLineStartOffset(lineNum);
+        int end = doc.getLineEndOffset(lineNum);
+        return of(doc.getCharsSequence().subSequence(start, end).toString());
     }
 
     private String componentType(VirtualFile file) {
