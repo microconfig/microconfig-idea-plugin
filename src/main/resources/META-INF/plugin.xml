@@ -1,0 +1,21 @@
+<idea-plugin>
+    <id>io.microconfig.idea-plugin</id>
+    <name>Microconfig</name>
+    <vendor email="support@microconfig.io" url="http://microconfig.io">Microconfig.IO</vendor>
+
+    <description><![CDATA[
+    Plugin for microconfig framework<br>
+    <em>Place holder resolution</em>
+    ]]>
+    </description>
+
+    <depends>com.intellij.modules.lang</depends>
+
+    <actions>
+        <group id="Microconfig.PluginMenu" text="Microconfig" description="Microconfig menu" popup="true">
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+            <add-to-group group-id="EditorPopupMenu" anchor="first"/>
+            <action id="Microconfig.ResolveAction" class="io.microconfig.plugin.ResolveAction" text="Resolve" description="Resolves a placeholder"/>
+        </group>
+    </actions>
+</idea-plugin>
