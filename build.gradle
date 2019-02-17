@@ -11,6 +11,9 @@ apply plugin: 'idea'
 apply plugin: 'org.jetbrains.intellij'
 apply plugin: 'java'
 
+repositories {
+    mavenCentral()
+}
 
 intellij {
     version 'IC-2017.3'
@@ -20,4 +23,9 @@ intellij {
 patchPluginXml {
     changeNotes """
       Release 1.0.0<br>"""
+}
+
+dependencies {
+    testCompile "junit:junit:4.12"
+    testCompile "org.assertj:assertj-core:3.11.1"
 }
