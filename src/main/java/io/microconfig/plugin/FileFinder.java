@@ -10,14 +10,13 @@ import com.intellij.psi.PsiManager;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
-import static io.microconfig.plugin.OptionalUtil.optional;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparingInt;
+import static java.util.Optional.ofNullable;
 
 public class FileFinder {
-
     public Optional<VirtualFile> resolveComponent(Project project, String component) {
-        return optional(findDirectory(project, component));
+        return ofNullable(findDirectory(project, component));
     }
 
     private VirtualFile findDirectory(Project project, String dirName) {
@@ -31,9 +30,9 @@ public class FileFinder {
 
     public Optional<PsiFile> findComponentFile(Project project, VirtualFile dir, String extension) {
         return stream(dir.getChildren())
-            .filter(f -> f.getName().endsWith(extension))
-            .min(comparingInt(f -> f.getName().length()))
-            .map(PsiManager.getInstance(project)::findFile);
+                .filter(f -> f.getName().endsWith(extension))
+                .min(comparingInt(f -> f.getName().length()))
+                .map(PsiManager.getInstance(project)::findFile);
     }
 
     private static ContentIterator contentIterator(String dirName, AtomicReference<VirtualFile> ref) {
@@ -44,5 +43,4 @@ public class FileFinder {
             return false;
         };
     }
-
 }

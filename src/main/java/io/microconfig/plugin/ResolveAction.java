@@ -16,8 +16,6 @@ import java.util.Optional;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
 import static com.intellij.openapi.ui.Messages.showInfoMessage;
-import static io.microconfig.plugin.OptionalUtil.optional;
-import static io.microconfig.plugin.OptionalUtil.some;
 import static java.util.Optional.empty;
 
 public class ResolveAction extends AnAction {
@@ -34,10 +32,10 @@ public class ResolveAction extends AnAction {
 
         try {
             currentLine(event)
-                .flatMap(nameResolver::resolve)
-                .flatMap(cn -> fileFinder.resolveComponent(project, cn))
-                .flatMap(dir -> fileFinder.findComponentFile(project, dir, componentType(editorFile)))
-                .ifPresent(f -> f.navigate(true));
+                    .flatMap(nameResolver::resolve)
+                    .flatMap(cn -> fileFinder.resolveComponent(project, cn))
+                    .flatMap(dir -> fileFinder.findComponentFile(project, dir, componentType(editorFile)))
+                    .ifPresent(f -> f.navigate(true));
             HintManager.getInstance().showInformationHint(editor, "navigated");
         } catch (PluginException e) {
             showInfoMessage(e.getMessage(), "Microconfig Error");
@@ -46,8 +44,8 @@ public class ResolveAction extends AnAction {
     }
 
     private Optional<String> currentLine(AnActionEvent event) {
-        Optional<Document> document = optional(event.getData(EDITOR)).map(Editor::getDocument);
-        Optional<LogicalPosition> position = optional(event.getData(LangDataKeys.CARET)).map(Caret::getLogicalPosition);
+        Optional<Document> document = Optional.ofNullable(event.getData(EDITOR)).map(Editor::getDocument);
+        Optional<LogicalPosition> position = Optional.ofNullable(event.getData(LangDataKeys.CARET)).map(Caret::getLogicalPosition);
         if (!document.isPresent() || !position.isPresent()) return empty();
         int lineNum = position.get().line;
         Document doc = document.get();
@@ -55,14 +53,15 @@ public class ResolveAction extends AnAction {
         int start = doc.getLineStartOffset(lineNum);
         int end = doc.getLineEndOffset(lineNum);
         String line = doc.getCharsSequence().subSequence(start, end).toString();
-        return some(line);
+        return Optional.of(line);
     }
 
     private String componentType(VirtualFile file) {
         int lastDot = file.getName().lastIndexOf('.');
-        if (lastDot <= 0)
+        if (lastDot < 0) {
             throw new PluginException("Current file doesn't have an extension. Unable to resolve component type.");
+        }
+
         return file.getName().substring(lastDot);
     }
-
 }
