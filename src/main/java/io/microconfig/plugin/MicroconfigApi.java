@@ -8,9 +8,11 @@ public interface MicroconfigApi {
      *
      * @return Env to Placeholder value
      */
-    Map<String, String> resolvePlaceholder(String placeholder);
+    Map<String, String> placeholderValues(File projectDir, String placeholder);
 
-    File sourceOfPlaceholder(String placeholder);
+    File placeholderSourceLocation(File projectDir, String placeholder);
 
-    File dirForComponent(String componentName);
+    File componentDirectory(File projectDir, String componentName);
+
+    File componentFile(File projectDir, String componentName, String componentType);
 }
