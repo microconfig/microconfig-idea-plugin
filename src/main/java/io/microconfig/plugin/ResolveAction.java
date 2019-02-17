@@ -23,7 +23,7 @@ public class ResolveAction extends AnAction {
         } catch (PluginException e) {
             HintManager.getInstance().showErrorHint(context.editor, e.getMessage());
         } catch (NullPointerException e) {
-            //ignore
+            //ignore ¯\_(ツ)_/¯
         }
     }
 

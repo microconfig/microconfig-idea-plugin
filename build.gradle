@@ -12,6 +12,7 @@ apply plugin: 'java'
 
 intellij {
     version 'IC-2017.3'
+    updateSinceUntilBuild false
 }
 
 patchPluginXml {
