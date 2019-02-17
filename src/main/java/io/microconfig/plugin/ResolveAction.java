@@ -16,8 +16,7 @@ import java.util.Optional;
 
 import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
 import static com.intellij.openapi.ui.Messages.showInfoMessage;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
+import static java.util.Optional.*;
 
 public class ResolveAction extends AnAction {
     private final FileFinder fileFinder = new FileFinder();
@@ -43,8 +42,8 @@ public class ResolveAction extends AnAction {
     }
 
     private Optional<String> currentLine(AnActionEvent event) {
-        Optional<Document> document = Optional.ofNullable(event.getData(LangDataKeys.EDITOR)).map(Editor::getDocument);
-        Optional<LogicalPosition> position = Optional.ofNullable(event.getData(LangDataKeys.CARET)).map(Caret::getLogicalPosition);
+        Optional<Document> document = ofNullable(event.getData(LangDataKeys.EDITOR)).map(Editor::getDocument);
+        Optional<LogicalPosition> position = ofNullable(event.getData(LangDataKeys.CARET)).map(Caret::getLogicalPosition);
         if (!document.isPresent() || !position.isPresent()) return empty();
 
         int lineNum = position.get().line;
