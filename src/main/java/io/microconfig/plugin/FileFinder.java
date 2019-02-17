@@ -29,12 +29,10 @@ public class FileFinder {
     }
 
     public Optional<PsiFile> findComponentFile(Project project, VirtualFile dir, String extension) {
-        PsiManager psiManager = PsiManager.getInstance(project);
-
         return stream(dir.getChildren())
                 .filter(f -> f.getName().endsWith(extension))
                 .min(comparingInt(f -> f.getName().length()))
-                .map(psiManager::findFile);
+                .map(PsiManager.getInstance(project)::findFile);
     }
 
     private static ContentIterator contentIterator(String dirName, AtomicReference<VirtualFile> ref) {
