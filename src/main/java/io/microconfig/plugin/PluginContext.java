@@ -11,7 +11,6 @@ import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
 
 class PluginContext {
-
     final Project project;
     final Editor editor;
     final Caret caret;
@@ -27,5 +26,4 @@ class PluginContext {
     boolean notFull() {
         return project == null || editor == null || editorFile == null || caret == null;
     }
-
 }

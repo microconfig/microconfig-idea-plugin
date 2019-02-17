@@ -5,7 +5,6 @@ import java.util.Map;
 
 public interface MicroconfigApi {
     /**
-     *
      * @return Env to Placeholder value
      */
     Map<String, String> placeholderValues(File projectDir, String placeholder);

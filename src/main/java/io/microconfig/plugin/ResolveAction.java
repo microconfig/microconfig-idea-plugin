@@ -7,7 +7,6 @@ import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.vfs.VirtualFile;
 
 public class ResolveAction extends AnAction {
-
     private final FileFinder fileFinder = new FileFinder();
     private final ComponentNameResolver nameResolver = new ComponentNameResolver();
 
@@ -22,15 +21,14 @@ public class ResolveAction extends AnAction {
                 .ifPresent(f -> f.navigate(true));
         } catch (PluginException e) {
             HintManager.getInstance().showErrorHint(context.editor, e.getMessage());
-        } catch (NullPointerException e) {
-            //ignore ¯\_(ツ)_/¯
+        } catch (NullPointerException ignore) {
         }
     }
 
     private String currentLine(PluginContext context) {
         Document doc = context.editor.getDocument();
-        int lineNum = context.caret.getLogicalPosition().line;
 
+        int lineNum = context.caret.getLogicalPosition().line;
         int start = doc.getLineStartOffset(lineNum);
         int end = doc.getLineEndOffset(lineNum);
         return doc.getCharsSequence().subSequence(start, end).toString();
@@ -42,5 +40,4 @@ public class ResolveAction extends AnAction {
 
         throw new PluginException("Current file doesn't have an extension. Unable to resolve component type.");
     }
-
 }

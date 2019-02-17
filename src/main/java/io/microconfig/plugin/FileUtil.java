@@ -6,7 +6,6 @@ import com.intellij.openapi.vfs.VirtualFile;
 import java.io.File;
 
 public class FileUtil {
-
     public static File toFile(VirtualFile virtualFile) {
         return new File(virtualFile.getPath());
     }
@@ -14,5 +13,4 @@ public class FileUtil {
     public static VirtualFile toVirtualFile(File file) {
         return LocalFileSystem.getInstance().findFileByIoFile(file);
     }
-
 }
