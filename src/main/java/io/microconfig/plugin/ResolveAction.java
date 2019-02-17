@@ -3,7 +3,6 @@ package io.microconfig.plugin;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.LangDataKeys;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
@@ -13,13 +12,11 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 import java.util.Optional;
 
-import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
-import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
 import static com.intellij.openapi.ui.Messages.showInfoMessage;
-import static java.util.Optional.empty;
+import static java.util.Optional.*;
 
 public class ResolveAction extends AnAction {
-
     private final FileFinder fileFinder = new FileFinder();
     private final ComponentNameResolver nameResolver = new ComponentNameResolver();
 
@@ -44,8 +41,8 @@ public class ResolveAction extends AnAction {
     }
 
     private Optional<String> currentLine(AnActionEvent event) {
-        Optional<Document> document = Optional.ofNullable(event.getData(EDITOR)).map(Editor::getDocument);
-        Optional<LogicalPosition> position = Optional.ofNullable(event.getData(LangDataKeys.CARET)).map(Caret::getLogicalPosition);
+        Optional<Document> document = ofNullable(event.getData(EDITOR)).map(Editor::getDocument);
+        Optional<LogicalPosition> position = ofNullable(event.getData(CARET)).map(Caret::getLogicalPosition);
         if (!document.isPresent() || !position.isPresent()) return empty();
         int lineNum = position.get().line;
         Document doc = document.get();
@@ -53,7 +50,7 @@ public class ResolveAction extends AnAction {
         int start = doc.getLineStartOffset(lineNum);
         int end = doc.getLineEndOffset(lineNum);
         String line = doc.getCharsSequence().subSequence(start, end).toString();
-        return Optional.of(line);
+        return of(line);
     }
 
     private String componentType(VirtualFile file) {
