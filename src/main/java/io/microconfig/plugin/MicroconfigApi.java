@@ -1,9 +1,14 @@
 package io.microconfig.plugin;
 
 import java.io.File;
+import java.util.Map;
 
 public interface MicroconfigApi {
-    String resolvePlaceholder(String placeholder);
+    /**
+     *
+     * @return Env to Placeholder value
+     */
+    Map<String, String> resolvePlaceholder(String placeholder);
 
     File sourceOfPlaceholder(String placeholder);
 
