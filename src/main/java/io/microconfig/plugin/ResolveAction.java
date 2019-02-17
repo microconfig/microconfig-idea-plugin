@@ -55,10 +55,8 @@ public class ResolveAction extends AnAction {
 
     private String componentType(VirtualFile file) {
         int lastDot = file.getName().lastIndexOf('.');
-        if (lastDot < 0) {
-            throw new PluginException("Current file doesn't have an extension. Unable to resolve component type.");
-        }
+        if (lastDot >= 0) return file.getName().substring(lastDot);
 
-        return file.getName().substring(lastDot);
+        throw new PluginException("Current file doesn't have an extension. Unable to resolve component type.");
     }
 }
