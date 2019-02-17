@@ -1,0 +1,1 @@
+# microconfig-idea-plugin
