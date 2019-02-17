@@ -35,7 +35,7 @@ public class FileFinder {
                 .map(PsiManager.getInstance(project)::findFile);
     }
 
-    private static ContentIterator contentIterator(String dirName, AtomicReference<VirtualFile> ref) {
+    private ContentIterator contentIterator(String dirName, AtomicReference<VirtualFile> ref) {
         return f -> {
             if (!f.isDirectory() || !f.getName().equals(dirName)) return true;
 
