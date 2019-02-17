@@ -41,16 +41,18 @@ public class ResolveAction extends AnAction {
     }
 
     private Optional<String> currentLine(AnActionEvent event) {
-        Optional<Document> document = ofNullable(event.getData(EDITOR)).map(Editor::getDocument);
-        Optional<LogicalPosition> position = ofNullable(event.getData(CARET)).map(Caret::getLogicalPosition);
-        if (!document.isPresent() || !position.isPresent()) return empty();
-        int lineNum = position.get().line;
-        Document doc = document.get();
+        Editor editor = event.getData(EDITOR);
+        Caret caret = event.getData(CARET);
+        if (editor == null || caret == null) return empty();
 
-        int start = doc.getLineStartOffset(lineNum);
-        int end = doc.getLineEndOffset(lineNum);
-        String line = doc.getCharsSequence().subSequence(start, end).toString();
-        return of(line);
+        Document doc = editor.getDocument();
+        int lineNum = caret.getLogicalPosition().line;
+
+        CharSequence line = doc.getCharsSequence().subSequence(
+                doc.getLineStartOffset(lineNum),
+                doc.getLineEndOffset(lineNum)
+        ).toString();
+        return of(line.toString());
     }
 
     private String componentType(VirtualFile file) {
