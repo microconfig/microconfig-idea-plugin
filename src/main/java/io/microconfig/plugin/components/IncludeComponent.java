@@ -18,6 +18,10 @@ public class IncludeComponent implements MicroconfigComponent {
         this.currentLine = currentLine;
     }
 
+    public static boolean hasIncludeTag(String currentLine) {
+        return currentLine.startsWith(INCLUDE);
+    }
+
     @Override
     public void react() {
          FILE_FINDER.resolveComponent(context.project, componentName(currentLine))
