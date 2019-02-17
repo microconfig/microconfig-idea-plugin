@@ -3,54 +3,37 @@ package io.microconfig.plugin;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
-import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.LogicalPosition;
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
-import java.util.Optional;
-
-import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
-import static com.intellij.openapi.ui.Messages.showInfoMessage;
-import static java.util.Optional.*;
-
 public class ResolveAction extends AnAction {
+
     private final FileFinder fileFinder = new FileFinder();
     private final ComponentNameResolver nameResolver = new ComponentNameResolver();
 
     public void actionPerformed(AnActionEvent event) {
-        Project project = event.getProject();
-        Editor editor = event.getData(EDITOR);
-        VirtualFile editorFile = event.getData(VIRTUAL_FILE);
-
-        if (project == null || editor == null || editorFile == null) return;
+        PluginContext context = new PluginContext(event);
+        if (context.notFull()) return;
 
         try {
-            currentLine(event)
-                    .flatMap(nameResolver::resolve)
-                    .flatMap(cn -> fileFinder.resolveComponent(project, cn))
-                    .flatMap(dir -> fileFinder.findComponentFile(project, dir, componentType(editorFile)))
-                    .ifPresent(f -> f.navigate(true));
-            HintManager.getInstance().showInformationHint(editor, "navigated");
+            nameResolver.resolve(currentLine(context))
+                .flatMap(cn -> fileFinder.resolveComponent(context.project, cn))
+                .flatMap(dir -> fileFinder.findComponentFile(context.project, dir, componentType(context.editorFile)))
+                .ifPresent(f -> f.navigate(true));
         } catch (PluginException e) {
-            showInfoMessage(e.getMessage(), "Microconfig Error");
-//            HintManager.getInstance().showErrorHint(editor, e.getMessage());
+            HintManager.getInstance().showErrorHint(context.editor, e.getMessage());
+        } catch (NullPointerException e) {
+            //ignore
         }
     }
 
-    private Optional<String> currentLine(AnActionEvent event) {
-        Editor editor = event.getData(EDITOR);
-        Caret caret = event.getData(CARET);
-        if (editor == null || caret == null) return empty();
-
-        Document doc = editor.getDocument();
-        int lineNum = caret.getLogicalPosition().line;
+    private String currentLine(PluginContext context) {
+        Document doc = context.editor.getDocument();
+        int lineNum = context.caret.getLogicalPosition().line;
 
         int start = doc.getLineStartOffset(lineNum);
         int end = doc.getLineEndOffset(lineNum);
-        return of(doc.getCharsSequence().subSequence(start, end).toString());
+        return doc.getCharsSequence().subSequence(start, end).toString();
     }
 
     private String componentType(VirtualFile file) {
@@ -59,4 +42,5 @@ public class ResolveAction extends AnAction {
 
         throw new PluginException("Current file doesn't have an extension. Unable to resolve component type.");
     }
+
 }
