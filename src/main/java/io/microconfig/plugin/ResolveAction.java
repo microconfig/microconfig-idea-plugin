@@ -14,10 +14,12 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 import java.util.Optional;
 
+import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
+import static com.intellij.openapi.ui.Messages.showInfoMessage;
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 public class ResolveAction extends AnAction {
-
     private final FileFinder fileFinder = new FileFinder();
     private final ComponentNameResolver nameResolver = new ComponentNameResolver();
 
@@ -31,12 +33,12 @@ public class ResolveAction extends AnAction {
 
         try {
             currentLine(event)
-                .flatMap(nameResolver::resolve)
-                .flatMap(cn -> fileFinder.resolveComponent(project, cn))
-                .flatMap(dir -> fileFinder.findComponentFile(project, dir, componentType(event)))
-                .ifPresent(f -> f.navigate(true));
+                    .flatMap(nameResolver::resolve)
+                    .flatMap(cn -> fileFinder.resolveComponent(project, cn))
+                    .flatMap(dir -> fileFinder.findComponentFile(project, dir, componentType(event)))
+                    .ifPresent(f -> f.navigate(true));
         } catch (PluginException e) {
-            Messages.showInfoMessage(project, e.getMessage(), "Microconfig Error");
+            showInfoMessage(project, e.getMessage(), "Microconfig Error");
         }
     }
 
@@ -44,21 +46,22 @@ public class ResolveAction extends AnAction {
         Optional<Document> document = Optional.ofNullable(event.getData(LangDataKeys.EDITOR)).map(Editor::getDocument);
         Optional<LogicalPosition> position = Optional.ofNullable(event.getData(LangDataKeys.CARET)).map(Caret::getLogicalPosition);
         if (!document.isPresent() || !position.isPresent()) return empty();
+
         int lineNum = position.get().line;
         Document doc = document.get();
 
         int start = doc.getLineStartOffset(lineNum);
         int end = doc.getLineEndOffset(lineNum);
         String line = doc.getCharsSequence().subSequence(start, end).toString();
-        return Optional.of(line);
+        return of(line);
     }
 
     private String componentType(AnActionEvent event) {
-        VirtualFile file = event.getData(PlatformDataKeys.VIRTUAL_FILE);
+        VirtualFile file = event.getData(VIRTUAL_FILE);
         int lastDot = file.getName().lastIndexOf('.');
-        if (lastDot <= 0)
+        if (lastDot < 0) {
             throw new PluginException("Current file doesn't have an extension. Unable to resolve component type.");
+        }
         return file.getName().substring(lastDot);
     }
-
 }

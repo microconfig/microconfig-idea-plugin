@@ -12,11 +12,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparingInt;
+import static java.util.Optional.ofNullable;
 
 public class FileFinder {
-
     public Optional<VirtualFile> resolveComponent(Project project, String component) {
-        return Optional.ofNullable(findDirectory(project, component));
+        return ofNullable(findDirectory(project, component));
     }
 
     private VirtualFile findDirectory(Project project, String dirName) {
@@ -32,19 +32,17 @@ public class FileFinder {
         PsiManager psiManager = PsiManager.getInstance(project);
 
         return stream(dir.getChildren())
-            .filter(f -> f.getName().endsWith(extension))
-            .min(comparingInt(f -> f.getName().length()))
-            .map(psiManager::findFile);
+                .filter(f -> f.getName().endsWith(extension))
+                .min(comparingInt(f -> f.getName().length()))
+                .map(psiManager::findFile);
     }
 
     private static ContentIterator contentIterator(String dirName, AtomicReference<VirtualFile> ref) {
         return f -> {
-            if (f.isDirectory() && f.getName().equals(dirName)) {
-                ref.set(f);
-                return false;
-            } else {
-                return true;
-            }
+            if (!f.isDirectory() || !f.getName().equals(dirName)) return true;
+
+            ref.set(f);
+            return false;
         };
     }
 
