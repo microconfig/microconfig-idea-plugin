@@ -6,22 +6,22 @@ import io.microconfig.plugin.PluginContext;
 import static io.microconfig.plugin.ContextUtils.componentType;
 
 public class IncludeComponent implements MicroconfigComponent {
-     static final String INCLUDE = "#include";
+    static final String INCLUDE = "#include";
 
-    private final FileFinder fileFinder = new FileFinder();
+    private static final FileFinder FILE_FINDER = new FileFinder();
 
     private final PluginContext context;
     private final String currentLine;
 
-    public IncludeComponent(PluginContext context, String currentLine) {
+    IncludeComponent(PluginContext context, String currentLine) {
         this.context = context;
         this.currentLine = currentLine;
     }
 
     @Override
     public void react() {
-         fileFinder.resolveComponent(context.project, componentName(currentLine))
-            .flatMap(dir -> fileFinder.findComponentFile(context.project, dir, componentType(context)))
+         FILE_FINDER.resolveComponent(context.project, componentName(currentLine))
+            .flatMap(dir -> FILE_FINDER.findComponentFile(context.project, dir, componentType(context)))
             .ifPresent(f -> f.navigate(true));
     }
 
