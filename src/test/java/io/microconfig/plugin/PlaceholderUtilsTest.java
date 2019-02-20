@@ -2,7 +2,7 @@ package io.microconfig.plugin;
 
 import org.junit.Test;
 
-import static io.microconfig.plugin.PlaceholderUtils.placeholderSubstring;
+import static io.microconfig.plugin.utils.PlaceholderUtils.placeholderSubstring;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class PlaceholderUtilsTest {

@@ -1,4 +1,4 @@
-package io.microconfig.plugin.components;
+package io.microconfig.plugin;
 
 public interface MicroconfigComponent {
 

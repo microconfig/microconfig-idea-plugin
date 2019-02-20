@@ -1,17 +1,16 @@
 package io.microconfig.plugin;
 
 import java.io.File;
-import java.util.Map;
 
 public interface MicroconfigApi {
+
     /**
-     * @return Env to Placeholder value
+     * @param projectDir      base directory of microconfig project
+     * @param includeLine     #include line
+     * @param currentFileName filename of current file for env/type resolution
+     * @return file of component if found
+     * @throws PluginException if component file not found
      */
-    Map<String, String> placeholderValues(File projectDir, String placeholder);
+    File findInclude(File projectDir, String includeLine, String currentFileName);
 
-    File placeholderSourceLocation(File projectDir, String placeholder);
-
-    File componentDirectory(File projectDir, String componentName);
-
-    File componentFile(File projectDir, String componentName, String componentType);
 }

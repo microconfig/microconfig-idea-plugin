@@ -6,9 +6,12 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 
+import java.io.File;
+
 import static com.intellij.openapi.actionSystem.CommonDataKeys.CARET;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
+import static io.microconfig.plugin.utils.FileUtil.toFile;
 
 public class PluginContext {
     public final Project project;
@@ -16,14 +19,18 @@ public class PluginContext {
     public final Caret caret;
     public final VirtualFile editorFile;
 
-    PluginContext(AnActionEvent event) {
+    public PluginContext(AnActionEvent event) {
         project = event.getProject();
         editor = event.getData(EDITOR);
         caret = event.getData(CARET);
         editorFile = event.getData(VIRTUAL_FILE);
     }
 
-    boolean notFull() {
+    public boolean notFull() {
         return project == null || editor == null || editorFile == null || caret == null;
+    }
+
+    public File projectDir() {
+        return toFile(project.getBaseDir());
     }
 }

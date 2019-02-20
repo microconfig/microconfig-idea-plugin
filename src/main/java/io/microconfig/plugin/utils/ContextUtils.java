@@ -1,6 +1,8 @@
-package io.microconfig.plugin;
+package io.microconfig.plugin.utils;
 
 import com.intellij.openapi.editor.Document;
+import io.microconfig.plugin.PluginContext;
+import io.microconfig.plugin.PluginException;
 
 public class ContextUtils {
 
@@ -13,9 +15,9 @@ public class ContextUtils {
         return doc.getCharsSequence().subSequence(start, end).toString();
     }
 
-    public static String componentType(PluginContext context) {
-        int lastDot = context.editorFile.getName().lastIndexOf('.');
-        if (lastDot >= 0) return context.editorFile.getName().substring(lastDot);
+    public static String componentType(String currentFileName) {
+        int lastDot = currentFileName.lastIndexOf('.');
+        if (lastDot >= 0) return currentFileName.substring(lastDot);
 
         throw new PluginException("Current file doesn't have an extension. Unable to resolve component type.");
     }

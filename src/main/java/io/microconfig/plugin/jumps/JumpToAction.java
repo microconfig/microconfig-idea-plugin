@@ -1,13 +1,14 @@
-package io.microconfig.plugin;
+package io.microconfig.plugin.jumps;
 
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import io.microconfig.plugin.components.ComponentFactory;
-import io.microconfig.plugin.components.MicroconfigComponent;
+import io.microconfig.plugin.MicroconfigComponent;
+import io.microconfig.plugin.PluginContext;
+import io.microconfig.plugin.PluginException;
 
-public class ResolveAction extends AnAction {
-    private final ComponentFactory factory = new ComponentFactory();
+public class JumpToAction extends AnAction {
+    private final Jumps factory = new Jumps();
 
     public void actionPerformed(AnActionEvent event) {
         PluginContext context = new PluginContext(event);

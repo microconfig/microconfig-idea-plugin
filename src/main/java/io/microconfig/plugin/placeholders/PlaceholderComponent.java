@@ -1,5 +1,6 @@
-package io.microconfig.plugin.components;
+package io.microconfig.plugin.placeholders;
 
+import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
 
 public class PlaceholderComponent implements MicroconfigComponent {

@@ -1,4 +1,4 @@
-package io.microconfig.plugin;
+package io.microconfig.plugin.utils;
 
 import java.util.Optional;
 
