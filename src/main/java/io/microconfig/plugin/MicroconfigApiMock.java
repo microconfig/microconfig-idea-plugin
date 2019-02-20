@@ -35,6 +35,21 @@ public class MicroconfigApiMock implements MicroconfigApi {
         }
     }
 
+    @Override
+    public FilePosition findPlaceholderKey(File projectDir, String placeholder, String currentFileName) {
+        return new FilePosition(findInclude(projectDir, "#include "+ placeholder.replaceAll("[\\$,{,}]",""), currentFileName), 1);
+    }
+
+    @Override
+    public boolean navigatable(String placeholder) {
+        return true;
+    }
+
+    @Override
+    public boolean insidePlaceholder(String line, int offset) {
+        return true;
+    }
+
     private String includeComponentName(String currentLine) {
         return currentLine.substring(8).trim();
     }

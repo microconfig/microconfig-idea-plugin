@@ -22,4 +22,8 @@ public class PlaceholderUtils {
         return empty();
     }
 
+    public static boolean insidePlaceholderBrackets(String line, int offset) {
+        return false;
+    }
+
 }

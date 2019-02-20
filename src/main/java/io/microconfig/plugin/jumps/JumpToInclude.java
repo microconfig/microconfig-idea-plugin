@@ -5,12 +5,14 @@ import com.intellij.psi.PsiFile;
 import io.microconfig.plugin.MicroconfigApi;
 import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
+import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 
 import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
 import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
 
+@RequiredArgsConstructor
 public class JumpToInclude implements MicroconfigComponent {
 
     private static final String INCLUDE = "#include";
@@ -18,12 +20,6 @@ public class JumpToInclude implements MicroconfigComponent {
     private final MicroconfigApi api;
     private final PluginContext context;
     private final String currentLine;
-
-    JumpToInclude(MicroconfigApi api, PluginContext context, String currentLine) {
-        this.api = api;
-        this.context = context;
-        this.currentLine = currentLine;
-    }
 
     static boolean hasIncludeTag(String currentLine) {
         return currentLine.startsWith(INCLUDE);
