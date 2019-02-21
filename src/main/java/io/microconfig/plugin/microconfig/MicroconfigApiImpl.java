@@ -85,11 +85,6 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         return true;
     }
 
-    @Override
-    public boolean insidePlaceholder(String line, int offset) {
-        return true;
-    }
-
     private MicroconfigFactory microconfigFactory(File projectDir) {
         return MicroconfigFactory.init(
                 new File(projectDir, "repo"), //todo

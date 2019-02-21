@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import static io.microconfig.plugin.utils.ContextUtils.moveToLineColumn;
 import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
 import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
+import static io.microconfig.plugin.utils.PlaceholderUtils.insidePlaceholderBrackets;
 import static io.microconfig.plugin.utils.PlaceholderUtils.placeholderSubstring;
 
 @RequiredArgsConstructor
@@ -21,8 +22,8 @@ public class JumpToPlaceholder implements MicroconfigComponent {
     private final PluginContext context;
     private final String currentLine;
 
-    static boolean insidePlaceholder(MicroconfigApi api, String currentLine, Caret caret) {
-        return api.insidePlaceholder(currentLine, caret.getLogicalPosition().column);
+    static boolean insidePlaceholder(String currentLine, Caret caret) {
+        return insidePlaceholderBrackets(currentLine, caret.getLogicalPosition().column);
     }
 
     @Override

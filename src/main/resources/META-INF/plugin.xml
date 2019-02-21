@@ -16,9 +16,13 @@
         <group id="Microconfig.PluginMenu" text="Microconfig" description="Microconfig menu" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            <action id="Microconfig.ResolveAction" class="io.microconfig.plugin.jumps.JumpToAction" text="Jump to component"
+            <action id="Microconfig.JumpToAction" class="io.microconfig.plugin.jumps.JumpToAction" text="Jump to component"
                     description="Jumps to component">
                 <keyboard-shortcut first-keystroke="F10" keymap="$default"/>
+            </action>
+            <action id="Microconfig.ResolveAction" class="io.microconfig.plugin.placeholders.ResolvePlaceholderAction" text="Resolve placeholder"
+                    description="Resolves placeholder value for all ENVs">
+                <keyboard-shortcut first-keystroke="control F10" keymap="$default"/>
             </action>
 
         </group>

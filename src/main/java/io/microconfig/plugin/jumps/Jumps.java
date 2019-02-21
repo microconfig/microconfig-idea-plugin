@@ -21,7 +21,7 @@ public class Jumps {
         if (hasIncludeTag(currentLine)) {
             return of(new JumpToInclude(api, context, currentLine));
         }
-        if (insidePlaceholder(api, currentLine, context.caret)) {
+        if (insidePlaceholder(currentLine, context.caret)) {
             return of(new JumpToPlaceholder(api, context, currentLine));
         }
         return empty();
