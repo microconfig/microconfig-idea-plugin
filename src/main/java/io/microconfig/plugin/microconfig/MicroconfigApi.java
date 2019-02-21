@@ -38,10 +38,4 @@ public interface MicroconfigApi {
      */
     boolean navigatable(String placeholder);
 
-    /**
-     * @param line current line
-     * @param offset offset inside current line
-     * @return true if inside ${placeholder} false otherwise
-     */
-    boolean insidePlaceholder(String line, int offset);
 }
