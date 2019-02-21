@@ -24,7 +24,7 @@ patchPluginXml {
     changeNotes """
       Release 0.5.0<br>
       #include component navigation
-      ${placeholder} component navigation
+      placeholder component navigation
       """
 }
 
