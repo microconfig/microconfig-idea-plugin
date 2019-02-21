@@ -21,11 +21,11 @@ public interface MicroconfigApi {
     /**
      * @param projectDir      base directory of microconfig project
      * @param placeholder     placeholder string value
-     * @param currentFileName filename of current file for env/type resolution
+     * @param currentFile current file for env/type resolution
      * @return {@link FilePosition}  with file of component if found and line number inside file
      * @throws PluginException if component/key not found
      */
-    FilePosition findPlaceholderKey(File projectDir, String placeholder, String currentFileName);
+    FilePosition findPlaceholderKey(File projectDir, String placeholder, File currentFile);
 
     /**
      * @return placeholder value for each env: env -> value

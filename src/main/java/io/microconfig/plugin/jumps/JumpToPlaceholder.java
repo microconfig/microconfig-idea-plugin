@@ -7,6 +7,7 @@ import io.microconfig.plugin.FilePosition;
 import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
+import io.microconfig.plugin.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
 
 import static io.microconfig.plugin.utils.ContextUtils.moveToLineColumn;
@@ -29,7 +30,7 @@ public class JumpToPlaceholder implements MicroconfigComponent {
         String placeholder = placeholderSubstring(currentLine, context.caret.getLogicalPosition().column);
         if (!api.navigatable(placeholder)) return;
 
-        FilePosition filePosition = api.findPlaceholderKey(context.projectDir(), placeholder, context.editorFile.getName());
+        FilePosition filePosition = api.findPlaceholderKey(context.projectDir(), placeholder, FileUtil.toFile(context.editorFile));
         VirtualFile virtualFile = toVirtualFile(filePosition.getFile());
         PsiFile psiFile = toPsiFile(context.project, virtualFile);
         psiFile.navigate(true);

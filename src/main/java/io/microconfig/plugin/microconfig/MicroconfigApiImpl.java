@@ -18,7 +18,7 @@ import static io.microconfig.environments.Component.byType;
 import static io.microconfig.plugin.utils.ContextUtils.fileExtension;
 import static java.util.Comparator.comparing;
 
-public class MicroconfigApiMock implements MicroconfigApi {
+public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public File findInclude(File projectDir, String includeLine, String currentFileName) {
         Include include = Include.parse(includeLine, "");
@@ -39,11 +39,12 @@ public class MicroconfigApiMock implements MicroconfigApi {
     }
 
     @Override
-    public FilePosition findPlaceholderKey(File projectDir, String placeholder, String currentFileName) {
-        Placeholder p = Placeholder.parse(placeholder, ""); //todo will fail for env-specific properties @portOffset
+    public FilePosition findPlaceholderKey(File projectDir, String placeholder, File currentFile) {
+        MicroconfigFactory factory = microconfigFactory(projectDir);
+        Placeholder p = getPlaceholder(placeholder, currentFile, factory);
 
-        Map<String, Property> properties = microconfigFactory(projectDir)
-                .newPropertiesProvider(byExtension(fileExtension(currentFileName)))
+        Map<String, Property> properties = factory
+                .newPropertiesProvider(byExtension(fileExtension(currentFile.getName()))) //todo useVirtualFiles
                 .getProperties(byType(p.getComponent()), p.getEnvironment());
         Property property = properties.get(p.getValue());
 
@@ -52,7 +53,20 @@ public class MicroconfigApiMock implements MicroconfigApi {
         }
 
         Source source = property.getSource();
-        return new FilePosition(new File(source.getSourceOfProperty()), source.getLine());
+        return new FilePosition(new File(projectDir, source.getSourceOfProperty()), source.getLine());
+    }
+
+    private Placeholder getPlaceholder(String placeholder, File currentFile, MicroconfigFactory factory) {
+        Placeholder p = Placeholder.parse(placeholder, anyEnv(factory));
+        return p.getComponent().equals("this") ? p.changeComponent(currentFile.getParentFile().getName()) : p;
+    }
+
+    private String anyEnv(MicroconfigFactory factory) {
+        return factory.getEnvironmentProvider()
+                .getEnvironmentNames()
+                .stream()
+                .findFirst()
+                .orElse(""); //otherwise will fail for env-specific props
     }
 
     @Override
