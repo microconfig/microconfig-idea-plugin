@@ -10,6 +10,7 @@ import io.microconfig.properties.resolver.placeholder.Placeholder;
 
 import java.io.File;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 
 import static io.microconfig.commands.factory.ConfigType.byExtension;
@@ -39,7 +40,7 @@ public class MicroconfigApiMock implements MicroconfigApi {
 
     @Override
     public FilePosition findPlaceholderKey(File projectDir, String placeholder, String currentFileName) {
-        Placeholder p = Placeholder.parse(placeholder, "BASE");
+        Placeholder p = Placeholder.parse(placeholder, ""); //todo will fail for env-specific properties @portOffset
 
         Map<String, Property> properties = microconfigFactory(projectDir)
                 .newPropertiesProvider(byExtension(fileExtension(currentFileName)))
@@ -56,7 +57,13 @@ public class MicroconfigApiMock implements MicroconfigApi {
 
     @Override
     public Map<String, String> placeholderValues(File projectDir, String currentLine) {
-        return null;
+        return new HashMap<String, String>() {
+            {
+                put("prod", "value1");
+                put("dev", "value2");
+                put("", "value3");
+            }
+        };
     }
 
     @Override
