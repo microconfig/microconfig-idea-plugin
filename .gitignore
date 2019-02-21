@@ -14,6 +14,7 @@
 
 .gradle
 .idea
+*.iml
 lib
 
 # Package Files #
