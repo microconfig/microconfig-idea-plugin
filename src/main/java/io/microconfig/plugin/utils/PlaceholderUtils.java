@@ -16,7 +16,7 @@ public class PlaceholderUtils {
 
         int nextEnd = line.indexOf('}', offset);
 
-        if (previousStart > 0 && nextEnd > 0) return Optional.of(line.substring(previousStart + 2, nextEnd));
+        if (previousStart > 0 && nextEnd > 0) return Optional.of(line.substring(previousStart, nextEnd + 1));
 
         return empty();
     }

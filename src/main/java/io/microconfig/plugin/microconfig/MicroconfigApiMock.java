@@ -41,10 +41,10 @@ public class MicroconfigApiMock implements MicroconfigApi {
     public FilePosition findPlaceholderKey(File projectDir, String placeholder, String currentFileName) {
         Placeholder p = Placeholder.parse(placeholder, "BASE");
 
-        Property property = microconfigFactory(projectDir)
+        Map<String, Property> properties = microconfigFactory(projectDir)
                 .newPropertiesProvider(byExtension(fileExtension(currentFileName)))
-                .getProperties(byType(p.getComponent()), p.getEnvironment())
-                .get(p.getValue());
+                .getProperties(byType(p.getComponent()), p.getEnvironment());
+        Property property = properties.get(p.getValue());
 
         if (property == null) {
             throw new PluginException("Can't resolve " + placeholder);
