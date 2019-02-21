@@ -1,45 +1,56 @@
 package io.microconfig.plugin.microconfig;
 
+import io.microconfig.commands.factory.MicroconfigFactory;
 import io.microconfig.plugin.FilePosition;
 import io.microconfig.plugin.PluginException;
+import io.microconfig.properties.Property;
+import io.microconfig.properties.Property.Source;
+import io.microconfig.properties.files.parser.Include;
+import io.microconfig.properties.resolver.placeholder.Placeholder;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.stream.Stream;
+import java.util.Map;
 
-import static io.microconfig.plugin.utils.ContextUtils.componentType;
-import static java.util.Arrays.stream;
+import static io.microconfig.commands.factory.ConfigType.byExtension;
+import static io.microconfig.environments.Component.byType;
+import static io.microconfig.plugin.utils.ContextUtils.fileExtension;
+import static java.util.Comparator.comparing;
 
 public class MicroconfigApiMock implements MicroconfigApi {
     @Override
     public File findInclude(File projectDir, String includeLine, String currentFileName) {
-        String componentName = includeComponentName(includeLine);
-        String componentType = componentType(currentFileName);
+        Include include = Include.parse(includeLine, "BASE");
 
-        try (Stream<Path> dirStream = Files.walk(projectDir.toPath())) {
-            File[] componentFiles = dirStream
-                    .map(Path::toFile)
-                    .filter(File::isDirectory)
-                    .filter(f -> f.getName().equals(componentName))
-                    .findFirst()
-                    .map(File::listFiles)
-                    .orElseThrow(() -> new PluginException("Component not found: " + componentName));
+        String componentName = include.getComponentName();
+        String fileExtension = fileExtension(currentFileName);
 
-            return stream(componentFiles)
-                    .filter(f -> f.getName().endsWith(componentType))
-                    .findAny()
-                    .orElseThrow(() -> new PluginException("Component not found: " + componentName));
-
-        } catch (IOException e) {
-            throw new PluginException("IOEx: " + e.getMessage());
-        }
+        return microconfigFactory(projectDir)
+                .getComponentTree()
+                .getConfigFiles(componentName, file -> file.getName().endsWith(fileExtension))
+                .min(comparing(f -> f.getName().length()))
+                .orElseThrow(() -> new PluginException("Component not found: " + componentName));
     }
 
     @Override
     public FilePosition findPlaceholderKey(File projectDir, String placeholder, String currentFileName) {
-        return new FilePosition(findInclude(projectDir, INCLUDE + placeholder.replaceAll("[$,{,}]", ""), currentFileName), 1);
+        Placeholder p = Placeholder.parse(placeholder, "BASE");
+
+        Property property = microconfigFactory(projectDir)
+                .newPropertiesProvider(byExtension(fileExtension(currentFileName)))
+                .getProperties(byType(p.getComponent()), p.getEnvironment())
+                .get(p.getValue());
+
+        if (property == null) {
+            throw new PluginException("Can't resolve " + placeholder);
+        }
+
+        Source source = property.getSource();
+        return new FilePosition(new File(source.getSourceOfProperty()), source.getLine());
+    }
+
+    @Override
+    public Map<String, String> placeholderValues(File projectDir, String currentLine) {
+        return null;
     }
 
     @Override
@@ -52,7 +63,10 @@ public class MicroconfigApiMock implements MicroconfigApi {
         return true;
     }
 
-    private String includeComponentName(String currentLine) {
-        return currentLine.substring(INCLUDE.length()).trim();
+    private MicroconfigFactory microconfigFactory(File projectDir) {
+        return MicroconfigFactory.init(
+                new File(projectDir, "repo"), //todo
+                new File(projectDir, "build/output")
+        );
     }
 }

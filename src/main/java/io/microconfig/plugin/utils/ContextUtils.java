@@ -17,7 +17,7 @@ public class ContextUtils {
         return doc.getCharsSequence().subSequence(start, end).toString();
     }
 
-    public static String componentType(String currentFileName) {
+    public static String fileExtension(String currentFileName) {
         int lastDot = currentFileName.lastIndexOf('.');
         if (lastDot >= 0) return currentFileName.substring(lastDot);
 

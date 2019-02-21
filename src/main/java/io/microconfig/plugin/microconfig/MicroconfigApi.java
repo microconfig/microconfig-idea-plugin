@@ -4,6 +4,7 @@ import io.microconfig.plugin.FilePosition;
 import io.microconfig.plugin.PluginException;
 
 import java.io.File;
+import java.util.Map;
 
 public interface MicroconfigApi {
     String INCLUDE = "#include";
@@ -25,6 +26,11 @@ public interface MicroconfigApi {
      * @throws PluginException if component/key not found
      */
     FilePosition findPlaceholderKey(File projectDir, String placeholder, String currentFileName);
+
+    /**
+     * @return placeholder value for each env: env -> value
+     */
+    Map<String, String> placeholderValues(File projectDir, String currentLine);
 
     /**
      * @param placeholder string value of placeholder
