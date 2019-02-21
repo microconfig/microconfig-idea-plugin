@@ -9,6 +9,7 @@ import io.microconfig.properties.files.parser.Include;
 import io.microconfig.properties.resolver.placeholder.Placeholder;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.Map;
 
 import static io.microconfig.commands.factory.ConfigType.byExtension;
@@ -19,7 +20,7 @@ import static java.util.Comparator.comparing;
 public class MicroconfigApiMock implements MicroconfigApi {
     @Override
     public File findInclude(File projectDir, String includeLine, String currentFileName) {
-        Include include = Include.parse(includeLine, "BASE");
+        Include include = Include.parse(includeLine, "");
 
         String componentName = include.getComponentName();
         String fileExtension = fileExtension(currentFileName);
@@ -27,8 +28,13 @@ public class MicroconfigApiMock implements MicroconfigApi {
         return microconfigFactory(projectDir)
                 .getComponentTree()
                 .getConfigFiles(componentName, file -> file.getName().endsWith(fileExtension))
-                .min(comparing(f -> f.getName().length()))
+                .min(priorityByEnv(include.getEnv()))
                 .orElseThrow(() -> new PluginException("Component not found: " + componentName));
+    }
+
+    private Comparator<File> priorityByEnv(String env) {
+        Comparator<File> comparator = comparing(f -> f.getName().contains("." + env + ".") ? 0 : 1);
+        return !env.isEmpty() ? comparator : comparator.reversed();
     }
 
     @Override
