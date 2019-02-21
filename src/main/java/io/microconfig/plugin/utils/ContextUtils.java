@@ -8,7 +8,6 @@ import io.microconfig.plugin.PluginContext;
 import io.microconfig.plugin.PluginException;
 
 public class ContextUtils {
-
     public static String currentLine(PluginContext context) {
         Document doc = context.editor.getDocument();
 
@@ -26,7 +25,9 @@ public class ContextUtils {
     }
 
     public static void moveToLineColumn(Project project, int line, int column) {
-        FileEditorManager.getInstance(project).getSelectedTextEditor().getCaretModel().moveToLogicalPosition(new LogicalPosition(line, column));
+        FileEditorManager.getInstance(project)
+                .getSelectedTextEditor()
+                .getCaretModel()
+                .moveToLogicalPosition(new LogicalPosition(line, column));
     }
-
 }

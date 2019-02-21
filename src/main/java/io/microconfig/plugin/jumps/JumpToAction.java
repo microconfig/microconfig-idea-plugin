@@ -20,5 +20,4 @@ public class JumpToAction extends AnAction {
             HintManager.getInstance().showErrorHint(context.editor, e.getMessage());
         }
     }
-
 }

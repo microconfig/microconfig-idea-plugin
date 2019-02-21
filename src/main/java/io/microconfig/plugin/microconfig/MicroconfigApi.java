@@ -1,8 +1,12 @@
-package io.microconfig.plugin;
+package io.microconfig.plugin.microconfig;
+
+import io.microconfig.plugin.FilePosition;
+import io.microconfig.plugin.PluginException;
 
 import java.io.File;
 
 public interface MicroconfigApi {
+    String INCLUDE = "#include";
 
     /**
      * @param projectDir      base directory of microconfig project

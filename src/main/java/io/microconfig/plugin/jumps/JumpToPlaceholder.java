@@ -4,9 +4,9 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import io.microconfig.plugin.FilePosition;
-import io.microconfig.plugin.MicroconfigApi;
 import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
+import io.microconfig.plugin.microconfig.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
 
 import static io.microconfig.plugin.utils.ContextUtils.moveToLineColumn;
@@ -16,7 +16,6 @@ import static io.microconfig.plugin.utils.PlaceholderUtils.placeholderSubstring;
 
 @RequiredArgsConstructor
 public class JumpToPlaceholder implements MicroconfigComponent {
-
     private final MicroconfigApi api;
     private final PluginContext context;
     private final String currentLine;
@@ -36,5 +35,4 @@ public class JumpToPlaceholder implements MicroconfigComponent {
         psiFile.navigate(true);
         moveToLineColumn(context.project, filePosition.getLineNumber(), 0);
     }
-
 }

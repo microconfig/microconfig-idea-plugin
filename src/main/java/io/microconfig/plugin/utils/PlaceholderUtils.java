@@ -5,7 +5,6 @@ import java.util.Optional;
 import static java.util.Optional.empty;
 
 public class PlaceholderUtils {
-
     public static String placeholderSubstring(String line, int offset) {
         return insideBrackets(line, offset).orElse(line);
     }
@@ -25,5 +24,4 @@ public class PlaceholderUtils {
     public static boolean insidePlaceholderBrackets(String line, int offset) {
         return false;
     }
-
 }

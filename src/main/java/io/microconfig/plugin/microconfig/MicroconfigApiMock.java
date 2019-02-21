@@ -1,4 +1,7 @@
-package io.microconfig.plugin;
+package io.microconfig.plugin.microconfig;
+
+import io.microconfig.plugin.FilePosition;
+import io.microconfig.plugin.PluginException;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,25 +13,24 @@ import static io.microconfig.plugin.utils.ContextUtils.componentType;
 import static java.util.Arrays.stream;
 
 public class MicroconfigApiMock implements MicroconfigApi {
-
     @Override
     public File findInclude(File projectDir, String includeLine, String currentFileName) {
         String componentName = includeComponentName(includeLine);
         String componentType = componentType(currentFileName);
 
         try (Stream<Path> dirStream = Files.walk(projectDir.toPath())) {
-            File[] componentFiles =dirStream
-                .map(Path::toFile)
-                .filter(File::isDirectory)
-                .filter(f -> f.getName().equals(componentName))
-                .findFirst()
-                .map(File::listFiles)
-                .orElseThrow(() -> new PluginException("Component not found: " + componentName));
+            File[] componentFiles = dirStream
+                    .map(Path::toFile)
+                    .filter(File::isDirectory)
+                    .filter(f -> f.getName().equals(componentName))
+                    .findFirst()
+                    .map(File::listFiles)
+                    .orElseThrow(() -> new PluginException("Component not found: " + componentName));
 
             return stream(componentFiles)
-                .filter(f -> f.getName().endsWith(componentType))
-                .findAny()
-                .orElseThrow(() -> new PluginException("Component not found: " + componentName));
+                    .filter(f -> f.getName().endsWith(componentType))
+                    .findAny()
+                    .orElseThrow(() -> new PluginException("Component not found: " + componentName));
 
         } catch (IOException e) {
             throw new PluginException("IOEx: " + e.getMessage());
@@ -37,7 +39,7 @@ public class MicroconfigApiMock implements MicroconfigApi {
 
     @Override
     public FilePosition findPlaceholderKey(File projectDir, String placeholder, String currentFileName) {
-        return new FilePosition(findInclude(projectDir, "#include "+ placeholder.replaceAll("[\\$,{,}]",""), currentFileName), 1);
+        return new FilePosition(findInclude(projectDir, INCLUDE + placeholder.replaceAll("[$,{,}]", ""), currentFileName), 1);
     }
 
     @Override
@@ -51,7 +53,6 @@ public class MicroconfigApiMock implements MicroconfigApi {
     }
 
     private String includeComponentName(String currentLine) {
-        return currentLine.substring(8).trim();
+        return currentLine.substring(INCLUDE.length()).trim();
     }
-
 }
