@@ -6,7 +6,6 @@ import static io.microconfig.plugin.utils.PlaceholderUtils.placeholderSubstring;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class PlaceholderUtilsTest {
-
     private static final String LINE = "server.port=${ports@eureka.port}";
     private static final String PLACEHOLDER = "ports@eureka.port";
 

@@ -15,7 +15,10 @@
 .gradle
 .idea
 *.iml
+*.iml
 lib
+target/
+build/
 
 # Package Files #
 *.jar
