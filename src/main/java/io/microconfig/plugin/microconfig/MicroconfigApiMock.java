@@ -33,8 +33,8 @@ public class MicroconfigApiMock implements MicroconfigApi {
     }
 
     private Comparator<File> priorityByEnv(String env) {
-        Comparator<File> comparator = comparing(f -> f.getName().contains("." + env + ".") ? 0 : 1);
-        return !env.isEmpty() ? comparator : comparator.reversed();
+        Comparator<File> comparator = comparing(f1 -> f1.getName().contains(env + ".") ? 0 : 1);
+        return comparator.thenComparing(f -> f.getName().length());
     }
 
     @Override
