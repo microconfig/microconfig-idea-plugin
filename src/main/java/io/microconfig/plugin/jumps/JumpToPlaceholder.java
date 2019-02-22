@@ -10,6 +10,8 @@ import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+
 import static io.microconfig.plugin.utils.ContextUtils.moveToLineColumn;
 import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
 import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
@@ -28,10 +30,10 @@ public class JumpToPlaceholder implements MicroconfigComponent {
 
     @Override
     public void react() {
-        String placeholder = placeholderSubstring(currentLine, context.caret.getLogicalPosition().column);
-        if (!api.navigatable(placeholder)) return;
+        Optional<String> placeholder = placeholderSubstring(currentLine, context.caret.getLogicalPosition().column);
+        if (!placeholder.isPresent() || !api.navigatable(placeholder.get())) return; //todo maybe print a warning
 
-        FilePosition filePosition = api.findPlaceholderKey(context.projectDir(), placeholder, FileUtil.toFile(context.editorFile));
+        FilePosition filePosition = api.findPlaceholderKey(context.projectDir(), placeholder.get(), FileUtil.toFile(context.editorFile));
         VirtualFile virtualFile = toVirtualFile(filePosition.getFile());
         PsiFile psiFile = toPsiFile(context.project, virtualFile);
         psiFile.navigate(true);
