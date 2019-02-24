@@ -28,7 +28,9 @@ public interface MicroconfigApi {
     FilePosition findPlaceholderKey(File projectDir, String placeholder, File currentFile);
 
     /**
-     * @return placeholder value for each env: env -> value
+     * @param projectDir      base directory of microconfig project
+     * @param currentLine     current line to resolve placeholders
+     * @return full line with resolved placeholder values for each env: env -> line
      */
     Map<String, String> placeholderValues(File projectDir, String currentLine);
 

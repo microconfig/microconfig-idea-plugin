@@ -1,11 +1,12 @@
 package io.microconfig.plugin.jumps;
 
-import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
 import io.microconfig.plugin.PluginException;
+
+import static io.microconfig.plugin.utils.ContextUtils.showErrorHing;
 
 public class JumpToAction extends AnAction {
     private final Jumps factory = new Jumps();
@@ -17,7 +18,7 @@ public class JumpToAction extends AnAction {
         try {
             factory.componentFrom(context).ifPresent(MicroconfigComponent::react);
         } catch (PluginException e) {
-            HintManager.getInstance().showErrorHint(context.editor, e.getMessage());
+            showErrorHing(context.editor, e.getMessage());
         }
     }
 }

@@ -9,9 +9,11 @@ import io.microconfig.properties.files.parser.Include;
 import io.microconfig.properties.resolver.placeholder.Placeholder;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import static io.microconfig.commands.factory.ConfigType.byExtension;
 import static io.microconfig.environments.Component.byType;
@@ -71,11 +73,13 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     @Override
     public Map<String, String> placeholderValues(File projectDir, String currentLine) {
-        return new HashMap<String, String>() {
+        return new Random().nextBoolean()
+            ? Collections.emptyMap()
+            : new HashMap<String, String>() {
             {
-                put("prod", "value1");
-                put("dev", "value2");
-                put("", "value3");
+                put("prod", "key=prod value");
+                put("dev", "key=dev value");
+                put("", "key=default value");
             }
         };
     }
