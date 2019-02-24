@@ -9,15 +9,20 @@ import io.microconfig.properties.files.parser.Include;
 import io.microconfig.properties.resolver.placeholder.Placeholder;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Stream;
 
 import static io.microconfig.commands.factory.ConfigType.byExtension;
 import static io.microconfig.environments.Component.byType;
 import static io.microconfig.plugin.utils.ContextUtils.fileExtension;
+import static java.nio.file.Files.walk;
+import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 
 public class MicroconfigApiImpl implements MicroconfigApi {
@@ -29,10 +34,10 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         String fileExtension = fileExtension(currentFileName);
 
         return microconfigFactory(projectDir)
-                .getComponentTree()
-                .getConfigFiles(componentName, file -> file.getName().endsWith(fileExtension))
-                .min(priorityByEnv(include.getEnv()))
-                .orElseThrow(() -> new PluginException("Component not found: " + componentName));
+            .getComponentTree()
+            .getConfigFiles(componentName, file -> file.getName().endsWith(fileExtension))
+            .min(priorityByEnv(include.getEnv()))
+            .orElseThrow(() -> new PluginException("Component not found: " + componentName));
     }
 
     private Comparator<File> priorityByEnv(String env) {
@@ -46,8 +51,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         Placeholder p = getPlaceholder(placeholder, currentFile, factory);
 
         Map<String, Property> properties = factory
-                .newPropertiesProvider(byExtension(fileExtension(currentFile.getName()))) //todo useVirtualFiles
-                .getProperties(byType(p.getComponent()), p.getEnvironment());
+            .newPropertiesProvider(byExtension(fileExtension(currentFile.getName()))) //todo useVirtualFiles
+            .getProperties(byType(p.getComponent()), p.getEnvironment());
         Property property = properties.get(p.getValue());
 
         if (property == null) {
@@ -65,10 +70,10 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     private String anyEnv(MicroconfigFactory factory) {
         return factory.getEnvironmentProvider()
-                .getEnvironmentNames()
-                .stream()
-                .findFirst()
-                .orElse(""); //otherwise will fail for env-specific props
+            .getEnvironmentNames()
+            .stream()
+            .findFirst()
+            .orElse(""); //otherwise will fail for env-specific props
     }
 
     @Override
@@ -90,9 +95,32 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private MicroconfigFactory microconfigFactory(File projectDir) {
+        File configRootDir = findConfigRootDir(projectDir);
+        System.out.println("Config root dir: " + configRootDir);
         return MicroconfigFactory.init(
-                new File(projectDir, "repo"), //todo
-                new File(projectDir, "build/output")
+            configRootDir,
+            new File(projectDir, "build/output")
         );
+    }
+
+    private static File findConfigRootDir(File projectDir) {
+        if (projectDir.isDirectory() && configRootDir(projectDir.listFiles())) return projectDir;
+
+        try (Stream<Path> walk = walk(projectDir.toPath())) {
+            return walk.map(Path::toFile)
+                .filter(File::isDirectory)
+                .filter(f -> configRootDir(f.listFiles()))
+                .findAny()
+                .orElseThrow(() -> new PluginException("Can't find 'components' and 'envs' folders on same level"));
+        } catch (IOException e) {
+            throw new PluginException("IO exception " + e.getMessage());
+        }
+    }
+
+    private static boolean configRootDir(File[] children) {
+        return stream(children)
+            .filter(File::isDirectory)
+            .filter(f -> f.getName().equals("components") || f.getName().equals("envs"))
+            .count() == 2;
     }
 }

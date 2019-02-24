@@ -7,12 +7,12 @@ import io.microconfig.plugin.FilePosition;
 import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
-import io.microconfig.plugin.utils.FileUtil;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Optional;
 
 import static io.microconfig.plugin.utils.ContextUtils.moveToLineColumn;
+import static io.microconfig.plugin.utils.FileUtil.toFile;
 import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
 import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
 import static io.microconfig.plugin.utils.PlaceholderUtils.insidePlaceholderBrackets;
@@ -33,7 +33,8 @@ public class JumpToPlaceholder implements MicroconfigComponent {
         Optional<String> placeholder = placeholderSubstring(currentLine, context.caret.getLogicalPosition().column);
         if (!placeholder.isPresent() || !api.navigatable(placeholder.get())) return; //todo maybe print a warning
 
-        FilePosition filePosition = api.findPlaceholderKey(context.projectDir(), placeholder.get(), FileUtil.toFile(context.editorFile));
+        FilePosition filePosition = api.findPlaceholderKey(context.projectDir(), placeholder.get(), toFile(context.editorFile));
+        System.out.println("Resolved file position "+ filePosition);
         VirtualFile virtualFile = toVirtualFile(filePosition.getFile());
         PsiFile psiFile = toPsiFile(context.project, virtualFile);
         psiFile.navigate(true);

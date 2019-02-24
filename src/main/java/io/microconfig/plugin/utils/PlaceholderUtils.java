@@ -9,7 +9,7 @@ import static java.util.Optional.empty;
 public class PlaceholderUtils {
     public static Optional<String> placeholderSubstring(String line, int offset) {
         return placeholderBorders(line, offset)
-            .map(b -> line.substring(b.start + 2, b.end));
+            .map(b -> line.substring(b.start, b.end + 1));
     }
 
     public static boolean insidePlaceholderBrackets(String line, int offset) {

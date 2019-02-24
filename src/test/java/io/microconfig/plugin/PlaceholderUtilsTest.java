@@ -9,7 +9,7 @@ import static org.fest.assertions.Assertions.assertThat;
 
 public class PlaceholderUtilsTest {
     private static final String LINE = "server.port=${ports@eureka.port}";
-    private static final String PLACEHOLDER = "ports@eureka.port";
+    private static final String PLACEHOLDER = "${ports@eureka.port}";
 
     @Test
     public void should_resolve_substring_if_in_brackets() {
@@ -23,7 +23,7 @@ public class PlaceholderUtilsTest {
         String line = "${first}${middle}${second}";
         Optional<String> result = placeholderSubstring(line, 11);
         assertThat(result.isPresent()).isTrue();
-        assertThat(result.get()).isEqualTo("middle");
+        assertThat(result.get()).isEqualTo("${middle}");
     }
 
     @Test
