@@ -17,7 +17,7 @@ public class JumpToAction extends AnAction {
 
         try {
             factory.componentFrom(context).ifPresent(MicroconfigComponent::react);
-        } catch (PluginException e) {
+        } catch (RuntimeException e) {
             showErrorHing(context.editor, e.getMessage());
         }
     }
