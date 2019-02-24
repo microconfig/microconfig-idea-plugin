@@ -2,17 +2,14 @@ package io.microconfig.plugin.placeholders;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
+import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
 import io.microconfig.plugin.PluginException;
-import io.microconfig.plugin.microconfig.MicroconfigApi;
-import io.microconfig.plugin.microconfig.MicroconfigApiImpl;
 
-import static io.microconfig.plugin.placeholders.ResolvePlaceholderLine.hasPlaceholder;
-import static io.microconfig.plugin.utils.ContextUtils.currentLine;
 import static io.microconfig.plugin.utils.ContextUtils.showErrorHing;
 
 public class ResolvePlaceholderAction extends AnAction {
-    private final MicroconfigApi api = new MicroconfigApiImpl();
+    private final Placeholders factory = new Placeholders();
 
     @Override
     public void actionPerformed(AnActionEvent event) {
@@ -20,10 +17,7 @@ public class ResolvePlaceholderAction extends AnAction {
         if (context.notFull()) return;
 
         try {
-            String currentLine = currentLine(context);
-            if (hasPlaceholder(currentLine)) {
-                new ResolvePlaceholderLine(api, context, currentLine).react();
-            }
+            factory.componentFrom(context).ifPresent(MicroconfigComponent::react);
         } catch (PluginException e) {
             showErrorHing(context.editor, e.getMessage());
         }

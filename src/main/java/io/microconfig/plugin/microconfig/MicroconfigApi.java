@@ -32,7 +32,14 @@ public interface MicroconfigApi {
      * @param currentLine     current line to resolve placeholders
      * @return full line with resolved placeholder values for each env: env -> line
      */
-    Map<String, String> placeholderValues(File projectDir, String currentLine);
+    Map<String, String> lineWithPlaceholders(File projectDir, String currentLine);
+
+    /**
+     * @param projectDir      base directory of microconfig project
+     * @param placeholder     placeholder
+     * @return resolved placeholder values for each env: env -> value
+     */
+    Map<String, String> placeholderValues(File projectDir, String placeholder);
 
     /**
      * @param placeholder string value of placeholder

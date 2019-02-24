@@ -1,15 +1,21 @@
-package io.microconfig.plugin;
+package io.microconfig.plugin.utils;
 
 import org.junit.Test;
 
 import java.util.Optional;
 
+import static io.microconfig.plugin.utils.PlaceholderUtils.insidePlaceholderBrackets;
 import static io.microconfig.plugin.utils.PlaceholderUtils.placeholderSubstring;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class PlaceholderUtilsTest {
     private static final String LINE = "server.port=${ports@eureka.port}";
     private static final String PLACEHOLDER = "${ports@eureka.port}";
+
+    @Test
+    public void should_return_false_if_on_key() {
+        assertThat(insidePlaceholderBrackets(LINE, 3)).isFalse();
+    }
 
     @Test
     public void should_resolve_substring_if_in_brackets() {

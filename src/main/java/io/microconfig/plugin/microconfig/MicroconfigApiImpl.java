@@ -77,7 +77,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     @Override
-    public Map<String, String> placeholderValues(File projectDir, String currentLine) {
+    public Map<String, String> lineWithPlaceholders(File projectDir, String currentLine) {
         return new Random().nextBoolean()
             ? Collections.emptyMap()
             : new HashMap<String, String>() {
@@ -85,6 +85,19 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 put("prod", "key=prod value");
                 put("dev", "key=dev value");
                 put("", "key=default value");
+            }
+        };
+    }
+
+    @Override
+    public Map<String, String> placeholderValues(File projectDir, String placeholder) {
+        return new Random().nextBoolean()
+            ? Collections.emptyMap()
+            : new HashMap<String, String>() {
+            {
+                put("prod", "prod value");
+                put("dev", "dev value");
+                put("", "default value");
             }
         };
     }
