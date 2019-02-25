@@ -12,9 +12,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Optional;
 
 import static io.microconfig.plugin.utils.ContextUtils.moveToLineColumn;
-import static io.microconfig.plugin.utils.FileUtil.toFile;
-import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
-import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
+import static io.microconfig.plugin.utils.FileUtil.*;
 import static io.microconfig.plugin.utils.PlaceholderUtils.insidePlaceholderBrackets;
 import static io.microconfig.plugin.utils.PlaceholderUtils.placeholderSubstring;
 
@@ -34,7 +32,7 @@ public class JumpToPlaceholder implements MicroconfigComponent {
         if (!placeholder.isPresent() || !api.navigatable(placeholder.get())) return; //todo maybe print a warning
 
         FilePosition filePosition = api.findPlaceholderKey(context.projectDir(), placeholder.get(), toFile(context.editorFile));
-        System.out.println("Resolved file position "+ filePosition);
+        System.out.println("Resolved file position " + filePosition);
         VirtualFile virtualFile = toVirtualFile(filePosition.getFile());
         PsiFile psiFile = toPsiFile(context.project, virtualFile);
         psiFile.navigate(true);

@@ -8,9 +8,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 
 import java.io.File;
 
-import static com.intellij.openapi.actionSystem.CommonDataKeys.CARET;
-import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
-import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
 import static io.microconfig.plugin.utils.FileUtil.toFile;
 
 public class PluginContext {

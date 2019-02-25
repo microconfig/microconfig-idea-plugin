@@ -7,7 +7,6 @@ import io.microconfig.plugin.microconfig.MicroconfigApi;
 import java.util.Map;
 
 public class ResolvePlaceholderLine extends ResolvePlaceholderBase implements MicroconfigComponent {
-
     public ResolvePlaceholderLine(MicroconfigApi api, PluginContext context, String currentLine) {
         super(api, context, currentLine);
     }

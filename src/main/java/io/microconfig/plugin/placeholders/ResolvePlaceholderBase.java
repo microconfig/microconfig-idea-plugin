@@ -5,11 +5,11 @@ import io.microconfig.plugin.microconfig.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static io.microconfig.plugin.utils.ContextUtils.showErrorHing;
 import static io.microconfig.plugin.utils.ContextUtils.showInfoHing;
 import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.joining;
 
 @RequiredArgsConstructor
 public abstract class ResolvePlaceholderBase {
@@ -24,9 +24,9 @@ public abstract class ResolvePlaceholderBase {
         }
 
         String message = values.entrySet().stream()
-            .sorted(comparingInt(e -> rate(e.getKey())))
-            .map(e -> message(e.getKey(), e.getValue()))
-            .collect(Collectors.joining("\n"));
+                .sorted(comparingInt(e -> rate(e.getKey())))
+                .map(e -> message(e.getKey(), e.getValue()))
+                .collect(joining("\n"));
 
         showInfoHing(context.editor, message);
     }
@@ -36,8 +36,8 @@ public abstract class ResolvePlaceholderBase {
     }
 
     private static String message(String env, String value) {
-        return env.isEmpty()
-            ? "default: " + value
-            : env + ": " + value;
+        return env.isEmpty() ? "default" : env
+                + ":"
+                + value;
     }
 }

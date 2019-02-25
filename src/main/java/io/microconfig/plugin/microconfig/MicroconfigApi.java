@@ -19,8 +19,8 @@ public interface MicroconfigApi {
     File findInclude(File projectDir, String includeLine, String currentFileName);
 
     /**
-     * @param projectDir      base directory of microconfig project
-     * @param placeholder     placeholder string value
+     * @param projectDir  base directory of microconfig project
+     * @param placeholder placeholder string value
      * @param currentFile current file for env/type resolution
      * @return {@link FilePosition}  with file of component if found and line number inside file
      * @throws PluginException if component/key not found
@@ -28,15 +28,15 @@ public interface MicroconfigApi {
     FilePosition findPlaceholderKey(File projectDir, String placeholder, File currentFile);
 
     /**
-     * @param projectDir      base directory of microconfig project
-     * @param currentLine     current line to resolve placeholders
+     * @param projectDir  base directory of microconfig project
+     * @param currentLine current line to resolve placeholders
      * @return full line with resolved placeholder values for each env: env -> line
      */
     Map<String, String> lineWithPlaceholders(File projectDir, String currentLine);
 
     /**
-     * @param projectDir      base directory of microconfig project
-     * @param placeholder     placeholder
+     * @param projectDir  base directory of microconfig project
+     * @param placeholder placeholder
      * @return resolved placeholder values for each env: env -> value
      */
     Map<String, String> placeholderValues(File projectDir, String placeholder);

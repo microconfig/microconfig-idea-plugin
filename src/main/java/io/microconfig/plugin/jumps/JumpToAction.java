@@ -4,7 +4,6 @@ import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
-import io.microconfig.plugin.PluginException;
 
 import static io.microconfig.plugin.utils.ContextUtils.showErrorHing;
 

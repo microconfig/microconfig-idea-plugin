@@ -8,7 +8,7 @@ import java.util.Optional;
 import static java.util.Optional.empty;
 
 public class PlaceholderUtils {
-    private static final String regexp = "^.*?\\$\\{.*?\\}.*?$";
+    private static final String regexp = "^.*?\\$\\{.*?}.*?$";
 
     public static boolean hasPlaceholder(String currentLine) {
         return currentLine.matches(regexp);
@@ -16,14 +16,14 @@ public class PlaceholderUtils {
 
     public static Optional<String> placeholderSubstring(String line, int offset) {
         return placeholderBorders(line, offset)
-            .map(b -> line.substring(b.start, b.end + 1));
+                .map(b -> line.substring(b.start, b.end + 1));
     }
 
     public static boolean insidePlaceholderBrackets(String line, int offset) {
         return placeholderBorders(line, offset).isPresent();
     }
 
-    static Optional<Borders> placeholderBorders(String line, int offset) {
+    private static Optional<Borders> placeholderBorders(String line, int offset) {
         String leftString = line.substring(0, offset);
         int start = leftString.lastIndexOf("${");
         if (start < 0) return empty();

@@ -11,6 +11,7 @@ import static io.microconfig.plugin.utils.ContextUtils.currentLine;
 import static io.microconfig.plugin.utils.PlaceholderUtils.hasPlaceholder;
 import static io.microconfig.plugin.utils.PlaceholderUtils.insidePlaceholderBrackets;
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 public class Placeholders {
     private final MicroconfigApi api = new MicroconfigApiImpl();
@@ -20,9 +21,9 @@ public class Placeholders {
         if (!hasPlaceholder(currentLine)) return empty();
 
         if (insidePlaceholderBrackets(currentLine, context.caret.getLogicalPosition().column)) {
-            return Optional.of(new ResolvePlaceholderValue(api, context, currentLine));
+            return of(new ResolvePlaceholderValue(api, context, currentLine));
         }
 
-        return Optional.of(new ResolvePlaceholderLine(api, context, currentLine));
+        return of(new ResolvePlaceholderLine(api, context, currentLine));
     }
 }

@@ -2,9 +2,9 @@ package io.microconfig.plugin.jumps;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
+import io.microconfig.plugin.microconfig.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
