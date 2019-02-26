@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'io.micoconfig'
-version '0.5.0-SNAPSHOT'
+version '0.5.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -26,6 +26,8 @@ patchPluginXml {
       Release 0.5.0<br>
       #include component navigation
       placeholder component navigation
+      placeholder value hints
+      multiple placeholder values on same line hints
       """
 }
 
