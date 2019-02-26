@@ -8,6 +8,7 @@ import java.util.Map;
 
 import static io.microconfig.plugin.utils.ContextUtils.showErrorHing;
 import static io.microconfig.plugin.utils.ContextUtils.showInfoHing;
+import static io.microconfig.utils.FileUtils.LINES_SEPARATOR;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.joining;
 
@@ -26,7 +27,7 @@ public abstract class ResolvePlaceholderBase {
         String message = values.entrySet().stream()
                 .sorted(comparingInt(e -> rate(e.getKey())))
                 .map(e -> message(e.getKey(), e.getValue()))
-                .collect(joining("\n"));
+                .collect(joining(LINES_SEPARATOR));
 
         showInfoHing(context.editor, message);
     }
