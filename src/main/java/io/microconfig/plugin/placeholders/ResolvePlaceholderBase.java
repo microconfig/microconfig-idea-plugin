@@ -36,8 +36,6 @@ public abstract class ResolvePlaceholderBase {
     }
 
     private static String message(String env, String value) {
-        return env.isEmpty() ? "default" : env
-                + ":"
-                + value;
+        return (env.isEmpty() ? "default" : env) + ": " + value;
     }
 }
