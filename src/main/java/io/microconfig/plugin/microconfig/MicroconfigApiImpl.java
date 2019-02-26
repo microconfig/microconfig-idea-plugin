@@ -2,12 +2,13 @@ package io.microconfig.plugin.microconfig;
 
 import io.microconfig.commands.factory.ConfigType;
 import io.microconfig.commands.factory.MicroconfigFactory;
+import io.microconfig.commands.factory.StandardConfigType;
+import io.microconfig.configs.Property;
+import io.microconfig.configs.PropertySource;
+import io.microconfig.configs.files.parser.Include;
+import io.microconfig.configs.resolver.placeholder.Placeholder;
 import io.microconfig.plugin.FilePosition;
 import io.microconfig.plugin.PluginException;
-import io.microconfig.properties.Property;
-import io.microconfig.properties.Property.Source;
-import io.microconfig.properties.files.parser.Include;
-import io.microconfig.properties.resolver.placeholder.Placeholder;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,7 +31,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     public File findInclude(File projectDir, String includeLine, String currentFileName) {
         Include include = Include.parse(includeLine, "");
 
-        String componentName = include.getComponentName();
+        String componentName = include.getComponent();
         String fileExtension = fileExtension(currentFileName);
 
         return microconfigFactory(projectDir)
@@ -51,7 +52,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         Placeholder p = getPlaceholder(placeholder, currentFile, factory);
 
         Map<String, Property> properties = factory
-                .newPropertiesProvider(byExtension(fileExtension(currentFile.getName()))) //todo useVirtualFiles
+                .newConfigProvider(configTypeBy(fileExtension(currentFile.getName()))) //todo useVirtualFiles
                 .getProperties(byType(p.getComponent()), p.getEnvironment());
         Property property = properties.get(p.getValue());
 
@@ -59,20 +60,21 @@ public class MicroconfigApiImpl implements MicroconfigApi {
             throw new PluginException("Can't resolve " + placeholder);
         }
 
-        Source source = property.getSource();
-        return new FilePosition(new File(projectDir, source.getSourceOfProperty()), source.getLine());
-    }
-
-    private ConfigType byExtension(String ext) {
-        return Stream.of(ConfigType.values())
-                .filter(ct -> ct.getConfigExtension().equals(ext))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));
+        PropertySource source = property.getSource();
+        return new FilePosition(new File(source.getSourceOfProperty()), source.getLine());
     }
 
     private Placeholder getPlaceholder(String placeholder, File currentFile, MicroconfigFactory factory) {
         Placeholder p = Placeholder.parse(placeholder, anyEnv(factory));
         return p.getComponent().equals("this") ? p.changeComponent(currentFile.getParentFile().getName()) : p;
+    }
+
+    private ConfigType configTypeBy(String ext) {
+        return Stream.of(StandardConfigType.values())
+                .filter(ct -> ct.getConfigExtensions().stream().anyMatch(e -> e.equals(ext)))
+                .map(StandardConfigType::type)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));
     }
 
     private String anyEnv(MicroconfigFactory factory) {
