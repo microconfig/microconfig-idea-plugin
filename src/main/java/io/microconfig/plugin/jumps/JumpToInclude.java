@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 
 import static io.microconfig.plugin.microconfig.MicroconfigApi.INCLUDE;
-import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
-import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
+import static io.microconfig.plugin.utils.VirtialFileUtil.toPsiFile;
+import static io.microconfig.plugin.utils.VirtialFileUtil.toVirtualFile;
 
 @RequiredArgsConstructor
 public class JumpToInclude implements MicroconfigComponent {

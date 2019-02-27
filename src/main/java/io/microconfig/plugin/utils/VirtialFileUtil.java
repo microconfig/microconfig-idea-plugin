@@ -8,7 +8,7 @@ import com.intellij.psi.PsiManager;
 
 import java.io.File;
 
-public class FileUtil {
+public class VirtialFileUtil {
     public static File toFile(VirtualFile virtualFile) {
         return new File(virtualFile.getPath());
     }

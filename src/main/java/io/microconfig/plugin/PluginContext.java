@@ -9,7 +9,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import java.io.File;
 
 import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
-import static io.microconfig.plugin.utils.FileUtil.toFile;
+import static io.microconfig.plugin.utils.VirtialFileUtil.toFile;
 
 public class PluginContext {
     public final Project project;

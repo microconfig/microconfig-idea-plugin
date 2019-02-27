@@ -12,9 +12,9 @@ import lombok.RequiredArgsConstructor;
 import java.util.Optional;
 
 import static io.microconfig.plugin.utils.ContextUtils.moveToLineColumn;
-import static io.microconfig.plugin.utils.FileUtil.*;
 import static io.microconfig.plugin.utils.PlaceholderUtils.insidePlaceholderBrackets;
 import static io.microconfig.plugin.utils.PlaceholderUtils.placeholderSubstring;
+import static io.microconfig.plugin.utils.VirtialFileUtil.*;
 
 @RequiredArgsConstructor
 public class JumpToPlaceholder implements MicroconfigComponent {

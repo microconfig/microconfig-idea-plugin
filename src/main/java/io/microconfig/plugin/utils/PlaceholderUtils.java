@@ -6,12 +6,13 @@ import lombok.ToString;
 import java.util.Optional;
 
 import static java.util.Optional.empty;
+import static java.util.Optional.of;
 
 public class PlaceholderUtils {
-    private static final String regexp = "^.*?\\$\\{.*?}.*?$";
+    private static final String PATTERN = "^.*?\\$\\{.*?}.*?$";
 
     public static boolean hasPlaceholder(String currentLine) {
-        return currentLine.matches(regexp);
+        return currentLine.matches(PATTERN);
     }
 
     public static Optional<String> placeholderSubstring(String line, int offset) {
@@ -32,7 +33,7 @@ public class PlaceholderUtils {
         if (previousEnd > start) return empty();
 
         int end = line.indexOf('}', offset);
-        return end > 0 ? Optional.of(new Borders(start, end)) : empty();
+        return end > 0 ? of(new Borders(start, end)) : empty();
     }
 
     @AllArgsConstructor

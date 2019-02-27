@@ -1,18 +1,16 @@
 package io.microconfig.plugin.microconfig;
 
-import io.microconfig.commands.factory.ConfigType;
-import io.microconfig.commands.factory.MicroconfigFactory;
-import io.microconfig.commands.factory.StandardConfigType;
+import io.microconfig.commands.buildconfig.factory.ConfigType;
+import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
+import io.microconfig.commands.buildconfig.factory.StandardConfigType;
 import io.microconfig.configs.Property;
 import io.microconfig.configs.PropertySource;
-import io.microconfig.configs.files.parser.Include;
+import io.microconfig.configs.provider.Include;
 import io.microconfig.configs.resolver.placeholder.Placeholder;
 import io.microconfig.plugin.FilePosition;
 import io.microconfig.plugin.PluginException;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,12 +19,12 @@ import java.util.stream.Stream;
 
 import static io.microconfig.environments.Component.byType;
 import static io.microconfig.plugin.utils.ContextUtils.fileExtension;
-import static java.nio.file.Files.walk;
-import static java.util.Arrays.stream;
 import static java.util.Collections.emptyMap;
 import static java.util.Comparator.comparing;
 
 public class MicroconfigApiImpl implements MicroconfigApi {
+    private final MicroconfigInitializer initializer = new MicroconfigInitializerImpl();
+
     @Override
     public File findInclude(File projectDir, String includeLine, String currentFileName) {
         Include include = Include.parse(includeLine, "");
@@ -34,7 +32,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         String componentName = include.getComponent();
         String fileExtension = fileExtension(currentFileName);
 
-        return microconfigFactory(projectDir)
+        return initializer.getMicroconfigFactory(projectDir)
                 .getComponentTree()
                 .getConfigFiles(componentName, file -> file.getName().endsWith(fileExtension))
                 .min(priorityByEnv(include.getEnv()))
@@ -48,7 +46,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     @Override
     public FilePosition findPlaceholderKey(File projectDir, String placeholder, File currentFile) {
-        MicroconfigFactory factory = microconfigFactory(projectDir);
+        MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
         Placeholder p = getPlaceholder(placeholder, currentFile, factory);
 
         Map<String, Property> properties = factory
@@ -112,35 +110,5 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public boolean navigatable(String placeholder) {
         return true;
-    }
-
-    private MicroconfigFactory microconfigFactory(File projectDir) {
-        File configRootDir = findConfigRootDir(projectDir);
-        System.out.println("Config root dir: " + configRootDir);
-        return MicroconfigFactory.init(
-                configRootDir,
-                new File(projectDir, "build/output")
-        );
-    }
-
-    private static File findConfigRootDir(File projectDir) {
-        if (projectDir.isDirectory() && configRootDir(projectDir.listFiles())) return projectDir;
-
-        try (Stream<Path> walk = walk(projectDir.toPath())) {
-            return walk.map(Path::toFile)
-                    .filter(File::isDirectory)
-                    .filter(f -> configRootDir(f.listFiles()))
-                    .findAny()
-                    .orElseThrow(() -> new PluginException("Can't find 'components' and 'envs' folders on same level"));
-        } catch (IOException e) {
-            throw new PluginException("IO exception " + e.getMessage());
-        }
-    }
-
-    private static boolean configRootDir(File[] children) {
-        return stream(children)
-                .filter(File::isDirectory)
-                .filter(f -> f.getName().equals("components") || f.getName().equals("envs"))
-                .count() == 2;
     }
 }
