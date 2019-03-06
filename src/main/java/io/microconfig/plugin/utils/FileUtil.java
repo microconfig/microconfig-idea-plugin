@@ -20,12 +20,4 @@ public class FileUtil {
     public static PsiFile toPsiFile(Project project, VirtualFile virtualFile) {
         return PsiManager.getInstance(project).findFile(virtualFile);
     }
-
-    public static String fileExtension(File file) {
-        String name = file.getName();
-        int lastDot = name.lastIndexOf('.');
-        if (lastDot >= 0) return name.substring(lastDot);
-
-        throw new IllegalArgumentException("File " + file + " doesn't have an extension. Unable to resolve component type.");
-    }
 }

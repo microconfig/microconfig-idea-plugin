@@ -8,9 +8,9 @@ import io.microconfig.plugin.actions.common.PluginException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static io.microconfig.plugin.utils.FileUtil.fileExtension;
 import static java.nio.file.Files.walk;
 import static java.util.Arrays.stream;
 
@@ -26,7 +26,15 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
 
     @Override
     public ConfigType detectConfigType(File file) {
-        String ext = fileExtension(file);
+        Supplier<String> fileExtension = () -> {
+            String name = file.getName();
+            int lastDot = name.lastIndexOf('.');
+            if (lastDot >= 0) return name.substring(lastDot);
+
+            throw new IllegalArgumentException("File " + file + " doesn't have an extension. Unable to resolve component type.");
+        };
+
+        String ext = fileExtension.get();
         return stream(StandardConfigType.values())
                 .filter(ct -> ct.getConfigExtensions().stream().anyMatch(e -> e.equals(ext)))
                 .map(StandardConfigType::type)

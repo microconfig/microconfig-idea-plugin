@@ -1,5 +1,6 @@
 package io.microconfig.plugin.microconfig;
 
+import io.microconfig.commands.buildconfig.factory.ConfigType;
 import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 import io.microconfig.configs.Property;
 import io.microconfig.configs.PropertySource;
@@ -14,13 +15,13 @@ import io.microconfig.plugin.actions.common.PluginException;
 import java.io.File;
 import java.util.Comparator;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import static io.microconfig.configs.Property.parse;
 import static io.microconfig.configs.PropertySource.fileSource;
 import static io.microconfig.environments.Component.byType;
-import static io.microconfig.plugin.utils.FileUtil.fileExtension;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -37,13 +38,16 @@ public class MicroconfigApiImpl implements MicroconfigApi {
             return comparator.thenComparing(f -> f.getName().length());
         };
 
-        String componentName = include.getComponent();
-        String fileExtension = fileExtension(currentFile);
+        ConfigType configType = initializer.detectConfigType(currentFile);
+        Predicate<File> hasConfigTypeExtension = file -> configType.getConfigExtensions()
+                .stream()
+                .anyMatch(ext -> file.getName().endsWith(ext));
+
         return initializer.getMicroconfigFactory(projectDir)
                 .getComponentTree()
-                .getConfigFiles(componentName, file -> file.getName().endsWith(fileExtension))
+                .getConfigFiles(include.getComponent(), hasConfigTypeExtension)
                 .min(priorityByEnv.get())
-                .orElseThrow(() -> new PluginException("Component not found: " + componentName));
+                .orElseThrow(() -> new PluginException("Component not found: " + include.getComponent()));
     }
 
     @Override
