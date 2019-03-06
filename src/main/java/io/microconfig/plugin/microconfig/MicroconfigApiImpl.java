@@ -14,8 +14,8 @@ import io.microconfig.plugin.actions.common.PluginException;
 import java.io.File;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
 
 import static io.microconfig.configs.Property.parse;
 import static io.microconfig.configs.PropertySource.fileSource;
@@ -75,19 +75,20 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .newConfigProvider(initializer.detectConfigType(currentFile)))
                 .getResolver();
 
-        Function<Property, String> resolve = p -> {
+        Property property = parse(currentLine, "", fileSource(currentFile, -1, false));
+        UnaryOperator<String> resolve = env -> {
             try {
+                Property p = property.withNewEnv(env);
                 return propertyResolver.resolve(p, new EnvComponent(p.getSource().getComponent(), p.getEnvContext()));
             } catch (RuntimeException e) {
                 return "ERROR";
             }
         };
 
-        Property property = parse(currentLine, "", fileSource(currentFile, -1, false));
         return factory.getEnvironmentProvider()
                 .getEnvironmentNames()
                 .stream()
-                .collect(toMap(identity(), env -> resolve.apply(property.withNewEnv(env))));
+                .collect(toMap(identity(), resolve));
     }
 
     @Override
