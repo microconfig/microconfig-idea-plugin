@@ -16,7 +16,8 @@ public class ResolvePropertyLine implements ActionHandler {
 
     @Override
     public void onAction() {
-        Map<String, String> values = api.resolvePropertyValueForEachEnv(context.currentLine(), context.currentFile(), context.projectDir());
-        printValues(values, context);
+        String currentLine = context.currentLine();
+        Map<String, String> values = api.resolvePropertyValueForEachEnv(currentLine, context.currentFile(), context.projectDir());
+        printValues(currentLine, values, context);
     }
 }

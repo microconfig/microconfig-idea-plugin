@@ -19,6 +19,6 @@ public class ResolveOnePlaceholder implements ActionHandler {
     public void onAction() {
         //todo error hint if special placeholder
         Map<String, String> values = api.resolveOnePlaceholderForEachEnv(value, context.currentFile(), context.projectDir());
-        printValues(values, context);
+        printValues(value, values, context);
     }
 }
