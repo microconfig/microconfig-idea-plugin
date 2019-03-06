@@ -1,8 +1,6 @@
 package io.microconfig.plugin.microconfig;
 
-import io.microconfig.commands.buildconfig.factory.ConfigType;
 import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
-import io.microconfig.commands.buildconfig.factory.StandardConfigType;
 import io.microconfig.configs.Property;
 import io.microconfig.configs.PropertySource;
 import io.microconfig.configs.provider.Include;
@@ -19,7 +17,6 @@ import java.util.function.Supplier;
 
 import static io.microconfig.environments.Component.byType;
 import static io.microconfig.plugin.utils.ContextUtils.fileExtension;
-import static java.util.Arrays.stream;
 import static java.util.Collections.emptyMap;
 import static java.util.Comparator.comparing;
 
@@ -47,13 +44,12 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
-        Placeholder p = toPlaceholder(placeholderValue, currentFile, factory);
 
+        Placeholder p = toPlaceholder(placeholderValue, currentFile, anyEnv(factory));
         Map<String, Property> properties = factory
-                .newConfigProvider(configTypeBy(fileExtension(currentFile.getName())))
+                .newConfigProvider(initializer.detectConfigType(currentFile))
                 .getProperties(byType(p.getComponent()), p.getEnvironment());
         Property property = properties.get(p.getValue());
-
         if (property == null) {
             throw new PluginException("Can't resolve " + placeholderValue);
         }
@@ -62,17 +58,9 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         return new FilePosition(new File(source.getSourceOfProperty()), source.getLine());
     }
 
-    private Placeholder toPlaceholder(String placeholderValue, File currentFile, MicroconfigFactory factory) {
-        Placeholder p = Placeholder.parse(placeholderValue, anyEnv(factory));
+    private Placeholder toPlaceholder(String placeholderValue, File currentFile, String env) {
+        Placeholder p = Placeholder.parse(placeholderValue, env);
         return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
-    }
-
-    private ConfigType configTypeBy(String ext) {
-        return stream(StandardConfigType.values())
-                .filter(ct -> ct.getConfigExtensions().stream().anyMatch(e -> e.equals(ext)))
-                .map(StandardConfigType::type)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));
     }
 
     private String anyEnv(MicroconfigFactory factory) {

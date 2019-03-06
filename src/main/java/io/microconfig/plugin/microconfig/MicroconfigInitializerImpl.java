@@ -1,6 +1,8 @@
 package io.microconfig.plugin.microconfig;
 
+import io.microconfig.commands.buildconfig.factory.ConfigType;
 import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
+import io.microconfig.commands.buildconfig.factory.StandardConfigType;
 import io.microconfig.plugin.PluginException;
 
 import java.io.File;
@@ -8,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
+import static io.microconfig.plugin.utils.ContextUtils.fileExtension;
 import static java.nio.file.Files.walk;
 import static java.util.Arrays.stream;
 
@@ -19,6 +22,16 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
                 new File(projectDir, "build/output"),
                 new VirtualFileReader()
         );
+    }
+
+    @Override
+    public ConfigType detectConfigType(File file) {
+        String ext = fileExtension(file.getName());
+        return stream(StandardConfigType.values())
+                .filter(ct -> ct.getConfigExtensions().stream().anyMatch(e -> e.equals(ext)))
+                .map(StandardConfigType::type)
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));
     }
 
     private File findConfigRootDir(File projectDir) {
