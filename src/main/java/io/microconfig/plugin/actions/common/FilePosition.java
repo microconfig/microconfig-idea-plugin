@@ -22,13 +22,13 @@ public class FilePosition {
         PsiFile psiFile = toPsiFile(project, virtualFile);
         psiFile.navigate(true);
 
-        moveToLine(project, lineNumber);
+        moveToLine(project);
     }
 
-    private void moveToLine(Project project, int line) {
+    private void moveToLine(Project project) {
         FileEditorManager.getInstance(project)
                 .getSelectedTextEditor()
                 .getCaretModel()
-                .moveToLogicalPosition(new LogicalPosition(line, 0));
+                .moveToLogicalPosition(new LogicalPosition(lineNumber, 0));
     }
 }
