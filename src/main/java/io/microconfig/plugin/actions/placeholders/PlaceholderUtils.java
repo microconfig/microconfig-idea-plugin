@@ -1,7 +1,6 @@
 package io.microconfig.plugin.actions.placeholders;
 
 import io.microconfig.plugin.actions.common.PluginContext;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
@@ -31,7 +30,6 @@ public class PlaceholderUtils {
         context.showInfoHing(message);
     }
 
-    @NotNull
     private static String defaultEnvValue(Map<String, String> values) {
         return values.containsKey(DEFAULT_ENV_KEY) ? message(DEFAULT_ENV_KEY, values.remove(DEFAULT_ENV_KEY) + LINES_SEPARATOR) : "";
     }
