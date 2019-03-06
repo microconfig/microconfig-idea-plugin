@@ -8,7 +8,7 @@ import java.util.Map;
 public interface MicroconfigApi {
     File findIncludeSource(String includeLine, File currentFile, File projectDir);
 
-    FilePosition findPlaceholderSource(String placeholderVa, File currentFile, File projectDir);
+    FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir);
 
     /**
      * @return resolved placeholder values for each env: env -> value
