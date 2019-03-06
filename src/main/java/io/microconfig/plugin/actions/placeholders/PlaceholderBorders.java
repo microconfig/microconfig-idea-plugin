@@ -6,6 +6,8 @@ import lombok.ToString;
 
 import java.util.regex.Matcher;
 
+import static java.lang.Math.max;
+
 @ToString
 @RequiredArgsConstructor
 public class PlaceholderBorders {
@@ -15,7 +17,8 @@ public class PlaceholderBorders {
     private final int end;
 
     public static PlaceholderBorders borders(String line, int offset) {
-        Matcher matcher = Placeholder.placeholderMatcher(line.substring(offset));
+        String substring = line.substring(max(0, line.lastIndexOf("${", offset)));
+        Matcher matcher = Placeholder.placeholderMatcher(substring);
         return !matcher.find() ? new PlaceholderBorders(null, -1, -1) : new PlaceholderBorders(matcher.group(), matcher.start(), matcher.end());
     }
 
