@@ -18,11 +18,14 @@ public class FilePosition {
     private final int lineNumber;
 
     public void moveToPosition(Project project) {
+        openFile(project);
+        moveToLine(project);
+    }
+
+    private void openFile(Project project) {
         VirtualFile virtualFile = toVirtualFile(file);
         PsiFile psiFile = toPsiFile(project, virtualFile);
         psiFile.navigate(true);
-
-        moveToLine(project);
     }
 
     private void moveToLine(Project project) {
