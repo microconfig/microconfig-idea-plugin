@@ -56,7 +56,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .getProperties(byType(p.getComponent()), p.getEnvironment())
                 .get(p.getValue());
         if (property == null) {
-            throw new PluginException("Can't resolve " + placeholderValue);
+            throw new PluginException("Can't resolve " + placeholderValue); //todo return FilePosition(componentFile, 0)
         }
 
         PropertySource source = property.getSource();
