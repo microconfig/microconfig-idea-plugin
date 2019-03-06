@@ -24,17 +24,17 @@ public class PlaceholderUtils {
                 + values.entrySet()
                 .stream()
                 .sorted(comparing(Map.Entry::getKey))
-                .map(e -> message(e.getKey(), e.getValue()))
+                .map(e -> envValue(e.getKey(), e.getValue()))
                 .collect(joining(LINES_SEPARATOR));
 
         context.showInfoHing(message);
     }
 
     private static String defaultEnvValue(Map<String, String> values) {
-        return values.containsKey(DEFAULT_ENV_KEY) ? message(DEFAULT_ENV_KEY, values.remove(DEFAULT_ENV_KEY) + LINES_SEPARATOR) : "";
+        return values.containsKey(DEFAULT_ENV_KEY) ? envValue("default", values.remove(DEFAULT_ENV_KEY) + LINES_SEPARATOR) : "";
     }
 
-    private static String message(String env, String value) {
-        return (env.isEmpty() ? "default" : env) + ": " + value;
+    private static String envValue(String env, String value) {
+        return env + ": " + value;
     }
 }
