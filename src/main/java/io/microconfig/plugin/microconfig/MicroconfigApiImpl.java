@@ -16,10 +16,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static io.microconfig.environments.Component.byType;
 import static io.microconfig.plugin.utils.ContextUtils.fileExtension;
+import static java.util.Arrays.stream;
 import static java.util.Collections.emptyMap;
 import static java.util.Comparator.comparing;
 
@@ -47,7 +47,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
-        Placeholder p = getPlaceholder(placeholderValue, currentFile, factory);
+        Placeholder p = toPlaceholder(placeholderValue, currentFile, factory);
 
         Map<String, Property> properties = factory
                 .newConfigProvider(configTypeBy(fileExtension(currentFile.getName())))
@@ -62,13 +62,13 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         return new FilePosition(new File(source.getSourceOfProperty()), source.getLine());
     }
 
-    private Placeholder getPlaceholder(String placeholder, File currentFile, MicroconfigFactory factory) {
-        Placeholder p = Placeholder.parse(placeholder, anyEnv(factory));
-        return p.getComponent().equals("this") ? p.changeComponent(currentFile.getParentFile().getName()) : p;
+    private Placeholder toPlaceholder(String placeholderValue, File currentFile, MicroconfigFactory factory) {
+        Placeholder p = Placeholder.parse(placeholderValue, anyEnv(factory));
+        return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
     }
 
     private ConfigType configTypeBy(String ext) {
-        return Stream.of(StandardConfigType.values())
+        return stream(StandardConfigType.values())
                 .filter(ct -> ct.getConfigExtensions().stream().anyMatch(e -> e.equals(ext)))
                 .map(StandardConfigType::type)
                 .findFirst()
