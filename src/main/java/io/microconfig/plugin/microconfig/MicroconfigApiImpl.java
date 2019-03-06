@@ -14,7 +14,7 @@ import io.microconfig.plugin.actions.common.PluginException;
 import java.io.File;
 import java.util.Comparator;
 import java.util.Map;
-import java.util.Set;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static io.microconfig.configs.Property.parse;
@@ -63,19 +63,6 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         return new FilePosition(new File(source.getSourceOfProperty()), source.getLine());
     }
 
-    private Placeholder toPlaceholder(String placeholderValue, File currentFile, String env) {
-        Placeholder p = Placeholder.parse(placeholderValue, env);
-        return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
-    }
-
-    private String anyEnv(MicroconfigFactory factory) {
-        return factory.getEnvironmentProvider()
-                .getEnvironmentNames()
-                .stream()
-                .findFirst()
-                .orElse(""); //otherwise will fail for env-specific props
-    }
-
     @Override
     public Map<String, String> resolveOnePlaceholderForEachEnv(String placeholderValue, File currentFile, File projectDir) {
         return resolvePropertyValueForEachEnv("key=" + placeholderValue, currentFile, projectDir);
@@ -88,23 +75,36 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .newConfigProvider(initializer.detectConfigType(currentFile)))
                 .getResolver();
 
+        Function<Property, String> resolve = p -> {
+            try {
+                return propertyResolver.resolve(p, new EnvComponent(p.getSource().getComponent(), p.getEnvContext()));
+            } catch (RuntimeException e) {
+                return "ERROR";
+            }
+        };
+
         Property property = parse(currentLine, "", fileSource(currentFile, -1, false));
-        Set<String> envs = factory.getEnvironmentProvider().getEnvironmentNames();
-
-        return envs.stream()
-                .collect(toMap(identity(), env -> resolve(property.withNewEnv(env), propertyResolver)));
-    }
-
-    private String resolve(Property p, PropertyResolver propertyResolver) {
-        try {
-            return propertyResolver.resolve(p, new EnvComponent(p.getSource().getComponent(), p.getEnvContext()));
-        } catch (RuntimeException e) {
-            return "ERROR";
-        }
+        return factory.getEnvironmentProvider()
+                .getEnvironmentNames()
+                .stream()
+                .collect(toMap(identity(), env -> resolve.apply(property.withNewEnv(env))));
     }
 
     @Override
     public boolean navigatable(String placeholder) {
         return true;
+    }
+
+    private Placeholder toPlaceholder(String placeholderValue, File currentFile, String env) {
+        Placeholder p = Placeholder.parse(placeholderValue, env);
+        return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
+    }
+
+    private String anyEnv(MicroconfigFactory factory) {
+        return factory.getEnvironmentProvider()
+                .getEnvironmentNames()
+                .stream()
+                .findFirst()
+                .orElse(""); //otherwise will fail for env-specific props
     }
 }
