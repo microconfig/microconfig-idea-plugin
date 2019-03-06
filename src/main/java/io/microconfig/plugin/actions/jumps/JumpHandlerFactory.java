@@ -1,9 +1,9 @@
 package io.microconfig.plugin.actions.jumps;
 
 import io.microconfig.configs.provider.Include;
-import io.microconfig.plugin.ActionHandler;
-import io.microconfig.plugin.PluginContext;
-import io.microconfig.plugin.actions.common.HandlerFactory;
+import io.microconfig.plugin.actions.common.ActionHandler;
+import io.microconfig.plugin.actions.common.ActionHandlerFactory;
+import io.microconfig.plugin.actions.common.PluginContext;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.MicroconfigApiImpl;
 
@@ -13,7 +13,7 @@ import static io.microconfig.plugin.actions.placeholders.PlaceholderBorders.bord
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-class JumpHandlerFactory implements HandlerFactory {
+class JumpHandlerFactory implements ActionHandlerFactory {
     private MicroconfigApi api = new MicroconfigApiImpl();
 
     @Override

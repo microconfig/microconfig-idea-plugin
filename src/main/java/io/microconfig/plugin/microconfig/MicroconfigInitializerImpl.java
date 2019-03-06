@@ -3,7 +3,7 @@ package io.microconfig.plugin.microconfig;
 import io.microconfig.commands.buildconfig.factory.ConfigType;
 import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 import io.microconfig.commands.buildconfig.factory.StandardConfigType;
-import io.microconfig.plugin.PluginException;
+import io.microconfig.plugin.actions.common.PluginException;
 
 import java.io.File;
 import java.io.IOException;

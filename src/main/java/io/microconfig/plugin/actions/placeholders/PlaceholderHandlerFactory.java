@@ -1,8 +1,8 @@
 package io.microconfig.plugin.actions.placeholders;
 
-import io.microconfig.plugin.ActionHandler;
-import io.microconfig.plugin.PluginContext;
-import io.microconfig.plugin.actions.common.HandlerFactory;
+import io.microconfig.plugin.actions.common.ActionHandler;
+import io.microconfig.plugin.actions.common.ActionHandlerFactory;
+import io.microconfig.plugin.actions.common.PluginContext;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.MicroconfigApiImpl;
 
@@ -12,7 +12,7 @@ import static io.microconfig.configs.resolver.placeholder.Placeholder.placeholde
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
-class PlaceholderHandlerFactory implements HandlerFactory {
+class PlaceholderHandlerFactory implements ActionHandlerFactory {
     private final MicroconfigApi api = new MicroconfigApiImpl();
 
     @Override

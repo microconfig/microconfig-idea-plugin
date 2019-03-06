@@ -8,8 +8,8 @@ import io.microconfig.configs.resolver.EnvComponent;
 import io.microconfig.configs.resolver.PropertyResolver;
 import io.microconfig.configs.resolver.PropertyResolverHolder;
 import io.microconfig.configs.resolver.placeholder.Placeholder;
-import io.microconfig.plugin.FilePosition;
-import io.microconfig.plugin.PluginException;
+import io.microconfig.plugin.actions.common.FilePosition;
+import io.microconfig.plugin.actions.common.PluginException;
 
 import java.io.File;
 import java.util.Comparator;

@@ -1,6 +1,6 @@
 package io.microconfig.plugin.actions.placeholders;
 
-import io.microconfig.plugin.PluginContext;
+import io.microconfig.plugin.actions.common.PluginContext;
 
 import java.util.Map;
 

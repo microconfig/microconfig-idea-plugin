@@ -5,7 +5,6 @@ import com.intellij.openapi.vfs.LocalFileSystem;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import com.intellij.psi.PsiManager;
-import io.microconfig.plugin.PluginException;
 
 import java.io.File;
 
@@ -27,6 +26,6 @@ public class FileUtil {
         int lastDot = name.lastIndexOf('.');
         if (lastDot >= 0) return name.substring(lastDot);
 
-        throw new PluginException("File " + file + " doesn't have an extension. Unable to resolve component type.");
+        throw new IllegalArgumentException("File " + file + " doesn't have an extension. Unable to resolve component type.");
     }
 }

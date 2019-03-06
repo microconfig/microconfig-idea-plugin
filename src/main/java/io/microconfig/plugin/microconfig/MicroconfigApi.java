@@ -1,6 +1,6 @@
 package io.microconfig.plugin.microconfig;
 
-import io.microconfig.plugin.FilePosition;
+import io.microconfig.plugin.actions.common.FilePosition;
 
 import java.io.File;
 import java.util.Map;

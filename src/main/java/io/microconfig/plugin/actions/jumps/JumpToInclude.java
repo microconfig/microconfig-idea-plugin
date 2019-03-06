@@ -2,8 +2,8 @@ package io.microconfig.plugin.actions.jumps;
 
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
-import io.microconfig.plugin.ActionHandler;
-import io.microconfig.plugin.PluginContext;
+import io.microconfig.plugin.actions.common.ActionHandler;
+import io.microconfig.plugin.actions.common.PluginContext;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
 

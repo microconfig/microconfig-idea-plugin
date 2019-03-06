@@ -1,7 +1,7 @@
 package io.microconfig.plugin.actions.placeholders;
 
-import io.microconfig.plugin.ActionHandler;
-import io.microconfig.plugin.PluginContext;
+import io.microconfig.plugin.actions.common.ActionHandler;
+import io.microconfig.plugin.actions.common.PluginContext;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
 
