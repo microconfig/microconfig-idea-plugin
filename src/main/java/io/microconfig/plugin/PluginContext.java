@@ -3,6 +3,7 @@ package io.microconfig.plugin;
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Caret;
+import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -14,9 +15,9 @@ import java.io.File;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
 import static io.microconfig.plugin.utils.VirtialFileUtil.toFile;
 
-@Getter
 @RequiredArgsConstructor
 public class PluginContext {
+    @Getter
     private final Project project;
     private final Editor editor;
     private final Caret caret;
@@ -36,6 +37,19 @@ public class PluginContext {
 
     public File currentFile() {
         return toFile(editorFile);
+    }
+
+    public String currentLine() {
+        Document doc = editor.getDocument();
+
+        int lineNum = caret.getLogicalPosition().line;
+        int start = doc.getLineStartOffset(lineNum);
+        int end = doc.getLineEndOffset(lineNum);
+        return doc.getCharsSequence().subSequence(start, end).toString();
+    }
+
+    public int currentColumn() {
+        return caret.getLogicalPosition().column;
     }
 
     public void showInfoHing(String message) {

@@ -1,6 +1,5 @@
 package io.microconfig.plugin.jumps;
 
-import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
 import io.microconfig.plugin.FilePosition;
@@ -12,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import java.util.Optional;
 
 import static io.microconfig.plugin.utils.ContextUtils.moveToLineColumn;
-import static io.microconfig.plugin.utils.PlaceholderUtils.insidePlaceholderBrackets;
 import static io.microconfig.plugin.utils.PlaceholderUtils.placeholderSubstring;
 import static io.microconfig.plugin.utils.VirtialFileUtil.toPsiFile;
 import static io.microconfig.plugin.utils.VirtialFileUtil.toVirtualFile;
@@ -23,13 +21,9 @@ public class JumpToPlaceholder implements MicroconfigComponent {
     private final PluginContext context;
     private final String currentLine;
 
-    static boolean insidePlaceholder(String currentLine, Caret caret) {
-        return insidePlaceholderBrackets(currentLine, caret.getLogicalPosition().column);
-    }
-
     @Override
     public void react() {
-        Optional<String> placeholder = placeholderSubstring(currentLine, context.getCaret().getLogicalPosition().column);
+        Optional<String> placeholder = placeholderSubstring(currentLine, context.currentColumn());
         if (!placeholder.isPresent() || !api.navigatable(placeholder.get())) return; //todo maybe print a warning
 
         FilePosition filePosition = api.findPlaceholderSource(placeholder.get(), context.currentFile(), context.projectDir());

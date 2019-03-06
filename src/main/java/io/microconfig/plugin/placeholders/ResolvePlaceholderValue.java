@@ -15,7 +15,7 @@ public class ResolvePlaceholderValue extends ResolvePlaceholderBase implements M
 
     @Override
     public void react() {
-        String placeholder = placeholderSubstring(currentLine, context.getCaret().getLogicalPosition().column)
+        String placeholder = placeholderSubstring(currentLine, context.currentColumn())
                 .orElseThrow(() -> new IllegalArgumentException("Not inside placeholder brackets"));
 
         //todo error hint if special placeholder

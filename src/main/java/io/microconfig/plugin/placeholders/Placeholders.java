@@ -7,7 +7,6 @@ import io.microconfig.plugin.microconfig.MicroconfigApiImpl;
 
 import java.util.Optional;
 
-import static io.microconfig.plugin.utils.ContextUtils.currentLine;
 import static io.microconfig.plugin.utils.PlaceholderUtils.hasPlaceholder;
 import static io.microconfig.plugin.utils.PlaceholderUtils.insidePlaceholderBrackets;
 import static java.util.Optional.empty;
@@ -17,10 +16,10 @@ public class Placeholders {
     private final MicroconfigApi api = new MicroconfigApiImpl();
 
     public Optional<MicroconfigComponent> componentFrom(PluginContext context) {
-        String currentLine = currentLine(context);
+        String currentLine = context.currentLine();
         if (!hasPlaceholder(currentLine)) return empty();
 
-        if (insidePlaceholderBrackets(currentLine, context.getCaret().getLogicalPosition().column)) {
+        if (insidePlaceholderBrackets(currentLine, context.currentColumn())) {
             return of(new ResolvePlaceholderValue(api, context, currentLine));
         }
 

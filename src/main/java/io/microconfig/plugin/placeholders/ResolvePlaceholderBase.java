@@ -16,7 +16,7 @@ public abstract class ResolvePlaceholderBase {
     protected final PluginContext context;
     protected final String currentLine;
 
-    void printValues(Map<String, String> values) {
+    protected void printValues(Map<String, String> values) {
         if (values.isEmpty()) {
             context.showErrorHing("Can't find placeholder values");
             return;

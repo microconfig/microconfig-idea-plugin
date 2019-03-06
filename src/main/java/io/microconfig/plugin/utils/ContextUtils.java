@@ -1,22 +1,11 @@
 package io.microconfig.plugin.utils;
 
-import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.LogicalPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import io.microconfig.plugin.PluginContext;
 import io.microconfig.plugin.PluginException;
 
 public class ContextUtils {
-    public static String currentLine(PluginContext context) {
-        Document doc = context.getEditor().getDocument();
-
-        int lineNum = context.getCaret().getLogicalPosition().line;
-        int start = doc.getLineStartOffset(lineNum);
-        int end = doc.getLineEndOffset(lineNum);
-        return doc.getCharsSequence().subSequence(start, end).toString();
-    }
-
     public static String fileExtension(String currentFileName) {
         int lastDot = currentFileName.lastIndexOf('.');
         if (lastDot >= 0) return currentFileName.substring(lastDot);
