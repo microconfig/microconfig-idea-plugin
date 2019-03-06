@@ -13,7 +13,7 @@ public class ResolvePlaceholderLine extends ResolvePlaceholderBase implements Mi
 
     @Override
     public void react() {
-        Map<String, String> values = api.lineWithPlaceholders(context.projectDir(), currentLine);
+        Map<String, String> values = api.resolvePropertyValueForEachEnv(currentLine, context.projectDir());
         printValues(values);
     }
 }

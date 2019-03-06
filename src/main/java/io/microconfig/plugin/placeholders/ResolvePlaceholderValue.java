@@ -20,7 +20,7 @@ public class ResolvePlaceholderValue extends ResolvePlaceholderBase implements M
                 .orElseThrow(() -> new IllegalArgumentException("Not inside placeholder brackets"));
 
         //todo error hint if special placeholder
-        Map<String, String> values = api.placeholderValues(context.projectDir(), placeholder);
+        Map<String, String> values = api.resolveOnePlaceholderForEachEnv(placeholder, context.projectDir());
         printValues(values);
     }
 }

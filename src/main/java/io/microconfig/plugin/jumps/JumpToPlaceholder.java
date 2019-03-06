@@ -31,7 +31,7 @@ public class JumpToPlaceholder implements MicroconfigComponent {
         Optional<String> placeholder = placeholderSubstring(currentLine, context.caret.getLogicalPosition().column);
         if (!placeholder.isPresent() || !api.navigatable(placeholder.get())) return; //todo maybe print a warning
 
-        FilePosition filePosition = api.findPlaceholderKey(context.projectDir(), placeholder.get(), toFile(context.editorFile));
+        FilePosition filePosition = api.findPlaceholderSource(placeholder.get(), toFile(context.editorFile), context.projectDir());
         System.out.println("Resolved file position " + filePosition);
         VirtualFile virtualFile = toVirtualFile(filePosition.getFile());
         PsiFile psiFile = toPsiFile(context.project, virtualFile);

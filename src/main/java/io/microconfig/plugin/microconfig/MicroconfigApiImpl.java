@@ -15,6 +15,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import static io.microconfig.environments.Component.byType;
@@ -26,36 +27,35 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     private final MicroconfigInitializer initializer = new MicroconfigInitializerImpl();
 
     @Override
-    public File findInclude(File projectDir, String includeLine, String currentFileName) {
-        Include include = Include.parse(includeLine, "");
+    public File findIncludeSource(String includeLine, File currentFile, File projectDir) {
+        Include include = Include.parse(includeLine, "").get(0); //todo
+
+        Supplier<Comparator<File>> priorityByEnv = () -> {
+            Comparator<File> comparator = comparing(f1 -> f1.getName().contains(include.getEnv() + ".") ? 0 : 1);
+            return comparator.thenComparing(f -> f.getName().length());
+        };
 
         String componentName = include.getComponent();
-        String fileExtension = fileExtension(currentFileName);
-
+        String fileExtension = fileExtension(currentFile.getName());
         return initializer.getMicroconfigFactory(projectDir)
                 .getComponentTree()
                 .getConfigFiles(componentName, file -> file.getName().endsWith(fileExtension))
-                .min(priorityByEnv(include.getEnv()))
+                .min(priorityByEnv.get())
                 .orElseThrow(() -> new PluginException("Component not found: " + componentName));
     }
 
-    private Comparator<File> priorityByEnv(String env) {
-        Comparator<File> comparator = comparing(f1 -> f1.getName().contains(env + ".") ? 0 : 1);
-        return comparator.thenComparing(f -> f.getName().length());
-    }
-
     @Override
-    public FilePosition findPlaceholderKey(File projectDir, String placeholder, File currentFile) {
+    public FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
-        Placeholder p = getPlaceholder(placeholder, currentFile, factory);
+        Placeholder p = getPlaceholder(placeholderValue, currentFile, factory);
 
         Map<String, Property> properties = factory
-                .newConfigProvider(configTypeBy(fileExtension(currentFile.getName()))) //todo useVirtualFiles
+                .newConfigProvider(configTypeBy(fileExtension(currentFile.getName())))
                 .getProperties(byType(p.getComponent()), p.getEnvironment());
         Property property = properties.get(p.getValue());
 
         if (property == null) {
-            throw new PluginException("Can't resolve " + placeholder);
+            throw new PluginException("Can't resolve " + placeholderValue);
         }
 
         PropertySource source = property.getSource();
@@ -84,7 +84,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     @Override
-    public Map<String, String> lineWithPlaceholders(File projectDir, String currentLine) {
+    public Map<String, String> resolvePropertyValueForEachEnv(String currentLine, File projectDir) {
         return new Random().nextBoolean() ? emptyMap()
                 : new HashMap<String, String>() {
             {
@@ -96,7 +96,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     @Override
-    public Map<String, String> placeholderValues(File projectDir, String placeholder) {
+    public Map<String, String> resolveOnePlaceholderForEachEnv(String placeholder, File projectDir) {
         return new Random().nextBoolean() ? emptyMap()
                 : new HashMap<String, String>() {
             {
