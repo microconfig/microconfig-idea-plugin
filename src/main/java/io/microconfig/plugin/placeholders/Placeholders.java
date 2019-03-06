@@ -20,7 +20,7 @@ public class Placeholders {
         String currentLine = currentLine(context);
         if (!hasPlaceholder(currentLine)) return empty();
 
-        if (insidePlaceholderBrackets(currentLine, context.caret.getLogicalPosition().column)) {
+        if (insidePlaceholderBrackets(currentLine, context.getCaret().getLogicalPosition().column)) {
             return of(new ResolvePlaceholderValue(api, context, currentLine));
         }
 

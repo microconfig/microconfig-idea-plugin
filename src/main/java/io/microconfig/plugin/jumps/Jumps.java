@@ -22,7 +22,7 @@ public class Jumps {
             return of(new JumpToInclude(api, context, currentLine));
         }
 
-        if (insidePlaceholder(currentLine, context.caret)) {
+        if (insidePlaceholder(currentLine, context.getCaret())) {
             return of(new JumpToPlaceholder(api, context, currentLine));
         }
 

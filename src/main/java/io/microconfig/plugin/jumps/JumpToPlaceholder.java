@@ -14,7 +14,8 @@ import java.util.Optional;
 import static io.microconfig.plugin.utils.ContextUtils.moveToLineColumn;
 import static io.microconfig.plugin.utils.PlaceholderUtils.insidePlaceholderBrackets;
 import static io.microconfig.plugin.utils.PlaceholderUtils.placeholderSubstring;
-import static io.microconfig.plugin.utils.VirtialFileUtil.*;
+import static io.microconfig.plugin.utils.VirtialFileUtil.toPsiFile;
+import static io.microconfig.plugin.utils.VirtialFileUtil.toVirtualFile;
 
 @RequiredArgsConstructor
 public class JumpToPlaceholder implements MicroconfigComponent {
@@ -28,14 +29,14 @@ public class JumpToPlaceholder implements MicroconfigComponent {
 
     @Override
     public void react() {
-        Optional<String> placeholder = placeholderSubstring(currentLine, context.caret.getLogicalPosition().column);
+        Optional<String> placeholder = placeholderSubstring(currentLine, context.getCaret().getLogicalPosition().column);
         if (!placeholder.isPresent() || !api.navigatable(placeholder.get())) return; //todo maybe print a warning
 
-        FilePosition filePosition = api.findPlaceholderSource(placeholder.get(), toFile(context.editorFile), context.projectDir());
+        FilePosition filePosition = api.findPlaceholderSource(placeholder.get(), context.currentFile(), context.projectDir());
         System.out.println("Resolved file position " + filePosition);
         VirtualFile virtualFile = toVirtualFile(filePosition.getFile());
-        PsiFile psiFile = toPsiFile(context.project, virtualFile);
+        PsiFile psiFile = toPsiFile(context.getProject(), virtualFile);
         psiFile.navigate(true);
-        moveToLineColumn(context.project, filePosition.getLineNumber(), 0);
+        moveToLineColumn(context.getProject(), filePosition.getLineNumber(), 0);
     }
 }

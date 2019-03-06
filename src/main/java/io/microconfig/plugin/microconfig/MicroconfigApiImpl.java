@@ -4,21 +4,26 @@ import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 import io.microconfig.configs.Property;
 import io.microconfig.configs.PropertySource;
 import io.microconfig.configs.provider.Include;
+import io.microconfig.configs.resolver.EnvComponent;
+import io.microconfig.configs.resolver.PropertyResolver;
+import io.microconfig.configs.resolver.PropertyResolverHolder;
 import io.microconfig.configs.resolver.placeholder.Placeholder;
 import io.microconfig.plugin.FilePosition;
 import io.microconfig.plugin.PluginException;
 
 import java.io.File;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.Set;
 import java.util.function.Supplier;
 
+import static io.microconfig.configs.Property.parse;
+import static io.microconfig.configs.PropertySource.fileSource;
 import static io.microconfig.environments.Component.byType;
 import static io.microconfig.plugin.utils.ContextUtils.fileExtension;
-import static java.util.Collections.emptyMap;
 import static java.util.Comparator.comparing;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 
 public class MicroconfigApiImpl implements MicroconfigApi {
     private final MicroconfigInitializer initializer = new MicroconfigInitializerImpl();
@@ -46,10 +51,10 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
         Placeholder p = toPlaceholder(placeholderValue, currentFile, anyEnv(factory));
-        Map<String, Property> properties = factory
+        Property property = factory
                 .newConfigProvider(initializer.detectConfigType(currentFile))
-                .getProperties(byType(p.getComponent()), p.getEnvironment());
-        Property property = properties.get(p.getValue());
+                .getProperties(byType(p.getComponent()), p.getEnvironment())
+                .get(p.getValue());
         if (property == null) {
             throw new PluginException("Can't resolve " + placeholderValue);
         }
@@ -72,27 +77,30 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     @Override
-    public Map<String, String> resolvePropertyValueForEachEnv(String currentLine, File projectDir) {
-        return new Random().nextBoolean() ? emptyMap()
-                : new HashMap<String, String>() {
-            {
-                put("prod", "key=prod value");
-                put("dev", "key=dev value");
-                put("", "key=default value");
-            }
-        };
+    public Map<String, String> resolveOnePlaceholderForEachEnv(String placeholderValue, File currentFile, File projectDir) {
+        return resolvePropertyValueForEachEnv("key=" + placeholderValue, currentFile, projectDir);
     }
 
     @Override
-    public Map<String, String> resolveOnePlaceholderForEachEnv(String placeholder, File projectDir) {
-        return new Random().nextBoolean() ? emptyMap()
-                : new HashMap<String, String>() {
-            {
-                put("prod", "prod value");
-                put("dev", "dev value");
-                put("", "default value");
-            }
-        };
+    public Map<String, String> resolvePropertyValueForEachEnv(String currentLine, File currentFile, File projectDir) {
+        MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
+        PropertyResolver propertyResolver = ((PropertyResolverHolder) factory
+                .newConfigProvider(initializer.detectConfigType(currentFile)))
+                .getResolver();
+
+        Property property = parse(currentLine, "", fileSource(currentFile, -1, false));
+        Set<String> envs = factory.getEnvironmentProvider().getEnvironmentNames();
+
+        return envs.stream()
+                .collect(toMap(identity(), env -> resolve(property.withNewEnv(env), propertyResolver)));
+    }
+
+    private String resolve(Property p, PropertyResolver propertyResolver) {
+        try {
+            return propertyResolver.resolve(p, new EnvComponent(p.getSource().getComponent(), p.getEnvContext()));
+        } catch (RuntimeException e) {
+            return "ERROR";
+        }
     }
 
     @Override

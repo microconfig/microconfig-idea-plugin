@@ -6,21 +6,19 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
-import static io.microconfig.plugin.utils.ContextUtils.showErrorHing;
-import static io.microconfig.plugin.utils.ContextUtils.showInfoHing;
 import static io.microconfig.utils.FileUtils.LINES_SEPARATOR;
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.joining;
 
 @RequiredArgsConstructor
 public abstract class ResolvePlaceholderBase {
-    final MicroconfigApi api;
-    final PluginContext context;
-    final String currentLine;
+    protected final MicroconfigApi api;
+    protected final PluginContext context;
+    protected final String currentLine;
 
     void printValues(Map<String, String> values) {
         if (values.isEmpty()) {
-            showErrorHing(context.editor, "Can't find placeholder values");
+            context.showErrorHing("Can't find placeholder values");
             return;
         }
 
@@ -29,7 +27,7 @@ public abstract class ResolvePlaceholderBase {
                 .map(e -> message(e.getKey(), e.getValue()))
                 .collect(joining(LINES_SEPARATOR));
 
-        showInfoHing(context.editor, message);
+        context.showInfoHing(message);
     }
 
     private static int rate(String env) {

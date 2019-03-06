@@ -5,8 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
 
-import static io.microconfig.plugin.utils.ContextUtils.showErrorHing;
-
 public class JumpToAction extends AnAction {
     private final Jumps factory = new Jumps();
 
@@ -17,7 +15,7 @@ public class JumpToAction extends AnAction {
         try {
             factory.componentFrom(context).ifPresent(MicroconfigComponent::react);
         } catch (RuntimeException e) {
-            showErrorHing(context.editor, e.getMessage());
+            context.showErrorHing(e);
         }
     }
 }

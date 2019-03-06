@@ -6,8 +6,6 @@ import io.microconfig.plugin.MicroconfigComponent;
 import io.microconfig.plugin.PluginContext;
 import io.microconfig.plugin.PluginException;
 
-import static io.microconfig.plugin.utils.ContextUtils.showErrorHing;
-
 public class ResolvePlaceholderAction extends AnAction {
     private final Placeholders factory = new Placeholders();
 
@@ -19,7 +17,7 @@ public class ResolvePlaceholderAction extends AnAction {
         try {
             factory.componentFrom(context).ifPresent(MicroconfigComponent::react);
         } catch (PluginException e) {
-            showErrorHing(context.editor, e.getMessage());
+            context.showErrorHing(e.getMessage());
         }
     }
 }

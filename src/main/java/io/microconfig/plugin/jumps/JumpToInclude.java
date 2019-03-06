@@ -9,7 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 
-import static io.microconfig.plugin.utils.VirtialFileUtil.*;
+import static io.microconfig.plugin.utils.VirtialFileUtil.toPsiFile;
+import static io.microconfig.plugin.utils.VirtialFileUtil.toVirtualFile;
 
 @RequiredArgsConstructor
 public class JumpToInclude implements MicroconfigComponent {
@@ -19,9 +20,9 @@ public class JumpToInclude implements MicroconfigComponent {
 
     @Override
     public void react() {
-        File componentFile = api.findIncludeSource(currentLine, toFile(context.editorFile), context.projectDir());
+        File componentFile = api.findIncludeSource(currentLine, context.currentFile(), context.projectDir());
         VirtualFile virtualFile = toVirtualFile(componentFile);
-        PsiFile psiFile = toPsiFile(context.project, virtualFile);
+        PsiFile psiFile = toPsiFile(context.getProject(), virtualFile);
         psiFile.navigate(true);
     }
 }
