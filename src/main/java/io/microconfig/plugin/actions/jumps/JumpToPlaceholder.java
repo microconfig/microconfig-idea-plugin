@@ -17,7 +17,7 @@ public class JumpToPlaceholder implements ActionHandler {
         String placeholder = PlaceholderBorders.borders(context.currentLine(), context.currentColumn()).value();
         if (placeholder == null || !api.navigatable(placeholder)) return; //todo maybe print a warning
 
-        FilePosition filePosition = api.findPlaceholderSource(placeholder, context.currentFile(), context.projectDir());
-        filePosition.moveTo(context.getProject());
+        FilePosition position = api.findPlaceholderSource(placeholder, context.currentFile(), context.projectDir());
+        position.moveToPosition(context.getProject());
     }
 }

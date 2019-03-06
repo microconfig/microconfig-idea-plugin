@@ -17,7 +17,7 @@ public class FilePosition {
     private final File file;
     private final int lineNumber;
 
-    public void moveTo(Project project) {
+    public void moveToPosition(Project project) {
         VirtualFile virtualFile = toVirtualFile(file);
         PsiFile psiFile = toPsiFile(project, virtualFile);
         psiFile.navigate(true);
