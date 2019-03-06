@@ -11,7 +11,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import static io.microconfig.plugin.utils.VirtialFileUtil.toVirtualFile;
+import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
 import static java.util.stream.Collectors.toList;
 
 public class VirtualFileReader implements FileReader {

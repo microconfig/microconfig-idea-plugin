@@ -1,11 +1,8 @@
 package io.microconfig.plugin.utils;
 
+import io.microconfig.plugin.actions.placeholders.PlaceholderBorders;
 import org.junit.Test;
 
-import java.util.Optional;
-
-import static io.microconfig.plugin.utils.PlaceholderUtils.insidePlaceholderBrackets;
-import static io.microconfig.plugin.utils.PlaceholderUtils.placeholderSubstring;
 import static org.fest.assertions.Assertions.assertThat;
 
 public class PlaceholderUtilsTest {
@@ -14,28 +11,27 @@ public class PlaceholderUtilsTest {
 
     @Test
     public void should_return_false_if_on_key() {
-        assertThat(insidePlaceholderBrackets(LINE, 3)).isFalse();
+        assertThat(PlaceholderBorders.borders(LINE, 3).isInsidePlaceholder());
     }
 
     @Test
     public void should_resolve_substring_if_in_brackets() {
-        Optional<String> result = placeholderSubstring(LINE, 27);
-        assertThat(result.isPresent()).isTrue();
-        assertThat(result.get()).isEqualTo(PLACEHOLDER);
+        PlaceholderBorders borders = PlaceholderBorders.borders(LINE, 27);
+        assertThat(borders.isInsidePlaceholder()).isTrue();
+        assertThat(borders.value()).isEqualTo(PLACEHOLDER);
     }
 
     @Test
     public void should_handle_middle_placeholder() {
         String line = "${first}${middle}${second}";
-        Optional<String> result = placeholderSubstring(line, 11);
-        assertThat(result.isPresent()).isTrue();
-        assertThat(result.get()).isEqualTo("${middle}");
+        PlaceholderBorders borders = PlaceholderBorders.borders(line, 11);
+        assertThat(borders.isInsidePlaceholder()).isTrue();
+        assertThat(borders.value()).isEqualTo("${middle}");
     }
 
     @Test
     public void should_handle_middle_text() {
         String line = "${first}middle${second}";
-        Optional<String> result = placeholderSubstring(line, 11);
-        assertThat(result.isPresent()).isFalse();
+        assertThat(PlaceholderBorders.borders(line, 11).isInsidePlaceholder()).isFalse();
     }
 }

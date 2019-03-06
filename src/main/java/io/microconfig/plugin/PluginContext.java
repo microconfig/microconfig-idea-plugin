@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 
 import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
-import static io.microconfig.plugin.utils.VirtialFileUtil.toFile;
+import static io.microconfig.plugin.utils.FileUtil.toFile;
 
 @RequiredArgsConstructor
 public class PluginContext {

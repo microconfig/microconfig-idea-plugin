@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 import static io.microconfig.configs.Property.parse;
 import static io.microconfig.configs.PropertySource.fileSource;
 import static io.microconfig.environments.Component.byType;
-import static io.microconfig.plugin.utils.ContextUtils.fileExtension;
+import static io.microconfig.plugin.utils.FileUtil.fileExtension;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -38,7 +38,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         String componentName = include.getComponent();
-        String fileExtension = fileExtension(currentFile.getName());
+        String fileExtension = fileExtension(currentFile);
         return initializer.getMicroconfigFactory(projectDir)
                 .getComponentTree()
                 .getConfigFiles(componentName, file -> file.getName().endsWith(fileExtension))

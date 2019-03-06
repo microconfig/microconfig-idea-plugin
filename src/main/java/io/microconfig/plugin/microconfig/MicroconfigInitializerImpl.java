@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 
-import static io.microconfig.plugin.utils.ContextUtils.fileExtension;
+import static io.microconfig.plugin.utils.FileUtil.fileExtension;
 import static java.nio.file.Files.walk;
 import static java.util.Arrays.stream;
 
@@ -26,7 +26,7 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
 
     @Override
     public ConfigType detectConfigType(File file) {
-        String ext = fileExtension(file.getName());
+        String ext = fileExtension(file);
         return stream(StandardConfigType.values())
                 .filter(ct -> ct.getConfigExtensions().stream().anyMatch(e -> e.equals(ext)))
                 .map(StandardConfigType::type)
