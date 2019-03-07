@@ -1,13 +1,13 @@
 <idea-plugin>
     <idea-version since-build="170.*"/>
     <id>io.microconfig.idea-plugin</id>
-    <name>Microconfig</name>
+    <name>Microconfig.io</name>
     <vendor email="support@microconfig.io" url="http://microconfig.io">Microconfig.IO</vendor>
 
     <description><![CDATA[
-    Plugin for microconfig framework<br>
-    <em>Easy navigation between configuration components</em>
-    <em>Hints of placeholder values</em>
+    Plugin for Microconfig.io framework<br>
+    &#183; <em> Easy navigation between configuration components</em><br>
+    &#183; <em> Hints of placeholder values</em>
     ]]>
     </description>
 

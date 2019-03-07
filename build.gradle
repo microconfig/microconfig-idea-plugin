@@ -24,10 +24,10 @@ intellij {
 patchPluginXml {
     changeNotes """
       Release 0.5.0<br>
-      #include component navigation
-      placeholder component navigation
-      placeholder value hints
-      multiple placeholder values on same line hints
+      &#183; #include component navigation<br>
+      &#183; placeholder component navigation<br>
+      &#183; placeholder value hints<br>
+      &#183; property value with multiple placeholders hints<br>
       """
 }
 
