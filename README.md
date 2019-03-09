@@ -10,7 +10,7 @@ For dev mode:
 Import as gradle project<br>
 `run gradlew :intellij:runIde`
 
-###Beta Installation
+### Beta Installation
 
 Download plugin zip file from `Beta channel` at `https://plugins.jetbrains.com/plugin/12064-microconfig-io`.
 
@@ -23,7 +23,7 @@ Microconfig has two actions:
 - Jump to component (F10)
 - Resolve placeholder (Ctrl-F10 / Command-F10)
 
-####Jump to component
+#### Jump to component
 
 `Jump to component` supports navigation from `#inlude component` line. Once chosen from menu or on hotkey press 
 it will try to find `component` in components directory and open corresponding file inside. 
@@ -31,7 +31,7 @@ it will try to find `component` in components directory and open corresponding f
 Also it can jump to component referenced in a placeholder like `${component@key}`. To choose a placeholder just place your cursor inside `{}`. 
 On jump it will try to find `component` file and then line with `key` inside it. Once found it will open that file and place cursor on `key` line.
 
-####Resolve placeholder
+#### Resolve placeholder
 
 `Resolve placeholder` supports two modes. 
 
