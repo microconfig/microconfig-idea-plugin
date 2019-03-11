@@ -22,6 +22,7 @@ import java.util.function.UnaryOperator;
 import static io.microconfig.configs.Property.parse;
 import static io.microconfig.configs.PropertySource.fileSource;
 import static io.microconfig.environments.Component.byType;
+import static java.lang.Math.max;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
@@ -33,12 +34,13 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     public File findIncludeSource(String includeLine, int currentColumn, File currentFile, File projectDir) {
         Supplier<Include> parseInclude = () -> {
             List<Include> includes = Include.parse(includeLine, "");
-            if (includeLine.length() == 1) return includes.get(0);
+            if (includes.size() == 1) return includes.get(0);
 
             int order = 0;
-            int p = currentColumn - 1;
-            while (p > 0) {
-                p = includeLine.lastIndexOf(',', p) - 1;
+            int p = currentColumn;
+            while (true) {
+                p = includeLine.lastIndexOf(',', max(0, p - 1));
+                if (p < 0) break;
                 ++order;
             }
             return includes.get(order);
