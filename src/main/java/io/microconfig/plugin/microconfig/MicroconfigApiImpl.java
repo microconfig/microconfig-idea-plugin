@@ -70,7 +70,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
         Supplier<Placeholder> parsePlaceholder = () -> {
-            Placeholder p = Placeholder.parse(placeholderValue, anyEnv(factory));
+            Placeholder p = Placeholder.parse(placeholderValue, detectEnv(currentFile, factory));
             return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
         };
 
@@ -119,7 +119,14 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         return true;
     }
 
-    private String anyEnv(MicroconfigFactory factory) {
+    private String detectEnv(File currentFile, MicroconfigFactory factory) {
+        String name = currentFile.getName();
+        int start = name.indexOf('.');
+        int end = name.indexOf('.', start + 1);
+        if (end > 0) {
+            return name.substring(start + 1, end);
+        }
+
         return factory.getEnvironmentProvider()
                 .getEnvironmentNames()
                 .stream()
