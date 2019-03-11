@@ -4,20 +4,14 @@ import io.microconfig.commands.buildconfig.factory.ConfigType;
 import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 import io.microconfig.commands.buildconfig.factory.StandardConfigType;
 import io.microconfig.plugin.actions.common.PluginException;
-import io.microconfig.plugin.utils.FileUtil;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Path;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
-import java.util.stream.Stream;
 
 import static io.microconfig.commands.buildconfig.factory.MicroconfigFactory.ENV_DIR;
 import static io.microconfig.configs.io.tree.ComponentTreeCache.COMPONENTS_DIR;
 import static io.microconfig.plugin.utils.FileUtil.find;
-import static java.nio.file.Files.readString;
-import static java.nio.file.Files.walk;
 import static java.util.Arrays.stream;
 
 class MicroconfigInitializerImpl implements MicroconfigInitializer {

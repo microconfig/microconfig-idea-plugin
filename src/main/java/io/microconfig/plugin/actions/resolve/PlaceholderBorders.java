@@ -1,10 +1,7 @@
 package io.microconfig.plugin.actions.resolve;
 
-import io.microconfig.configs.resolver.placeholder.Placeholder;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-
-import java.util.regex.Matcher;
 
 @ToString
 @RequiredArgsConstructor

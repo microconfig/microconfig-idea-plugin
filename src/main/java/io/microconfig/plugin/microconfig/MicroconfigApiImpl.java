@@ -10,7 +10,6 @@ import io.microconfig.configs.resolver.PropertyResolverHolder;
 import io.microconfig.configs.resolver.placeholder.Placeholder;
 import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Comparator;
