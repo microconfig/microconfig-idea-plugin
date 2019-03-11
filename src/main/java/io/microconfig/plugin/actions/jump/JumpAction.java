@@ -1,4 +1,4 @@
-package io.microconfig.plugin.actions.jumps;
+package io.microconfig.plugin.actions.jump;
 
 import io.microconfig.plugin.actions.common.MicroconfigAction;
 

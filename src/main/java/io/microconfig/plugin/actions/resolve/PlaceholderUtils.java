@@ -1,4 +1,4 @@
-package io.microconfig.plugin.actions.placeholders;
+package io.microconfig.plugin.actions.resolve;
 
 import io.microconfig.plugin.actions.common.PluginContext;
 
@@ -8,7 +8,7 @@ import static io.microconfig.utils.FileUtils.LINES_SEPARATOR;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 
-public class PlaceholderUtils {
+class PlaceholderUtils {
     private static final String DEFAULT_ENV_KEY = "";
 
     public static void printValues(String placeholder, Map<String, String> values, PluginContext context) {

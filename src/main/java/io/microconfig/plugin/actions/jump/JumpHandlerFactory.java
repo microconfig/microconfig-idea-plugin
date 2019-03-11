@@ -1,15 +1,13 @@
-package io.microconfig.plugin.actions.jumps;
+package io.microconfig.plugin.actions.jump;
 
 import io.microconfig.configs.provider.Include;
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.ActionHandlerFactory;
 import io.microconfig.plugin.actions.common.PluginContext;
-import io.microconfig.plugin.microconfig.MicroconfigApi;
-import io.microconfig.plugin.microconfig.MicroconfigApiImpl;
 
 import java.util.Optional;
 
-import static io.microconfig.plugin.actions.placeholders.PlaceholderBorders.borders;
+import static io.microconfig.plugin.actions.resolve.PlaceholderBorders.borders;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 

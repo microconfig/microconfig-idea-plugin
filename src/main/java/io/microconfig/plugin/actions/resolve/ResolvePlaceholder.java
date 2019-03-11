@@ -1,4 +1,4 @@
-package io.microconfig.plugin.actions.placeholders;
+package io.microconfig.plugin.actions.resolve;
 
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.PluginContext;
@@ -7,16 +7,16 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
-import static io.microconfig.plugin.actions.placeholders.PlaceholderUtils.printValues;
+import static io.microconfig.plugin.actions.resolve.PlaceholderUtils.printValues;
 
 @RequiredArgsConstructor
-public class ResolveOnePlaceholder implements ActionHandler {
+public class ResolvePlaceholder implements ActionHandler {
     private final String value;
 
     @Override
     public void onAction(PluginContext context, MicroconfigApi api) {
         //todo error hint if special placeholder
-        Map<String, String> values = api.resolveOnePlaceholderForEachEnv(value, context.currentFile(), context.projectDir());
+        Map<String, String> values = api.resolvePlaceholderForEachEnv(value, context.currentFile(), context.projectDir());
         printValues(value, values, context);
     }
 }

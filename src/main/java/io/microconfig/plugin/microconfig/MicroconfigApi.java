@@ -13,12 +13,12 @@ public interface MicroconfigApi {
     /**
      * @return resolved placeholder values for each env: env -> value
      */
-    Map<String, String> resolveOnePlaceholderForEachEnv(String placeholderValue, File currentFile, File projectDir);
+    Map<String, String> resolvePlaceholderForEachEnv(String placeholderValue, File currentFile, File projectDir);
 
     /**
      * @return full line with resolved placeholder values for each env: env -> line
      */
-    Map<String, String> resolvePropertyValueForEachEnv(String currentLine, File currentFile, File projectDir);
+    Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir);
 
     /**
      * @return true if placeholder is navigatable, false otherwise

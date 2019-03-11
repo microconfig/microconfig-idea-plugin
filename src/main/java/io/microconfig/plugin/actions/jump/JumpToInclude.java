@@ -1,7 +1,5 @@
-package io.microconfig.plugin.actions.jumps;
+package io.microconfig.plugin.actions.jump;
 
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.PluginContext;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
