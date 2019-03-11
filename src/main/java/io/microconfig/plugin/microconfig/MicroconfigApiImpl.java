@@ -37,14 +37,14 @@ public class MicroconfigApiImpl implements MicroconfigApi {
             List<Include> includes = Include.parse(includeLine, "");
             if (includes.size() == 1) return includes.get(0);
 
-            int order = 0;
-            int p = currentColumn;
-            while (true) {
-                p = includeLine.lastIndexOf(',', max(0, p - 1));
-                if (p < 0) break;
-                ++order;
-            }
-            return includes.get(order);
+            int position = currentColumn;
+            int componentIndex = -1;
+            do {
+                ++componentIndex;
+                position = includeLine.lastIndexOf(',', max(0, position - 1));
+            } while (position > 0);
+
+            return includes.get(componentIndex);
         };
 
         Include include = parseInclude.get();
