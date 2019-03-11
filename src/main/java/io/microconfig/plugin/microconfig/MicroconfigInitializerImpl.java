@@ -12,6 +12,8 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import static io.microconfig.commands.buildconfig.factory.MicroconfigFactory.ENV_DIR;
+import static io.microconfig.configs.io.tree.ComponentTreeCache.COMPONENTS_DIR;
 import static java.nio.file.Files.walk;
 import static java.util.Arrays.stream;
 
@@ -59,7 +61,7 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
 
     private boolean containsMicroconfigDirs(File[] files) {
         return files != null && stream(files)
-                .filter(f -> f.getName().equals("components") || f.getName().equals("envs"))
+                .filter(f -> f.getName().equals(ENV_DIR) || f.getName().equals(COMPONENTS_DIR))
                 .count() == 2;
     }
 
