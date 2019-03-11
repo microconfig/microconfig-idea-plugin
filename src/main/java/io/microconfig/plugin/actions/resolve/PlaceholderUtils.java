@@ -11,13 +11,13 @@ import static java.util.stream.Collectors.joining;
 class PlaceholderUtils {
     private static final String DEFAULT_ENV_KEY = "";
 
-    public static void printValues(String placeholder, Map<String, String> values, PluginContext context) {
+    public static void printValues(String line, Map<String, String> values, PluginContext context) {
         if (values.isEmpty()) {
-            context.showErrorHing("Can't find placeholder values: " + placeholder);
+            context.showErrorHing("Can't resolve line: " + line);
             return;
         }
 
-        String message = placeholder
+        String message = line
                 + LINES_SEPARATOR
                 + LINES_SEPARATOR
                 + defaultEnvValue(values)
