@@ -1,6 +1,6 @@
 package io.microconfig.plugin.actions.common;
 
-import com.intellij.openapi.editor.LogicalPosition;
+import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
@@ -37,6 +37,6 @@ public class FilePosition {
         FileEditorManager.getInstance(project)
                 .getSelectedTextEditor()
                 .getCaretModel()
-                .moveToLogicalPosition(new LogicalPosition(lineNumber, 0));
+                .moveToVisualPosition(new VisualPosition(lineNumber, 0));
     }
 }
