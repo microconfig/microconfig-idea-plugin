@@ -3,8 +3,6 @@ package io.microconfig.plugin.actions.common;
 import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.psi.PsiFile;
 import io.microconfig.configs.Property;
 import io.microconfig.configs.PropertySource;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +31,8 @@ public class FilePosition {
     }
 
     private void openFile(Project project) {
-        VirtualFile virtualFile = toVirtualFile(file);
-        PsiFile psiFile = toPsiFile(project, virtualFile);
-        psiFile.navigate(true);
+        toPsiFile(project, toVirtualFile(file))
+                .navigate(true);
     }
 
     private void moveToLine(Project project) {
