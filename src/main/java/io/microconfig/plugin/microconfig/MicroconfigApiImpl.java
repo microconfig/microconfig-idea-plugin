@@ -10,6 +10,7 @@ import io.microconfig.configs.resolver.PropertyResolverHolder;
 import io.microconfig.configs.resolver.placeholder.Placeholder;
 import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.Comparator;
@@ -22,6 +23,7 @@ import java.util.function.UnaryOperator;
 import static io.microconfig.configs.Property.parse;
 import static io.microconfig.configs.PropertySource.fileSource;
 import static io.microconfig.environments.Component.byType;
+import static io.microconfig.plugin.actions.common.FilePosition.positionFromProperty;
 import static java.lang.Math.max;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
@@ -74,16 +76,28 @@ public class MicroconfigApiImpl implements MicroconfigApi {
             return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
         };
 
-        Placeholder p = parsePlaceholder.get();
-        Property property = factory
+        Placeholder pl = parsePlaceholder.get();
+        Map<String, Property> sourceProperties = factory
                 .newConfigProvider(initializer.detectConfigType(currentFile))
-                .getProperties(byType(p.getComponent()), p.getEnvironment())
-                .get(p.getValue());
-        if (property == null) {
-            throw new PluginException("Can't resolve " + placeholderValue); //todo return FilePosition(componentFile, 0)
+                .getProperties(byType(pl.getComponent()), pl.getEnvironment());
+
+        Property resolved = sourceProperties.get(pl.getValue());
+        if (resolved != null) {
+            return positionFromProperty(resolved);
         }
 
-        return new FilePosition(property.getSource());
+        return toFirstLineOfComponent(pl, sourceProperties);
+    }
+
+    private FilePosition toFirstLineOfComponent(Placeholder pl, Map<String, Property> sourceProperties) {
+        return sourceProperties
+                .values()
+                .stream()
+                .filter(p -> p.getSource().getComponent().getName().equalsIgnoreCase(pl.getComponent()))
+                .sorted(comparing(p -> p.getSource().getSourceOfProperty().length()))
+                .map(p -> new FilePosition(new File(p.getSource().getSourceOfProperty()), 0))
+                .findFirst()
+                .orElseThrow(() -> new PluginException("Can't resolve " + pl.getValue()));
     }
 
     @Override
