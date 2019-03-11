@@ -57,7 +57,7 @@ class MicroconfigInitializerImpl implements MicroconfigInitializer {
 
         if (containsMicroconfigDirs.test(projectDir)) return projectDir;
 
-        try (Stream<Path> walk = walk(projectDir.toPath(), 3)) {
+        try (Stream<Path> walk = walk(projectDir.toPath(), 2)) {
             return walk.map(Path::toFile)
                     .filter(containsMicroconfigDirs)
                     .findAny()
