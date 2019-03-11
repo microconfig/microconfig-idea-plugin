@@ -6,7 +6,7 @@ import java.io.File;
 import java.util.Map;
 
 public interface MicroconfigApi {
-    File findIncludeSource(String includeLine, File currentFile, File projectDir);
+    File findIncludeSource(String includeLine, int currentColumn, File currentFile, File projectDir);
 
     FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir);
 

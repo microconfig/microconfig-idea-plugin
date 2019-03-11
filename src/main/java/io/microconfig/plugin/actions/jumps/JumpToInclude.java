@@ -14,14 +14,11 @@ import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
 
 @RequiredArgsConstructor
 public class JumpToInclude implements ActionHandler {
-    private final MicroconfigApi api;
-    private final PluginContext context;
-
     @Override
-    public void onAction() {
-        File componentFile = api.findIncludeSource(context.currentLine(), context.currentFile(), context.projectDir());
-        VirtualFile virtualFile = toVirtualFile(componentFile);
-        PsiFile psiFile = toPsiFile(context.getProject(), virtualFile);
-        psiFile.navigate(true);
+    public void onAction(PluginContext context, MicroconfigApi api) {
+        File source = api.findIncludeSource(context.currentLine(), context.currentColumn(), context.currentFile(), context.projectDir());
+
+        toPsiFile(context.getProject(), toVirtualFile(source))
+                .navigate(true);
     }
 }

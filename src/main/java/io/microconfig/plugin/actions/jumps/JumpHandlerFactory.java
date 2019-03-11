@@ -14,17 +14,15 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 class JumpHandlerFactory implements ActionHandlerFactory {
-    private MicroconfigApi api = new MicroconfigApiImpl();
-
     @Override
     public Optional<ActionHandler> getHandler(PluginContext context) {
         String currentLine = context.currentLine();
         if (Include.isInclude(currentLine)) {
-            return of(new JumpToInclude(api, context));
+            return of(new JumpToInclude());
         }
 
         if (borders(currentLine, context.currentColumn()).isInsidePlaceholder()) {
-            return of(new JumpToPlaceholder(api, context));
+            return of(new JumpToPlaceholder());
         }
 
         return empty();

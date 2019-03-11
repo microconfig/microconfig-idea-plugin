@@ -11,12 +11,10 @@ import static io.microconfig.plugin.actions.placeholders.PlaceholderUtils.printV
 
 @RequiredArgsConstructor
 public class ResolveOnePlaceholder implements ActionHandler {
-    private final MicroconfigApi api;
-    private final PluginContext context;
     private final String value;
 
     @Override
-    public void onAction() {
+    public void onAction(PluginContext context, MicroconfigApi api) {
         //todo error hint if special placeholder
         Map<String, String> values = api.resolveOnePlaceholderForEachEnv(value, context.currentFile(), context.projectDir());
         printValues(value, values, context);

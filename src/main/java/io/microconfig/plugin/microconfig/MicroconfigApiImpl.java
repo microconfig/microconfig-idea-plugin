@@ -3,7 +3,6 @@ package io.microconfig.plugin.microconfig;
 import io.microconfig.commands.buildconfig.factory.ConfigType;
 import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 import io.microconfig.configs.Property;
-import io.microconfig.configs.PropertySource;
 import io.microconfig.configs.provider.Include;
 import io.microconfig.configs.resolver.EnvComponent;
 import io.microconfig.configs.resolver.PropertyResolver;
@@ -14,6 +13,7 @@ import io.microconfig.plugin.actions.common.PluginException;
 
 import java.io.File;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
@@ -30,18 +30,31 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     private final MicroconfigInitializer initializer = new MicroconfigInitializerImpl();
 
     @Override
-    public File findIncludeSource(String includeLine, File currentFile, File projectDir) {
-        Include include = Include.parse(includeLine, "").get(0); //todo
+    public File findIncludeSource(String includeLine, int currentColumn, File currentFile, File projectDir) {
+        Supplier<Include> parseInclude = () -> {
+            List<Include> includes = Include.parse(includeLine, "");
+            if (includeLine.length() == 1) return includes.get(0);
 
-        Supplier<Comparator<File>> priorityByEnv = () -> {
-            Comparator<File> comparator = comparing(f1 -> f1.getName().contains(include.getEnv() + ".") ? 0 : 1);
-            return comparator.thenComparing(f -> f.getName().length());
+            int order = 0;
+            int p = currentColumn - 1;
+            while (p > 0) {
+                p = includeLine.lastIndexOf(',', p) - 1;
+                ++order;
+            }
+            return includes.get(order);
         };
+
+        Include include = parseInclude.get();
 
         ConfigType configType = initializer.detectConfigType(currentFile);
         Predicate<File> hasConfigTypeExtension = file -> configType.getConfigExtensions()
                 .stream()
                 .anyMatch(ext -> file.getName().endsWith(ext));
+
+        Supplier<Comparator<File>> priorityByEnv = () -> {
+            Comparator<File> comparator = comparing(f1 -> f1.getName().contains(include.getEnv() + ".") ? 0 : 1);
+            return comparator.thenComparing(f -> f.getName().length());
+        };
 
         return initializer.getMicroconfigFactory(projectDir)
                 .getComponentTree()
@@ -54,7 +67,12 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     public FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
-        Placeholder p = toPlaceholder(placeholderValue, currentFile, anyEnv(factory));
+        Supplier<Placeholder> parsePlaceholder = () -> {
+            Placeholder p = Placeholder.parse(placeholderValue, anyEnv(factory));
+            return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
+        };
+
+        Placeholder p = parsePlaceholder.get();
         Property property = factory
                 .newConfigProvider(initializer.detectConfigType(currentFile))
                 .getProperties(byType(p.getComponent()), p.getEnvironment())
@@ -63,8 +81,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
             throw new PluginException("Can't resolve " + placeholderValue); //todo return FilePosition(componentFile, 0)
         }
 
-        PropertySource source = property.getSource();
-        return new FilePosition(new File(source.getSourceOfProperty()), source.getLine());
+        return new FilePosition(property.getSource());
     }
 
     @Override
@@ -98,11 +115,6 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public boolean navigatable(String placeholder) {
         return true;
-    }
-
-    private Placeholder toPlaceholder(String placeholderValue, File currentFile, String env) {
-        Placeholder p = Placeholder.parse(placeholderValue, env);
-        return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
     }
 
     private String anyEnv(MicroconfigFactory factory) {

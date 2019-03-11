@@ -9,11 +9,8 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class JumpToPlaceholder implements ActionHandler {
-    private final MicroconfigApi api;
-    private final PluginContext context;
-
     @Override
-    public void onAction() {
+    public void onAction(PluginContext context, MicroconfigApi api) {
         String placeholder = PlaceholderBorders.borders(context.currentLine(), context.currentColumn()).value();
         if (placeholder == null || !api.navigatable(placeholder)) return; //todo maybe print a warning
 

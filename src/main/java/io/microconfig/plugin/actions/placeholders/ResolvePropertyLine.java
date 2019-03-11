@@ -11,11 +11,8 @@ import static io.microconfig.plugin.actions.placeholders.PlaceholderUtils.printV
 
 @RequiredArgsConstructor
 public class ResolvePropertyLine implements ActionHandler {
-    private final MicroconfigApi api;
-    private final PluginContext context;
-
     @Override
-    public void onAction() {
+    public void onAction(PluginContext context, MicroconfigApi api) {
         String currentLine = context.currentLine();
         Map<String, String> values = api.resolvePropertyValueForEachEnv(currentLine, context.currentFile(), context.projectDir());
         printValues(currentLine, values, context);

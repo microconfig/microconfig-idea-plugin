@@ -17,7 +17,7 @@ import static io.microconfig.configs.io.tree.ComponentTreeCache.COMPONENTS_DIR;
 import static java.nio.file.Files.walk;
 import static java.util.Arrays.stream;
 
-public class MicroconfigInitializerImpl implements MicroconfigInitializer {
+class MicroconfigInitializerImpl implements MicroconfigInitializer {
     @Override
     public MicroconfigFactory getMicroconfigFactory(File projectDir) {
         return MicroconfigFactory.init(
@@ -46,26 +46,24 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     }
 
     private File findConfigRootDir(File projectDir) {
-        if (containsMicroconfigDirs(projectDir.listFiles())) return projectDir;
+        Predicate<File> containsMicroconfigDirs = dir -> {
+            if (dir.getName().contains(".")) return false;
+
+            File[] files = dir.listFiles();
+            return files != null && stream(files)
+                    .filter(f -> f.getName().equals(ENV_DIR) || f.getName().equals(COMPONENTS_DIR))
+                    .count() == 2;
+        };
+
+        if (containsMicroconfigDirs.test(projectDir)) return projectDir;
 
         try (Stream<Path> walk = walk(projectDir.toPath(), 3)) {
             return walk.map(Path::toFile)
-                    .filter(IsDirectory())
-                    .filter(f -> containsMicroconfigDirs(f.listFiles()))
+                    .filter(containsMicroconfigDirs)
                     .findAny()
                     .orElseThrow(() -> new PluginException("Can't find 'components' and 'envs' folders on the same level"));
         } catch (IOException e) {
             throw new PluginException("IO exception " + e.getMessage());
         }
-    }
-
-    private boolean containsMicroconfigDirs(File[] files) {
-        return files != null && stream(files)
-                .filter(f -> f.getName().equals(ENV_DIR) || f.getName().equals(COMPONENTS_DIR))
-                .count() == 2;
-    }
-
-    private Predicate<File> IsDirectory() {
-        return f -> !f.getName().contains(".");
     }
 }

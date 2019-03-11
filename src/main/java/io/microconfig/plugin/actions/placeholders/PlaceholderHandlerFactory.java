@@ -3,8 +3,6 @@ package io.microconfig.plugin.actions.placeholders;
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.ActionHandlerFactory;
 import io.microconfig.plugin.actions.common.PluginContext;
-import io.microconfig.plugin.microconfig.MicroconfigApi;
-import io.microconfig.plugin.microconfig.MicroconfigApiImpl;
 
 import java.util.Optional;
 
@@ -13,8 +11,6 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 class PlaceholderHandlerFactory implements ActionHandlerFactory {
-    private final MicroconfigApi api = new MicroconfigApiImpl();
-
     @Override
     public Optional<ActionHandler> getHandler(PluginContext context) {
         String currentLine = context.currentLine();
@@ -22,9 +18,9 @@ class PlaceholderHandlerFactory implements ActionHandlerFactory {
 
         PlaceholderBorders borders = PlaceholderBorders.borders(currentLine, context.currentColumn());
         if (borders.isInsidePlaceholder()) {
-            return of(new ResolveOnePlaceholder(api, context, borders.value()));
+            return of(new ResolveOnePlaceholder(borders.value()));
         }
 
-        return of(new ResolvePropertyLine(api, context));
+        return of(new ResolvePropertyLine());
     }
 }

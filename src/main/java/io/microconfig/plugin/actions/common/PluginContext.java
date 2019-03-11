@@ -45,7 +45,9 @@ public class PluginContext {
         int lineNum = caret.getLogicalPosition().line;
         int start = doc.getLineStartOffset(lineNum);
         int end = doc.getLineEndOffset(lineNum);
-        return doc.getCharsSequence().subSequence(start, end).toString();
+        return doc.getCharsSequence()
+                .subSequence(start, end)
+                .toString();
     }
 
     public int currentColumn() {

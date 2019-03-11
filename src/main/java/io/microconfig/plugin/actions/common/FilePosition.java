@@ -5,6 +5,7 @@ import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.psi.PsiFile;
+import io.microconfig.configs.PropertySource;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
@@ -16,6 +17,10 @@ import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
 public class FilePosition {
     private final File file;
     private final int lineNumber;
+
+    public FilePosition(PropertySource source) {
+        this(new File(source.getSourceOfProperty()), source.getLine());
+    }
 
     public void moveToPosition(Project project) {
         openFile(project);
