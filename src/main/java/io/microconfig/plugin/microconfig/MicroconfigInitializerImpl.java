@@ -8,6 +8,7 @@ import io.microconfig.plugin.actions.common.PluginException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -43,23 +44,26 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     }
 
     private File findConfigRootDir(File projectDir) {
-        if (projectDir.isDirectory() && containsMicroconfigDirs(projectDir.listFiles())) return projectDir;
+        if (containsMicroconfigDirs(projectDir.listFiles())) return projectDir;
 
-        try (Stream<Path> walk = walk(projectDir.toPath())) {
+        try (Stream<Path> walk = walk(projectDir.toPath(), 3)) {
             return walk.map(Path::toFile)
-                    .filter(File::isDirectory)
+                    .filter(IsDirectory())
                     .filter(f -> containsMicroconfigDirs(f.listFiles()))
                     .findAny()
-                    .orElseThrow(() -> new PluginException("Can't find 'components' and 'envs' folders on same level"));
+                    .orElseThrow(() -> new PluginException("Can't find 'components' and 'envs' folders on the same level"));
         } catch (IOException e) {
             throw new PluginException("IO exception " + e.getMessage());
         }
     }
 
     private boolean containsMicroconfigDirs(File[] files) {
-        return stream(files)
-                .filter(File::isDirectory)
+        return files != null && stream(files)
                 .filter(f -> f.getName().equals("components") || f.getName().equals("envs"))
                 .count() == 2;
+    }
+
+    private Predicate<File> IsDirectory() {
+        return f -> !f.getName().contains(".");
     }
 }
