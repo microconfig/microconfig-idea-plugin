@@ -114,11 +114,6 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .collect(toMap(identity(), resolve));
     }
 
-    @Override
-    public boolean navigatable(String placeholder) {
-        return true;
-    }
-
     private String detectEnv(File currentFile, MicroconfigFactory factory) {
         String name = currentFile.getName();
         int start = name.indexOf('.');

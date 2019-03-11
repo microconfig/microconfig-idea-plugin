@@ -12,7 +12,7 @@ public class JumpToPlaceholder implements ActionHandler {
     @Override
     public void onAction(PluginContext context, MicroconfigApi api) {
         String placeholder = PlaceholderBorders.borders(context.currentLine(), context.currentColumn()).value();
-        if (placeholder == null || !api.navigatable(placeholder)) return; //todo maybe print a warning
+        if (placeholder == null) return;
 
         FilePosition position = api.findPlaceholderSource(placeholder, context.currentFile(), context.projectDir());
         position.moveToPosition(context.getProject());

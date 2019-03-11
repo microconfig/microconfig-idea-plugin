@@ -19,9 +19,4 @@ public interface MicroconfigApi {
      * @return full line with resolved placeholder values for each env: env -> line
      */
     Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir);
-
-    /**
-     * @return true if placeholder is navigatable, false otherwise
-     */
-    boolean navigatable(String placeholder);
 }
