@@ -12,7 +12,7 @@ Import as gradle project<br>
 
 ### Beta Installation
 
-Download plugin zip file from `Beta channel` at `https://plugins.jetbrains.com/plugin/12064-microconfig-io`.
+Download plugin zip file from `Beta channel` at https://plugins.jetbrains.com/plugin/12064-microconfig-io.
 
 Download the plugin zip file and import it via <br> `Preferences -> Plugins -> Install plugin from disk...`
 
