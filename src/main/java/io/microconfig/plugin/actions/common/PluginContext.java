@@ -54,15 +54,15 @@ public class PluginContext {
         return caret.getLogicalPosition().column;
     }
 
-    public void showInfoHing(String message) {
+    public void showInfoHint(String message) {
         HintManager.getInstance().showInformationHint(editor, message);
     }
 
-    public void showErrorHing(Exception e) {
-        showErrorHing(e.getMessage());
+    public void showErrorHint(Exception e) {
+        showErrorHint(e.getMessage());
     }
 
-    public void showErrorHing(String message) {
+    public void showErrorHint(String message) {
         HintManager.getInstance().showErrorHint(editor, message);
     }
 }

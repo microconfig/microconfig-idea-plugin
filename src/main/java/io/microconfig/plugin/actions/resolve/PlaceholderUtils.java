@@ -13,7 +13,7 @@ class PlaceholderUtils {
 
     public static void printValues(String line, Map<String, String> values, PluginContext context) {
         if (values.isEmpty()) {
-            context.showErrorHing("Can't resolve line: " + line);
+            context.showErrorHint("Can't resolve line: " + line);
             return;
         }
 
@@ -27,7 +27,7 @@ class PlaceholderUtils {
                 .map(e -> envValue(e.getKey(), e.getValue()))
                 .collect(joining(LINES_SEPARATOR));
 
-        context.showInfoHing(message);
+        context.showInfoHint(message);
     }
 
     private static String defaultEnvValue(Map<String, String> values) {

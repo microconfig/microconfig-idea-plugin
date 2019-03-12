@@ -17,7 +17,7 @@ public abstract class MicroconfigAction extends AnAction {
             if (actionHandler == null) return;
             actionHandler.onAction(context, new MicroconfigApiImpl());
         } catch (RuntimeException e) {
-            context.showErrorHing(e);
+            context.showErrorHint(e);
         }
     }
 
