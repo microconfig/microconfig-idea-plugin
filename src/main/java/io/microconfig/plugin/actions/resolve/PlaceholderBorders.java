@@ -44,7 +44,7 @@ public class PlaceholderBorders {
     }
 
     public boolean isInsidePlaceholder() {
-        return start >= 0;
+        return start >= 0 && start < end;
     }
 
     public String value() {
