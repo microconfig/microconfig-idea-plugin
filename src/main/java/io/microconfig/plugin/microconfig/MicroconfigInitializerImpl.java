@@ -44,8 +44,6 @@ class MicroconfigInitializerImpl implements MicroconfigInitializer {
 
     private File findConfigRootDir(File projectDir) {
         Predicate<File> containsMicroconfigDirs = dir -> {
-            if (dir.getName().contains(".")) return false;
-
             File[] files = dir.listFiles();
             return files != null && stream(files)
                     .filter(f -> f.getName().equals(ENV_DIR) || f.getName().equals(COMPONENTS_DIR))
