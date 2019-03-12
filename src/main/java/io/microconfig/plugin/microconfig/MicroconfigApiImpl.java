@@ -86,7 +86,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         PropertyResolver propertyResolver = ((PropertyResolverHolder) factory.newConfigProvider(configType)).getResolver();
 
         Property property = parse(currentLine, "", fileSource(currentFile, 0, false));
-        UnaryOperator<String> resolve = env -> {
+        UnaryOperator<String> resolveProperty = env -> {
             try {
                 Property p = property.withNewEnv(env);
                 return propertyResolver.resolve(p, new EnvComponent(p.getSource().getComponent(), p.getEnvContext()));
@@ -96,7 +96,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         return envs(currentLine, currentFile, factory)
-                .collect(toMap(identity(), resolve, (k1, k2) -> k1, TreeMap::new));
+                .collect(toMap(identity(), resolveProperty, (k1, k2) -> k1, TreeMap::new));
     }
 
     private Stream<String> envs(String currentLine, File currentFile, MicroconfigFactory factory) {

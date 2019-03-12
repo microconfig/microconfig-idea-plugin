@@ -15,7 +15,6 @@ public class ResolvePlaceholder implements ActionHandler {
 
     @Override
     public void onAction(PluginContext context, MicroconfigApi api) {
-        //todo error hint if special placeholder
         Map<String, String> values = api.resolvePlaceholderForEachEnv(value, context.currentFile(), context.projectDir());
         showHint(value, values, context);
     }
