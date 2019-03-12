@@ -55,7 +55,7 @@ class Hints {
         valueToEnv.forEach((v, envs) -> hint.append("Value: ")
                 .append(v)
                 .append(LINES_SEPARATOR)
-                .append("For: ")
+                .append("Envs: ")
                 .append(envs)
                 .append(LINES_SEPARATOR)
                 .append(LINES_SEPARATOR));
