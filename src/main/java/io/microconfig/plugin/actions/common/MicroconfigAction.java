@@ -7,18 +7,19 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public abstract class MicroconfigAction extends AnAction {
-    private final ActionHandlerFactory factory;
-
     @Override
     public void actionPerformed(AnActionEvent event) {
         PluginContext context = new PluginContext(event);
         if (context.notFull()) return;
 
         try {
-            factory.getHandler(context)
-                    .ifPresent(actionHandler -> actionHandler.onAction(context, new MicroconfigApiImpl()));
+            ActionHandler actionHandler = chooseHandler(context);
+            if (actionHandler == null) return;
+            actionHandler.onAction(context, new MicroconfigApiImpl());
         } catch (RuntimeException e) {
             context.showErrorHing(e);
         }
     }
+
+    protected abstract ActionHandler chooseHandler(PluginContext context);
 }
