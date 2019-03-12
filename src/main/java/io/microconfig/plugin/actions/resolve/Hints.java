@@ -2,15 +2,12 @@ package io.microconfig.plugin.actions.resolve;
 
 import io.microconfig.plugin.actions.common.PluginContext;
 
-import java.io.File;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
 import static io.microconfig.utils.FileUtils.LINES_SEPARATOR;
-import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.*;
 
 class Hints {
@@ -55,7 +52,7 @@ class Hints {
     }
 
     private static void addValues(Map<String, List<String>> valueToEnv, StringBuilder hint) {
-        valueToEnv.forEach((v, envs)-> hint.append("Value: ")
+        valueToEnv.forEach((v, envs) -> hint.append("Value: ")
                 .append(v)
                 .append(LINES_SEPARATOR)
                 .append("For: ")
