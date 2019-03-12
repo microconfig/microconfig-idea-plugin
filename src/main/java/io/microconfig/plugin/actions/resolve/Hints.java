@@ -8,10 +8,11 @@ import static io.microconfig.utils.FileUtils.LINES_SEPARATOR;
 import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.joining;
 
-class PlaceholderUtils {
+class Hints {
     private static final String DEFAULT_ENV_KEY = "";
+    private static final String DEFAULT_ENV_ALIAS = "default";
 
-    public static void printValues(String line, Map<String, String> values, PluginContext context) {
+    public static void showHint(String line, Map<String, String> values, PluginContext context) {
         if (values.isEmpty()) {
             context.showErrorHint("Can't resolve line: " + line);
             return;
@@ -31,7 +32,7 @@ class PlaceholderUtils {
     }
 
     private static String defaultEnvValue(Map<String, String> values) {
-        return values.containsKey(DEFAULT_ENV_KEY) ? envValue("default", values.remove(DEFAULT_ENV_KEY) + LINES_SEPARATOR) : "";
+        return values.containsKey(DEFAULT_ENV_KEY) ? envValue(DEFAULT_ENV_ALIAS, values.remove(DEFAULT_ENV_KEY) + LINES_SEPARATOR) : "";
     }
 
     private static String envValue(String env, String value) {

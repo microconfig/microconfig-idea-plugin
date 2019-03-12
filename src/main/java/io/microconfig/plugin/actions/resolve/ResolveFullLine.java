@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.Map;
 
 import static io.microconfig.configs.sources.FileSource.fileSource;
-import static io.microconfig.plugin.actions.resolve.PlaceholderUtils.printValues;
+import static io.microconfig.plugin.actions.resolve.Hints.showHint;
 
 @RequiredArgsConstructor
 public class ResolveFullLine implements ActionHandler {
@@ -19,6 +19,6 @@ public class ResolveFullLine implements ActionHandler {
         Map<String, String> values = api.resolveFullLineForEachEnv(currentLine, context.currentFile(), context.projectDir());
 
         String key = Property.parse(currentLine, "", fileSource(context.currentFile(), 0, false)).getKey();
-        printValues(key, values, context);
+        showHint(key, values, context);
     }
 }

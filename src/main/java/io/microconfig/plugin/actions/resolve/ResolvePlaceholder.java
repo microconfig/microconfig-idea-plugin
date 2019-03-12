@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
-import static io.microconfig.plugin.actions.resolve.PlaceholderUtils.printValues;
+import static io.microconfig.plugin.actions.resolve.Hints.showHint;
 
 @RequiredArgsConstructor
 public class ResolvePlaceholder implements ActionHandler {
@@ -17,6 +17,6 @@ public class ResolvePlaceholder implements ActionHandler {
     public void onAction(PluginContext context, MicroconfigApi api) {
         //todo error hint if special placeholder
         Map<String, String> values = api.resolvePlaceholderForEachEnv(value, context.currentFile(), context.projectDir());
-        printValues(value, values, context);
+        showHint(value, values, context);
     }
 }
