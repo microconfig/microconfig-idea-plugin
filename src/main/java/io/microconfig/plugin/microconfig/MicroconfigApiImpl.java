@@ -58,7 +58,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
         Supplier<Placeholder> parsePlaceholder = () -> {
-            Placeholder p = Placeholder.parse(placeholderValue, detectEnv(currentFile, factory));
+            Placeholder p = Placeholder.parse(placeholderValue, detectEnvOr(currentFile, anyEnv(factory)));
             return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
         };
 
@@ -70,7 +70,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
             return positionFromFileSource((FileSource) resolved.get().getSource());
         }
 
-        return new FilePosition(getSourceFile(projectDir, placeholder.getComponent(), placeholder.getEnvironment(), currentFile), 0);
+        return new FilePosition(getSourceFile(projectDir, placeholder.getComponent(), detectEnvOr(currentFile, () -> ""), currentFile), 0);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .orElseThrow(() -> new PluginException("Component not found: " + component));
     }
 
-    private String detectEnv(File currentFile, MicroconfigFactory factory) {
+    private String detectEnvOr(File currentFile, Supplier<String> defaultEnv) {
         String name = currentFile.getName();
         int start = name.indexOf('.');
         int end = name.indexOf('.', start + 1);
@@ -127,10 +127,16 @@ public class MicroconfigApiImpl implements MicroconfigApi {
             return name.substring(start + 1, end);
         }
 
-        return factory.getEnvironmentProvider()
-                .getEnvironmentNames()
-                .stream()
-                .findFirst()
-                .orElse(""); //otherwise will fail for env-specific props
+        return defaultEnv.get();
+    }
+
+    private Supplier<String> anyEnv(MicroconfigFactory factory) {
+        return () -> {
+            return factory.getEnvironmentProvider()
+                    .getEnvironmentNames()
+                    .stream()
+                    .findFirst()
+                    .orElse(""); //otherwise will fail for env-specific prop
+        };
     }
 }
