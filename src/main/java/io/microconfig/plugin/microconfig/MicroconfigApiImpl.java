@@ -8,6 +8,8 @@ import io.microconfig.configs.resolver.EnvComponent;
 import io.microconfig.configs.resolver.PropertyResolver;
 import io.microconfig.configs.resolver.PropertyResolverHolder;
 import io.microconfig.configs.resolver.placeholder.Placeholder;
+import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
+import io.microconfig.configs.sources.FileSource;
 import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
 
@@ -15,14 +17,14 @@ import java.io.File;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 
 import static io.microconfig.configs.Property.parse;
-import static io.microconfig.configs.PropertySource.fileSource;
-import static io.microconfig.environments.Component.byType;
-import static io.microconfig.plugin.actions.common.FilePosition.positionFromProperty;
+import static io.microconfig.configs.sources.FileSource.fileSource;
+import static io.microconfig.plugin.actions.common.FilePosition.positionFromFileSource;
 import static java.lang.Math.max;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
@@ -48,22 +50,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         Include include = parseInclude.get();
-
-        ConfigType configType = initializer.detectConfigType(currentFile);
-        Predicate<File> hasConfigTypeExtension = file -> configType.getConfigExtensions()
-                .stream()
-                .anyMatch(ext -> file.getName().endsWith(ext));
-
-        Supplier<Comparator<File>> priorityByEnv = () -> {
-            Comparator<File> comparator = comparing(f1 -> f1.getName().contains(include.getEnv() + ".") ? 0 : 1);
-            return comparator.thenComparing(f -> f.getName().length());
-        };
-
-        return initializer.getMicroconfigFactory(projectDir)
-                .getComponentTree()
-                .getConfigFiles(include.getComponent(), hasConfigTypeExtension)
-                .min(priorityByEnv.get())
-                .orElseThrow(() -> new PluginException("Component not found: " + include.getComponent()));
+        return getSourceFile(projectDir, include.getComponent(), include.getEnv(), currentFile);
     }
 
     @Override
@@ -75,28 +62,15 @@ public class MicroconfigApiImpl implements MicroconfigApi {
             return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
         };
 
-        Placeholder pl = parsePlaceholder.get();
-        Map<String, Property> sourceProperties = factory
-                .newConfigProvider(initializer.detectConfigType(currentFile))
-                .getProperties(byType(pl.getComponent()), pl.getEnvironment());
+        Placeholder placeholder = parsePlaceholder.get();
+        PlaceholderResolver resolver = factory.newPlaceholderResolver(factory.newFileBasedProvider(initializer.detectConfigType(currentFile)));
+        Optional<Property> resolved = resolver.resolveToProperty(placeholder);
 
-        Property resolved = sourceProperties.get(pl.getValue());
-        if (resolved != null) {
-            return positionFromProperty(resolved);
+        if (resolved.isPresent() && resolved.get().getSource() instanceof FileSource) {
+            return positionFromFileSource((FileSource) resolved.get().getSource());
         }
 
-        return toFirstLineOfComponent(pl, sourceProperties);
-    }
-
-    private FilePosition toFirstLineOfComponent(Placeholder pl, Map<String, Property> sourceProperties) {
-        return sourceProperties
-                .values()
-                .stream()
-                .filter(p -> p.getSource().getComponent().getName().equalsIgnoreCase(pl.getComponent()))
-                .sorted(comparing(p -> p.getSource().getSourceOfProperty().length()))
-                .map(p -> new FilePosition(new File(p.getSource().getSourceOfProperty()), 0))
-                .findFirst()
-                .orElseThrow(() -> new PluginException("Can't resolve " + pl.getValue()));
+        return new FilePosition(getSourceFile(projectDir, placeholder.getComponent(), placeholder.getEnvironment(), currentFile), 0);
     }
 
     @Override
@@ -107,11 +81,10 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
-        PropertyResolver propertyResolver = ((PropertyResolverHolder) factory
-                .newConfigProvider(initializer.detectConfigType(currentFile)))
-                .getResolver();
+        ConfigType configType = initializer.detectConfigType(currentFile);
+        PropertyResolver propertyResolver = ((PropertyResolverHolder) factory.newConfigProvider(configType)).getResolver();
 
-        Property property = parse(currentLine, "", fileSource(currentFile, -1, false));
+        Property property = parse(currentLine, "", fileSource(currentFile, 0, false));
         UnaryOperator<String> resolve = env -> {
             try {
                 Property p = property.withNewEnv(env);
@@ -125,6 +98,25 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .getEnvironmentNames()
                 .stream()
                 .collect(toMap(identity(), resolve));
+    }
+
+    private File getSourceFile(File projectDir, String component, String env, File currentFile) {
+        ConfigType configType = initializer.detectConfigType(currentFile);
+        Predicate<File> hasConfigTypeExtension = file -> configType.getConfigExtensions()
+                .stream()
+                .anyMatch(ext -> file.getName().endsWith(ext));
+
+        Supplier<Comparator<File>> priorityByEnv = () -> {
+            Comparator<File> comparator = comparing(f1 -> f1.getName().contains(env + ".") ? 0 : 1);
+            return comparator.thenComparing(f -> f.getName().length());
+        };
+
+
+        return initializer.getMicroconfigFactory(projectDir)
+                .getComponentTree()
+                .getConfigFiles(component, hasConfigTypeExtension)
+                .min(priorityByEnv.get())
+                .orElseThrow(() -> new PluginException("Component not found: " + component));
     }
 
     private String detectEnv(File currentFile, MicroconfigFactory factory) {

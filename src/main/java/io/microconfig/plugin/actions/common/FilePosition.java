@@ -3,8 +3,7 @@ package io.microconfig.plugin.actions.common;
 import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import io.microconfig.configs.Property;
-import io.microconfig.configs.PropertySource;
+import io.microconfig.configs.sources.FileSource;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
@@ -17,11 +16,10 @@ public class FilePosition {
     private final File file;
     private final int lineNumber;
 
-    public static FilePosition positionFromProperty(Property property) {
-        PropertySource source = property.getSource();
+    public static FilePosition positionFromFileSource(FileSource source) {
         return new FilePosition(
-                new File(source.getSourceOfProperty()),
-                source.getLine()
+                source.getSource(),
+                source.getLineNumber()
         );
     }
 

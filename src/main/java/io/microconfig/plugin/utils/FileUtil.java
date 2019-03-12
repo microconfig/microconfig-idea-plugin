@@ -36,7 +36,7 @@ public class FileUtil {
         while (!queue.isEmpty()) {
             File dir = queue.removeFirst();
             if (predicate.test(dir)) return of(dir);
-            File[] child = dir.listFiles(File::isDirectory);
+            File[] child = dir.listFiles(f -> !f.getName().contains("."));
             if (child == null) continue;
             addAll(queue, child);
         }

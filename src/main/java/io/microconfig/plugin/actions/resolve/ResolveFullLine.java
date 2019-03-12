@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
-import static io.microconfig.configs.PropertySource.fileSource;
+import static io.microconfig.configs.sources.FileSource.fileSource;
 import static io.microconfig.plugin.actions.resolve.PlaceholderUtils.printValues;
 
 @RequiredArgsConstructor
