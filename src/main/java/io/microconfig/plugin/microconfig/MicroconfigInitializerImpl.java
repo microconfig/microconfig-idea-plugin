@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 
 import static io.microconfig.commands.buildconfig.factory.MicroconfigFactory.ENV_DIR;
 import static io.microconfig.configs.io.tree.ComponentTreeCache.COMPONENTS_DIR;
-import static io.microconfig.plugin.utils.FileUtil.find;
+import static io.microconfig.plugin.utils.FileUtil.findDir;
 import static java.util.Arrays.stream;
 
 class MicroconfigInitializerImpl implements MicroconfigInitializer {
@@ -52,7 +52,7 @@ class MicroconfigInitializerImpl implements MicroconfigInitializer {
                     .count() == 2;
         };
 
-        return find(projectDir, containsMicroconfigDirs)
+        return findDir(projectDir, containsMicroconfigDirs)
                 .orElseThrow(() -> new PluginException("Can't find 'components' and 'envs' folders on the same level"));
     }
 }

@@ -29,7 +29,7 @@ public class FileUtil {
         return PsiManager.getInstance(project).findFile(virtualFile);
     }
 
-    public static Optional<File> find(File root, Predicate<File> predicate) {
+    public static Optional<File> findDir(File root, Predicate<File> predicate) {
         Deque<File> queue = new ArrayDeque<>();
         queue.add(root);
 
