@@ -43,8 +43,3 @@ test {
     useJUnitPlatform()
     exclude '**/*IT.class'
 }
-
-//publishPlugin {
-//    username intellijPublishUsername
-//    password intellijPublishPassword
-//}

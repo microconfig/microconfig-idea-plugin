@@ -12,7 +12,7 @@
     ]]>
     </description>
 
-    <depends>com.intellij.modules.lang</depends>
+    <depends>com.intellij.modules.java</depends>
 
     <actions>
         <group id="Microconfig.PluginMenu" text="Microconfig" description="Microconfig menu" popup="true">
