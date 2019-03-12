@@ -29,6 +29,7 @@ import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
 
 public class MicroconfigApiImpl implements MicroconfigApi {
@@ -112,9 +113,11 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                     .limit(parts.length - 2);
         }
 
-        return factory.getEnvironmentProvider()
-                .getEnvironmentNames()
-                .stream();
+        return concat(of(""),
+                factory.getEnvironmentProvider()
+                        .getEnvironmentNames()
+                        .stream()
+        );
     }
 
     private File getSourceFile(File projectDir, String component, String env, File currentFile) {
