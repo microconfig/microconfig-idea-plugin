@@ -14,21 +14,22 @@ import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
 
 import java.io.File;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+import java.util.stream.Stream;
 
 import static io.microconfig.configs.Property.parse;
+import static io.microconfig.configs.resolver.placeholder.Placeholder.placeholderMatcher;
 import static io.microconfig.configs.sources.FileSource.fileSource;
 import static io.microconfig.plugin.actions.common.FilePosition.positionFromFileSource;
 import static java.lang.Math.max;
+import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Stream.of;
 
 public class MicroconfigApiImpl implements MicroconfigApi {
     private final MicroconfigInitializer initializer = new MicroconfigInitializerImpl();
@@ -94,10 +95,26 @@ public class MicroconfigApiImpl implements MicroconfigApi {
             }
         };
 
+        return envs(currentLine, currentFile, factory)
+                .collect(toMap(identity(), resolve, (k1, k2) -> k1, TreeMap::new));
+    }
+
+    private Stream<String> envs(String currentLine, File currentFile, MicroconfigFactory factory) {
+        if (!placeholderMatcher(currentLine).find()) return of("");
+
+        if (currentFile.getName().indexOf('.') != currentFile.getName().lastIndexOf('.')) {
+            String[] parts = currentFile
+                    .getName()
+                    .split("\\.");
+
+            return stream(parts)
+                    .skip(1)
+                    .limit(parts.length - 2);
+        }
+
         return factory.getEnvironmentProvider()
                 .getEnvironmentNames()
-                .stream()
-                .collect(toMap(identity(), resolve));
+                .stream();
     }
 
     private File getSourceFile(File projectDir, String component, String env, File currentFile) {
