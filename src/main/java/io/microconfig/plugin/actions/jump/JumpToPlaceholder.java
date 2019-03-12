@@ -1,20 +1,20 @@
 package io.microconfig.plugin.actions.jump;
 
 import io.microconfig.plugin.actions.common.ActionHandler;
-import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginContext;
-import io.microconfig.plugin.actions.resolve.PlaceholderBorders;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
+
+import static io.microconfig.plugin.actions.resolve.PlaceholderBorders.borders;
 
 @RequiredArgsConstructor
 public class JumpToPlaceholder implements ActionHandler {
     @Override
     public void onAction(PluginContext context, MicroconfigApi api) {
-        String placeholder = PlaceholderBorders.borders(context.currentLine(), context.currentColumn()).value();
+        String placeholder = borders(context.currentLine(), context.currentColumn()).value();
         if (placeholder == null) return;
 
-        FilePosition position = api.findPlaceholderSource(placeholder, context.currentFile(), context.projectDir());
-        position.moveToPosition(context.getProject());
+        api.findPlaceholderSource(placeholder, context.currentFile(), context.projectDir())
+                .moveToPosition(context.getProject());
     }
 }
