@@ -68,13 +68,13 @@ public class PluginContext {
                 || c == '-';
 
         IntSupplier startIndex = () -> {
-            for (int i = column; i >= 0; i--) {
+            for (int i = column - 1; i >= 0; i--) {
                 if (!isAllowedNameSymbol.test(line.charAt(i))) return i;
             }
             return -1;
         };
         IntSupplier endIndex = () -> {
-            for (int i = column; i < line.length(); i++) {
+            for (int i = column - 1; i < line.length(); i++) {
                 if (!isAllowedNameSymbol.test(line.charAt(i))) return i;
             }
             return line.length();
