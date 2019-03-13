@@ -85,6 +85,11 @@ public class PluginContext {
         return start < end ? line.substring(start + 1, end) : "";
     }
 
+    public void navigateTo(File file) {
+        toPsiFile(project, toVirtualFile(file))
+                .navigate(true);
+    }
+
     public void showInfoHint(String message) {
         HintManager.getInstance().showInformationHint(editor, message);
     }
@@ -95,10 +100,5 @@ public class PluginContext {
 
     public void showErrorHint(String message) {
         HintManager.getInstance().showErrorHint(editor, message);
-    }
-
-    public void navigateTo(File file) {
-        toPsiFile(project, toVirtualFile(file))
-                .navigate(true);
     }
 }
