@@ -11,9 +11,9 @@ Import as gradle project<br>
 `run gradlew :intellij:runIde`
 
 ### Installation
-Install plugin by name `Microconfig.io` from Idea.
-Or download plugin zip file from at https://plugins.jetbrains.com/plugin/12064-microconfig-io.
-Download the plugin zip file and import it via <br> `Preferences -> Plugins -> Install plugin from disk...`
+Install plugin by name `Microconfig.io` from Idea `Settings -> Plugins -> Marketplace'
+
+Or download plugin zip file from https://plugins.jetbrains.com/plugin/12064-microconfig-io and import it via <br> `Settings -> Plugins -> Install plugin from disk...`
 
 ### Plugin usage
 Plugin adds it's submenu in `Main Menu -> Tools -> Microconfig`. Also same menu appears in `RightClick` menu.
