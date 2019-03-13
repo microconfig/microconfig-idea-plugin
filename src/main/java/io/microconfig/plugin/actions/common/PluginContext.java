@@ -11,9 +11,13 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
+import java.util.function.IntPredicate;
+import java.util.function.IntSupplier;
 
 import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
 import static io.microconfig.plugin.utils.FileUtil.*;
+import static java.lang.Character.isAlphabetic;
+import static java.lang.Character.isDigit;
 
 @RequiredArgsConstructor
 public class PluginContext {
@@ -52,6 +56,33 @@ public class PluginContext {
 
     public int currentColumn() {
         return caret.getLogicalPosition().column;
+    }
+
+    public String currentToken() {
+        String line = currentLine();
+        int column = currentColumn();
+
+        IntPredicate isAllowedNameSymbol = c -> isAlphabetic(c)
+                || isDigit(c)
+                || c == '_'
+                || c == '-';
+
+        IntSupplier startIndex = () -> {
+            for (int i = column; i >= 0; i--) {
+                if (!isAllowedNameSymbol.test(line.charAt(i))) return i;
+            }
+            return -1;
+        };
+        IntSupplier endIndex = () -> {
+            for (int i = column; i < line.length(); i++) {
+                if (!isAllowedNameSymbol.test(line.charAt(i))) return i;
+            }
+            return line.length();
+        };
+
+        int start = startIndex.getAsInt();
+        int end = endIndex.getAsInt();
+        return start < end ? line.substring(start + 1, end) : "";
     }
 
     public void showInfoHint(String message) {

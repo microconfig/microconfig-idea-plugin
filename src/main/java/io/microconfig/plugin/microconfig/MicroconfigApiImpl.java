@@ -12,7 +12,6 @@ import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
 import io.microconfig.configs.sources.FileSource;
 import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
-import lombok.Getter;
 
 import java.io.File;
 import java.util.*;
@@ -82,6 +81,11 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     @Override
+    public File findAnyComponentFile(String component, String env, File projectDir) {
+        return findFile(component, env, f -> true, projectDir);
+    }
+
+    @Override
     public Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
         ConfigType configType = initializer.detectConfigType(currentFile);
@@ -132,15 +136,18 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .stream()
                 .anyMatch(ext -> file.getName().endsWith(ext));
 
+        return findFile(component, env, hasConfigTypeExtension, projectDir);
+    }
+
+    private File findFile(String component, String env, Predicate<File> predicate, File projectDir) {
         Supplier<Comparator<File>> priorityByEnv = () -> {
             Comparator<File> comparator = comparing(f1 -> f1.getName().contains(env + ".") ? 0 : 1);
             return comparator.thenComparing(f -> f.getName().length());
         };
 
-
         return initializer.getMicroconfigFactory(projectDir)
                 .getComponentTree()
-                .getConfigFiles(component, hasConfigTypeExtension)
+                .getConfigFiles(component, predicate)
                 .min(priorityByEnv.get())
                 .orElseThrow(() -> new PluginException("Component not found: " + component));
     }

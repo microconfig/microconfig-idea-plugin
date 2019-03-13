@@ -8,6 +8,8 @@ import java.util.Map;
 public interface MicroconfigApi {
     File findIncludeSource(String includeLine, int currentColumn, File currentFile, File projectDir);
 
+    File findAnyComponentFile(String component, String env, File projectDir);
+
     FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir);
 
     /**

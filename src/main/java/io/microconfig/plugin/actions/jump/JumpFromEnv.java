@@ -6,16 +6,21 @@ import io.microconfig.plugin.actions.common.PluginContext;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
 
+import java.io.File;
+
 @RequiredArgsConstructor
 public class JumpFromEnv implements ActionHandler {
     @Override
     public void onAction(PluginContext context, MicroconfigApi api) {
+        String env = envName(context);
+
         api.getMicroconfigInitializer()
                 .getMicroconfigFactory(context.projectDir())
                 .getEnvironmentProvider()
-                .getByName(envName(context))
+                .getByName(env)
                 .getComponentByName(componentName(context))
-                .ifPresent(c-> navigateTo(c, context));
+                .map(c -> findAnyComponentFile(c, env, context, api))
+                .ifPresent(context::navigateTo);
     }
 
     private String envName(PluginContext context) {
@@ -24,10 +29,10 @@ public class JumpFromEnv implements ActionHandler {
     }
 
     private String componentName(PluginContext context) {
-        return null;
+        return context.currentToken();
     }
 
-    private void navigateTo(Component component, PluginContext context) {
-
+    private File findAnyComponentFile(Component c, String env, PluginContext context, MicroconfigApi api) {
+        return api.findAnyComponentFile(c.getType(), env, context.projectDir());
     }
 }
