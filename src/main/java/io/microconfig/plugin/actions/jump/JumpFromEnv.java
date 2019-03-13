@@ -13,8 +13,8 @@ import java.util.function.Predicate;
 public class JumpFromEnv implements ActionHandler {
     @Override
     public void onAction(PluginContext context, MicroconfigApi api) {
-        String componentName = componentName(context);
-        if (componentName.isEmpty()) return;
+        String component = context.currentToken();
+        if (component.isEmpty()) return;
 
         String env = envName(context);
         api.getMicroconfigInitializer()
@@ -23,14 +23,10 @@ public class JumpFromEnv implements ActionHandler {
                 .getByName(env)
                 .getAllComponents()
                 .stream()
-                .filter(nameOrTypeEquals(componentName))
+                .filter(nameOrTypeEquals(component))
                 .findFirst()
                 .map(c -> findAnyComponentFile(c, env, context, api))
                 .ifPresent(context::navigateTo);
-    }
-
-    private Predicate<Component> nameOrTypeEquals(String componentName) {
-        return c -> c.getType().equals(componentName) || c.getName().equals(componentName);
     }
 
     private String envName(PluginContext context) {
@@ -38,8 +34,8 @@ public class JumpFromEnv implements ActionHandler {
         return name.substring(0, name.lastIndexOf('.'));
     }
 
-    private String componentName(PluginContext context) {
-        return context.currentToken();
+    private Predicate<Component> nameOrTypeEquals(String componentName) {
+        return c -> c.getType().equals(componentName) || c.getName().equals(componentName);
     }
 
     private File findAnyComponentFile(Component c, String env, PluginContext context, MicroconfigApi api) {
