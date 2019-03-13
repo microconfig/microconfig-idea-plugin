@@ -23,14 +23,10 @@ public class FilePosition {
         );
     }
 
-    public void moveToPosition(Project project) {
-        openFile(project);
-        moveToLine(project);
-    }
+    public void moveToPosition(PluginContext context) {
+        context.navigateTo(file);
 
-    private void openFile(Project project) {
-        toPsiFile(project, toVirtualFile(file))
-                .navigate(true);
+        moveToLine(context.getProject());
     }
 
     private void moveToLine(Project project) {
