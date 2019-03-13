@@ -3,7 +3,7 @@ package io.microconfig.plugin.actions.resolve;
 import org.junit.Test;
 
 import static io.microconfig.plugin.actions.resolve.PlaceholderBorders.borders;
-import static org.fest.assertions.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class PlaceholderBordersTest {
     private static final String LINE = "server.port=${ports@eureka.port}";
