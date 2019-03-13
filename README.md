@@ -10,10 +10,9 @@ For dev mode:
 Import as gradle project<br>
 `run gradlew :intellij:runIde`
 
-### Beta Installation
-
-Download plugin zip file from `Beta channel` at https://plugins.jetbrains.com/plugin/12064-microconfig-io.
-
+### Installation
+Install plugin by name `Microconfig.io` from Idea.
+Or download plugin zip file from at https://plugins.jetbrains.com/plugin/12064-microconfig-io.
 Download the plugin zip file and import it via <br> `Preferences -> Plugins -> Install plugin from disk...`
 
 ### Plugin usage
