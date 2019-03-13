@@ -15,6 +15,6 @@ public class JumpToPlaceholder implements ActionHandler {
         if (placeholder == null) return;
 
         api.findPlaceholderSource(placeholder, context.currentFile(), context.projectDir())
-                .moveToPosition(context.getProject());
+                .moveToPosition(context);
     }
 }
