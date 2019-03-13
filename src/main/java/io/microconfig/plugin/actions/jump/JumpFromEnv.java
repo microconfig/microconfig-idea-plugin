@@ -7,20 +7,30 @@ import io.microconfig.plugin.microconfig.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
+import java.util.function.Predicate;
 
 @RequiredArgsConstructor
 public class JumpFromEnv implements ActionHandler {
     @Override
     public void onAction(PluginContext context, MicroconfigApi api) {
-        String env = envName(context);
+        String componentName = componentName(context);
+        if (componentName.isEmpty()) return;
 
+        String env = envName(context);
         api.getMicroconfigInitializer()
                 .getMicroconfigFactory(context.projectDir())
                 .getEnvironmentProvider()
                 .getByName(env)
-                .getComponentByName(componentName(context))
+                .getAllComponents()
+                .stream()
+                .filter(nameOrTypeEquals(componentName))
+                .findFirst()
                 .map(c -> findAnyComponentFile(c, env, context, api))
                 .ifPresent(context::navigateTo);
+    }
+
+    private Predicate<Component> nameOrTypeEquals(String componentName) {
+        return c -> c.getType().equals(componentName) || c.getName().equals(componentName);
     }
 
     private String envName(PluginContext context) {
