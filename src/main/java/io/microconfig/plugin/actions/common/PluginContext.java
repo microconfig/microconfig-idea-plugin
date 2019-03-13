@@ -45,13 +45,12 @@ public class PluginContext {
 
     public String currentLine() {
         Document doc = editor.getDocument();
-
         int lineNum = caret.getLogicalPosition().line;
-        int start = doc.getLineStartOffset(lineNum);
-        int end = doc.getLineEndOffset(lineNum);
         return doc.getCharsSequence()
-                .subSequence(start, end)
-                .toString();
+                .subSequence(
+                        doc.getLineStartOffset(lineNum),
+                        doc.getLineEndOffset(lineNum)
+                ).toString();
     }
 
     public int currentColumn() {
