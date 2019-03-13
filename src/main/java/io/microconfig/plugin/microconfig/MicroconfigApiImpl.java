@@ -52,7 +52,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         Include include = parseInclude.get();
-        return getSourceFile(projectDir, include.getComponent(), include.getEnv(), currentFile);
+        return findSourceFile(include.getComponent(), include.getEnv(), currentFile, projectDir);
     }
 
     @Override
@@ -72,17 +72,12 @@ public class MicroconfigApiImpl implements MicroconfigApi {
             return positionFromFileSource((FileSource) resolved.get().getSource());
         }
 
-        return new FilePosition(getSourceFile(projectDir, placeholder.getComponent(), detectEnvOr(currentFile, () -> ""), currentFile), 0);
+        return new FilePosition(findSourceFile(placeholder.getComponent(), detectEnvOr(currentFile, () -> ""), currentFile, projectDir), 0);
     }
 
     @Override
     public Map<String, String> resolvePlaceholderForEachEnv(String placeholderValue, File currentFile, File projectDir) {
         return resolveFullLineForEachEnv("key=" + placeholderValue, currentFile, projectDir);
-    }
-
-    @Override
-    public File findAnyComponentFile(String component, String env, File projectDir) {
-        return findFile(component, env, f -> true, projectDir);
     }
 
     @Override
@@ -103,6 +98,15 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
         return envs(currentLine, currentFile, factory)
                 .collect(toMap(identity(), resolveProperty, (k1, k2) -> k1, TreeMap::new));
+    }
+
+    @Override
+    public File findAnyComponentFile(String component, String env, File projectDir) {
+        try {
+            return findFile(component, env, f -> f.getName().endsWith(".properties") || f.getName().endsWith(".yaml"), projectDir);
+        } catch (RuntimeException e) {
+            return findFile(component, env, f -> true, projectDir);
+        }
     }
 
     @Override
@@ -130,7 +134,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         );
     }
 
-    private File getSourceFile(File projectDir, String component, String env, File currentFile) {
+    private File findSourceFile(String component, String env, File currentFile, File projectDir) {
         ConfigType configType = initializer.detectConfigType(currentFile);
         Predicate<File> hasConfigTypeExtension = file -> configType.getConfigExtensions()
                 .stream()
