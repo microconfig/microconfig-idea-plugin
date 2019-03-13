@@ -5,7 +5,7 @@ import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 
 import java.io.File;
 
-interface MicroconfigInitializer {
+public interface MicroconfigInitializer {
     MicroconfigFactory getMicroconfigFactory(File projectDir);
 
     ConfigType detectConfigType(File file);

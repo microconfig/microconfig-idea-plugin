@@ -12,6 +12,7 @@ import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
 import io.microconfig.configs.sources.FileSource;
 import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
+import lombok.Getter;
 
 import java.io.File;
 import java.util.*;
@@ -98,6 +99,11 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
         return envs(currentLine, currentFile, factory)
                 .collect(toMap(identity(), resolveProperty, (k1, k2) -> k1, TreeMap::new));
+    }
+
+    @Override
+    public MicroconfigInitializer getMicroconfigInitializer() {
+        return initializer;
     }
 
     private Stream<String> envs(String currentLine, File currentFile, MicroconfigFactory factory) {

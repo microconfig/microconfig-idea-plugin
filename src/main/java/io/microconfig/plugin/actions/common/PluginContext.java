@@ -13,7 +13,7 @@ import lombok.RequiredArgsConstructor;
 import java.io.File;
 
 import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
-import static io.microconfig.plugin.utils.FileUtil.toFile;
+import static io.microconfig.plugin.utils.FileUtil.*;
 
 @RequiredArgsConstructor
 public class PluginContext {
@@ -64,5 +64,10 @@ public class PluginContext {
 
     public void showErrorHint(String message) {
         HintManager.getInstance().showErrorHint(editor, message);
+    }
+
+    public void navigateTo(File file) {
+        toPsiFile(project, toVirtualFile(file))
+                .navigate(true);
     }
 }

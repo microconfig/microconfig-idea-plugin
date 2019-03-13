@@ -15,8 +15,6 @@ public class JumpToInclude implements ActionHandler {
     @Override
     public void onAction(PluginContext context, MicroconfigApi api) {
         File source = api.findIncludeSource(context.currentLine(), context.currentColumn(), context.currentFile(), context.projectDir());
-
-        toPsiFile(context.getProject(), toVirtualFile(source))
-                .navigate(true);
+        context.navigateTo(source);
     }
 }
