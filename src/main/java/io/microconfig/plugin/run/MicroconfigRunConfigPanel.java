@@ -4,14 +4,13 @@ import com.intellij.openapi.options.ConfigurationException;
 
 import javax.swing.*;
 
+import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.GroupLayout.Alignment.LEADING;
+
 class MicroconfigRunConfigPanel extends JPanel {
-
     private final JTextField envText;
-
     private final JTextField groupText;
-
     private final JTextField servicesText;
-
     private final JTextField destinationText;
 
     MicroconfigRunConfigPanel() {
@@ -35,7 +34,7 @@ class MicroconfigRunConfigPanel extends JPanel {
         destinationText = new JTextField(40);
 
         layout.setHorizontalGroup(
-                layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                layout.createParallelGroup(LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addComponent(eLabel)
                                 .addComponent(envText))
@@ -51,16 +50,16 @@ class MicroconfigRunConfigPanel extends JPanel {
         );
 
         layout.setVerticalGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(BASELINE)
                         .addComponent(eLabel)
                         .addComponent(envText))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(BASELINE)
                         .addComponent(gLabel)
                         .addComponent(groupText))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(BASELINE)
                         .addComponent(sLabel)
                         .addComponent(servicesText))
-                .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addGroup(layout.createParallelGroup(BASELINE)
                         .addComponent(fLabel)
                         .addComponent(destinationText))
         );

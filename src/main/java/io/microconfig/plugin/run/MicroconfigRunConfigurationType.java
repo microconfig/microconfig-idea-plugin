@@ -6,8 +6,7 @@ import com.intellij.util.ui.ColorIcon;
 import static com.intellij.ui.JBColor.BLUE;
 
 public class MicroconfigRunConfigurationType extends ConfigurationTypeBase {
-
-    public static final String ID = "12064";
+    private static final String ID = "12064";
     private final RunConfigurationFactory factory;
 
     public MicroconfigRunConfigurationType() {

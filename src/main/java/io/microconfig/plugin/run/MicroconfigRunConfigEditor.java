@@ -7,7 +7,6 @@ import org.jetbrains.annotations.NotNull;
 import javax.swing.*;
 
 public class MicroconfigRunConfigEditor extends SettingsEditor<MicroconfigRunConfiguration> {
-
     private final MicroconfigRunConfigPanel editorPanel = new MicroconfigRunConfigPanel();
 
     @NotNull

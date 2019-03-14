@@ -55,7 +55,9 @@ public class MicroconfigRunner implements ProgramRunner<MicroconfigRunConfigurat
 
     @Override
     public void execute(@NotNull ExecutionEnvironment environment) {
-        MicroconfigRunConfiguration c = (MicroconfigRunConfiguration) environment.getRunnerAndConfigurationSettings().getConfiguration();
+        MicroconfigRunConfiguration c = (MicroconfigRunConfiguration) environment
+                .getRunnerAndConfigurationSettings()
+                .getConfiguration();
         System.out.println("Running with " + c.getName());
 
         Command command = new MicroconfigInitializerImpl().newBuildCommand(

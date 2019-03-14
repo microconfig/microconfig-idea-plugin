@@ -6,7 +6,6 @@ import com.intellij.openapi.project.Project;
 import org.jetbrains.annotations.NotNull;
 
 public class RunConfigurationFactory extends ConfigurationFactory {
-
     public RunConfigurationFactory(MicroconfigRunConfigurationType type) {
         super(type);
     }

@@ -6,7 +6,6 @@ import com.intellij.openapi.util.WriteExternalException;
 import org.jdom.Element;
 
 public class MicroconfigRunSettings implements RunnerSettings {
-
     @Override
     public void readExternal(Element element) throws InvalidDataException {
         System.out.println("Called read external");
