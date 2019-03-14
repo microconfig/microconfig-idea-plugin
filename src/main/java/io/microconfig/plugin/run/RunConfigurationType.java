@@ -3,9 +3,7 @@ package io.microconfig.plugin.run;
 import com.intellij.execution.configurations.ConfigurationTypeBase;
 import com.intellij.util.ui.ColorIcon;
 
-import java.awt.*;
-
-import static java.awt.Color.*;
+import static com.intellij.ui.JBColor.BLUE;
 
 public class RunConfigurationType extends ConfigurationTypeBase {
     private final RunConfigurationFactory factory;
