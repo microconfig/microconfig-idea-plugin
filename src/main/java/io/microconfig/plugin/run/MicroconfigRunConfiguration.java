@@ -1,10 +1,8 @@
 package io.microconfig.plugin.run;
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.RunProfileState;
-import com.intellij.execution.configurations.RuntimeConfigurationException;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -14,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class MicroconfigRunConfiguration extends RunConfigurationBase {
-
     private final Project project;
     private final MicroconfigGenerateSettingsEditor editor;
 
@@ -43,14 +40,12 @@ public class MicroconfigRunConfiguration extends RunConfigurationBase {
     }
 
     @Override
-    public void checkConfiguration() throws RuntimeConfigurationException {
-
+    public void checkConfiguration() {
     }
 
     @Nullable
     @Override
-    public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) throws ExecutionException {
+    public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) {
         return null;
     }
-
 }
