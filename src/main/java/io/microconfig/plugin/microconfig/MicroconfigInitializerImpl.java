@@ -1,5 +1,7 @@
 package io.microconfig.plugin.microconfig;
 
+import io.microconfig.commands.Command;
+import io.microconfig.commands.buildconfig.factory.CommandFactory;
 import io.microconfig.commands.buildconfig.factory.ConfigType;
 import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 import io.microconfig.commands.buildconfig.factory.StandardConfigType;
@@ -14,7 +16,7 @@ import static io.microconfig.configs.io.tree.ComponentTreeCache.COMPONENTS_DIR;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
 import static java.util.Arrays.stream;
 
-class MicroconfigInitializerImpl implements MicroconfigInitializer {
+public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     @Override
     public MicroconfigFactory getMicroconfigFactory(File projectDir) {
         return MicroconfigFactory.init(
@@ -40,6 +42,11 @@ class MicroconfigInitializerImpl implements MicroconfigInitializer {
                 .map(StandardConfigType::type)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));
+    }
+
+    @Override
+    public Command newBuildCommand(File projectRoot, File destination) {
+        return CommandFactory.newBuildCommand(findConfigRootDir(projectRoot), destination);
     }
 
     private File findConfigRootDir(File projectDir) {

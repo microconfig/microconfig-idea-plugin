@@ -12,14 +12,17 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MicroconfigRunConfiguration extends RunConfigurationBase implements RunnerSettings {
+import java.util.List;
 
+import static io.microconfig.utils.StringUtils.splitToList;
+
+public class MicroconfigRunConfiguration extends RunConfigurationBase implements RunnerSettings {
     private final Project project;
     private final MicroconfigRunConfigEditor editor;
 
     @Getter
     @Setter
-    private String envs = "test,dev";
+    private String env = "dev";
 
     @Getter
     @Setter
@@ -55,4 +58,11 @@ public class MicroconfigRunConfiguration extends RunConfigurationBase implements
         return null;
     }
 
+    public List<String> getGroupsAsList() {
+        return splitToList(groups, ",");
+    }
+
+    public List<String> geComponentsAsList() {
+        return splitToList(services, ",");
+    }
 }
