@@ -7,7 +7,7 @@ import org.jetbrains.annotations.NotNull;
 
 public class RunConfigurationFactory extends ConfigurationFactory {
 
-    public RunConfigurationFactory(RunConfigurationType type) {
+    public RunConfigurationFactory(MicroconfigRunConfigurationType type) {
         super(type);
     }
 

@@ -1,12 +1,14 @@
 package io.microconfig.plugin.run;
 
+import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 
-public class MicroconfigGenerateSettingsEditor extends SettingsEditor<MicroconfigRunConfiguration> {
-    private final MicroconfigRunPanel editorPanel = new MicroconfigRunPanel();
+public class MicroconfigRunConfigEditor extends SettingsEditor<MicroconfigRunConfiguration> {
+
+    private final MicroconfigRunConfigPanel editorPanel = new MicroconfigRunConfigPanel();
 
     @NotNull
     @Override
@@ -20,7 +22,8 @@ public class MicroconfigGenerateSettingsEditor extends SettingsEditor<Microconfi
     }
 
     @Override
-    protected void applyEditorTo(@NotNull MicroconfigRunConfiguration config) {
+    protected void applyEditorTo(@NotNull MicroconfigRunConfiguration config) throws ConfigurationException {
         this.editorPanel.updateConfig(config);
     }
+
 }

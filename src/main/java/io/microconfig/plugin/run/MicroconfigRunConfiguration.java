@@ -3,6 +3,7 @@ package io.microconfig.plugin.run;
 import com.intellij.execution.Executor;
 import com.intellij.execution.configurations.RunConfigurationBase;
 import com.intellij.execution.configurations.RunProfileState;
+import com.intellij.execution.configurations.RunnerSettings;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.options.SettingsEditor;
 import com.intellij.openapi.project.Project;
@@ -11,9 +12,10 @@ import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class MicroconfigRunConfiguration extends RunConfigurationBase {
+public class MicroconfigRunConfiguration extends RunConfigurationBase implements RunnerSettings {
+
     private final Project project;
-    private final MicroconfigGenerateSettingsEditor editor;
+    private final MicroconfigRunConfigEditor editor;
 
     @Getter
     @Setter
@@ -34,7 +36,7 @@ public class MicroconfigRunConfiguration extends RunConfigurationBase {
     public MicroconfigRunConfiguration(RunConfigurationFactory factory, Project project) {
         super(project, factory, "Generate " + project.getName());
         this.project = project;
-        this.editor = new MicroconfigGenerateSettingsEditor();
+        this.editor = new MicroconfigRunConfigEditor();
     }
 
     @NotNull
@@ -52,4 +54,5 @@ public class MicroconfigRunConfiguration extends RunConfigurationBase {
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) {
         return null;
     }
+
 }

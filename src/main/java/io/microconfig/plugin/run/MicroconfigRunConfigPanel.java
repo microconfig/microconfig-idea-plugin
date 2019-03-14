@@ -4,7 +4,7 @@ import com.intellij.openapi.options.ConfigurationException;
 
 import javax.swing.*;
 
-class MicroconfigRunPanel extends JPanel {
+class MicroconfigRunConfigPanel extends JPanel {
 
     private final JTextField envText;
 
@@ -14,7 +14,7 @@ class MicroconfigRunPanel extends JPanel {
 
     private final JTextField destinationText;
 
-    MicroconfigRunPanel() {
+    MicroconfigRunConfigPanel() {
         super();
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
