@@ -1,17 +1,17 @@
 package io.microconfig.plugin.run;
 
 import com.intellij.execution.configurations.ConfigurationTypeBase;
-import com.intellij.util.ui.ColorIcon;
-
-import static com.intellij.ui.JBColor.BLUE;
+import com.intellij.icons.AllIcons;
 
 public class MicroconfigRunConfigurationType extends ConfigurationTypeBase {
-    public static final String ID = "12064";
+
+    public static final String ID = "MicroconfigRunConfigurationType";
     private final RunConfigurationFactory factory;
 
     public MicroconfigRunConfigurationType() {
-        super(ID, "Microconfig", "Generate Config", new ColorIcon(10, 5, BLUE, true));
+        super(ID, "Microconfig", "Generate Config", AllIcons.General.Gear);
         factory = new RunConfigurationFactory(this);
         addFactory(factory);
     }
+
 }
