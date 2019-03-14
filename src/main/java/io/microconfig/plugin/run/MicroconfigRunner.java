@@ -70,7 +70,6 @@ public class MicroconfigRunner implements ProgramRunner<MicroconfigRunConfigurat
     @Override
     public void execute(@NotNull ExecutionEnvironment environment, @Nullable Callback callback) {
         execute(environment);
-        //todo
     }
 
 }
