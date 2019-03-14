@@ -4,11 +4,17 @@ import com.intellij.openapi.options.ConfigurationException;
 
 import javax.swing.*;
 
-import static javax.swing.GroupLayout.Alignment.LEADING;
+class MicroconfigRunPanel extends JPanel {
 
-public class MicroconfigRunPanel extends JPanel {
+    private final JTextField envText;
 
-    public MicroconfigRunPanel() {
+    private final JTextField groupText;
+
+    private final JTextField servicesText;
+
+    private final JTextField destinationText;
+
+    MicroconfigRunPanel() {
         super();
         GroupLayout layout = new GroupLayout(this);
         setLayout(layout);
@@ -16,45 +22,62 @@ public class MicroconfigRunPanel extends JPanel {
         layout.setAutoCreateGaps(true);
         layout.setAutoCreateContainerGaps(true);
 
-        JLabel envLabel = new JLabel("Environments: ");
-        JTextField envText = new JTextField("textField", 40);
+        JLabel eLabel = new JLabel("Environments:");
+        envText = new JTextField(40);
 
-        JLabel groupLabel = new JLabel("Groups: ");
-        JTextField groupText = new JTextField("groups", 40);
+        JLabel gLabel = new JLabel("Groups:");
+        groupText = new JTextField(40);
 
-        JLabel servicesLabel = new JLabel("Services: ");
-        JTextField servicesText = new JTextField("service1, service2", 40);
+        JLabel sLabel = new JLabel("Services:");
+        servicesText = new JTextField(40);
+
+        JLabel fLabel = new JLabel("Destination dir:");
+        destinationText = new JTextField(40);
 
         layout.setHorizontalGroup(
-            layout.createSequentialGroup()
-                .addComponent(envLabel)
-                .addComponent(envText)
-                .addGroup(layout.createParallelGroup(LEADING)
-                    .addComponent(groupLabel)
+            layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(eLabel)
+                    .addComponent(envText))
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(gLabel)
                     .addComponent(groupText))
-                .addGroup(layout.createParallelGroup(LEADING)
-                    .addComponent(servicesLabel)
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(sLabel)
                     .addComponent(servicesText))
+                .addGroup(layout.createSequentialGroup()
+                    .addComponent(fLabel)
+                    .addComponent(destinationText))
         );
 
         layout.setVerticalGroup(layout.createSequentialGroup()
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(envLabel)
+                .addComponent(eLabel)
                 .addComponent(envText))
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(groupLabel)
+                .addComponent(gLabel)
                 .addComponent(groupText))
             .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
-                .addComponent(servicesLabel)
+                .addComponent(sLabel)
                 .addComponent(servicesText))
+            .addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE)
+                .addComponent(fLabel)
+                .addComponent(destinationText))
         );
     }
 
-    public void applyConfig(MicroconfigRunConfiguration config) {
+    void applyConfig(MicroconfigRunConfiguration config) {
+        envText.setText(config.getEnvs());
+        groupText.setText(config.getGroups());
+        servicesText.setText(config.getServices());
+        destinationText.setText(config.getDestination());
     }
 
-    public void updateConfig(MicroconfigRunConfiguration config) throws ConfigurationException {
-
+    void updateConfig(MicroconfigRunConfiguration config) throws ConfigurationException {
+        config.setEnvs(envText.getText());
+        config.setGroups(groupText.getText());
+        config.setServices(servicesText.getText());
+        config.setDestination(destinationText.getText());
     }
 
 }

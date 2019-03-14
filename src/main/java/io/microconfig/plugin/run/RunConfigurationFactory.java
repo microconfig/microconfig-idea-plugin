@@ -7,8 +7,6 @@ import org.jetbrains.annotations.NotNull;
 
 public class RunConfigurationFactory extends ConfigurationFactory {
 
-    private final MicroconfigGenerateSettingsEditor editor = new MicroconfigGenerateSettingsEditor();
-
     public RunConfigurationFactory(RunConfigurationType type) {
         super(type);
     }
@@ -16,7 +14,7 @@ public class RunConfigurationFactory extends ConfigurationFactory {
     @NotNull
     @Override
     public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
-        return new MicroconfigRunConfiguration(this, editor, project);
+        return new MicroconfigRunConfiguration(this, project);
     }
 
 }

@@ -20,20 +20,24 @@ public class MicroconfigRunConfiguration extends RunConfigurationBase {
 
     @Getter
     @Setter
-    private String envs = "Envs";
+    private String envs = "test,dev";
 
     @Getter
     @Setter
-    private String groups = "Groups";
+    private String groups = "group1,group2";
 
     @Getter
     @Setter
-    private String services = "Services";
+    private String services = "service1,service2";
 
-    public MicroconfigRunConfiguration(RunConfigurationFactory factory, MicroconfigGenerateSettingsEditor editor, Project project) {
+    @Getter
+    @Setter
+    private String destination = "full path";
+
+    public MicroconfigRunConfiguration(RunConfigurationFactory factory, Project project) {
         super(project, factory, "Generate " + project.getName());
         this.project = project;
-        this.editor = editor;
+        this.editor = new MicroconfigGenerateSettingsEditor();
     }
 
     @NotNull
