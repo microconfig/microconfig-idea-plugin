@@ -9,11 +9,11 @@ import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.util.PathUtil;
 import io.microconfig.commands.buildconfig.entry.BuildConfigMain;
 
-public class CommandLineRunnerState extends JavaCommandLineState {
+public class RunnerState extends JavaCommandLineState {
 
-    private final MicroconfigRunConfiguration configuration;
+    private final RunConfig configuration;
 
-    protected CommandLineRunnerState(ExecutionEnvironment environment, MicroconfigRunConfiguration configuration) {
+    protected RunnerState(ExecutionEnvironment environment, RunConfig configuration) {
         super(environment);
         this.configuration = configuration;
     }

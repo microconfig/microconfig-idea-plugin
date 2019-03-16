@@ -19,8 +19,8 @@ import java.util.List;
 
 import static io.microconfig.utils.StringUtils.splitToList;
 
-public class MicroconfigRunConfiguration extends RunConfigurationBase implements RunnerSettings {
-    private final MicroconfigRunConfigEditor editor;
+public class RunConfig extends RunConfigurationBase implements RunnerSettings {
+    private final RunConfigEditor editor;
 
     @Getter
     @Setter
@@ -38,15 +38,15 @@ public class MicroconfigRunConfiguration extends RunConfigurationBase implements
     @Setter
     private String destination = "full path";
 
-    public MicroconfigRunConfiguration(RunConfigurationFactory factory, Project project) {
+    public RunConfig(RunConfigFactory factory, Project project) {
         super(project, factory, "Generate " + project.getName());
-        this.editor = new MicroconfigRunConfigEditor();
+        this.editor = new RunConfigEditor();
         this.destination = project.getBasePath();
     }
 
     @NotNull
     @Override
-    public SettingsEditor<MicroconfigRunConfiguration> getConfigurationEditor() {
+    public SettingsEditor<RunConfig> getConfigurationEditor() {
         return editor;
     }
 
@@ -83,7 +83,7 @@ public class MicroconfigRunConfiguration extends RunConfigurationBase implements
     @Nullable
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) {
-        return new CommandLineRunnerState(environment, this);
+        return new RunnerState(environment, this);
     }
 
     public List<String> getGroupsAsList() {

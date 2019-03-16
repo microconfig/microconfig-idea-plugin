@@ -4,16 +4,16 @@ import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.runners.DefaultProgramRunner;
 import org.jetbrains.annotations.NotNull;
 
-public class MicroconfigRunner extends DefaultProgramRunner {
+public class Runner extends DefaultProgramRunner {
 
     @NotNull
     @Override
     public String getRunnerId() {
-        return "MicroconfigRunner";
+        return "Runner";
     }
 
     @Override
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-        return executorId.equals("Run") && profile instanceof MicroconfigRunConfiguration;
+        return executorId.equals("Run") && profile instanceof RunConfig;
     }
 }
