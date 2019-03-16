@@ -85,7 +85,7 @@ public class MicroconfigRunConfiguration extends RunConfigurationBase implements
     @Nullable
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) {
-        return null;
+        return new CommandLineRunnerState(environment, this);
     }
 
     public List<String> getGroupsAsList() {

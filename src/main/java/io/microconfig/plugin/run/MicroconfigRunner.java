@@ -31,7 +31,7 @@ public class MicroconfigRunner implements ProgramRunner<MicroconfigRunConfigurat
 
     @Override
     public boolean canRun(@NotNull String executorId, @NotNull RunProfile profile) {
-        return executorId.equals("Run");
+        return executorId.equals("Run") && profile instanceof MicroconfigRunConfiguration;
     }
 
     @Nullable
@@ -60,13 +60,13 @@ public class MicroconfigRunner implements ProgramRunner<MicroconfigRunConfigurat
     @Override
     public void execute(@NotNull ExecutionEnvironment environment) {
         MicroconfigRunConfiguration c = (MicroconfigRunConfiguration) environment
-                .getRunnerAndConfigurationSettings()
-                .getConfiguration();
+            .getRunnerAndConfigurationSettings()
+            .getConfiguration();
         System.out.println("Running with " + c.getName());
 
         Command command = new MicroconfigInitializerImpl().newBuildCommand(
-                toFile(environment.getProject().getBaseDir()),
-                new File(c.getDestination())
+            toFile(environment.getProject().getBaseDir()),
+            new File(c.getDestination())
         );
         BuildConfigMain.execute(command, c.getEnv(), c.getGroupsAsList(), c.geComponentsAsList());
     }
@@ -75,5 +75,4 @@ public class MicroconfigRunner implements ProgramRunner<MicroconfigRunConfigurat
     public void execute(@NotNull ExecutionEnvironment environment, @Nullable Callback callback) {
         execute(environment);
     }
-
 }
