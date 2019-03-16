@@ -20,7 +20,6 @@ import java.util.List;
 import static io.microconfig.utils.StringUtils.splitToList;
 
 public class MicroconfigRunConfiguration extends RunConfigurationBase implements RunnerSettings {
-    private final Project project;
     private final MicroconfigRunConfigEditor editor;
 
     @Getter
@@ -41,7 +40,6 @@ public class MicroconfigRunConfiguration extends RunConfigurationBase implements
 
     public MicroconfigRunConfiguration(RunConfigurationFactory factory, Project project) {
         super(project, factory, "Generate " + project.getName());
-        this.project = project;
         this.editor = new MicroconfigRunConfigEditor();
         this.destination = project.getBasePath();
     }
