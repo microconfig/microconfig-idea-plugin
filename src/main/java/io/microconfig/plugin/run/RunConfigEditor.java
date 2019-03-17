@@ -50,7 +50,7 @@ public class RunConfigEditor extends SettingsEditor<RunConfig> {
             JLabel servicesLabel = new JLabel("Services:");
             servicesText = new JTextField(40);
 
-            JLabel destinationDir = new JLabel("Destination dir:");
+            JLabel destinationDir = new JLabel("Destination:");
             destinationText = new JTextField(40);
 
             layout.setHorizontalGroup(

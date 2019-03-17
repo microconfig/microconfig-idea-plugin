@@ -15,6 +15,8 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
+
 public class RunConfig extends RunConfigurationBase implements RunnerSettings {
     private final RunConfigEditor editor;
 
@@ -32,12 +34,12 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
 
     @Getter
     @Setter
-    private String destination = "full path";
+    private String destination;
 
     public RunConfig(RunConfigFactory factory, Project project) {
         super(project, factory, "Generate " + project.getName());
         this.editor = new RunConfigEditor();
-        this.destination = project.getBasePath() + "/build/configs";
+        this.destination = new File(project.getBasePath(), "/build/configs/").getAbsolutePath();
     }
 
     @NotNull
@@ -52,8 +54,6 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
 
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
-        super.writeExternal(element);
-
         Element runConfig = new Element("MicroconfigRunConfig");
         runConfig.setAttribute("env", env);
         runConfig.setAttribute("groups", groups);
@@ -61,6 +61,7 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
         runConfig.setAttribute("destination", destination);
 
         element.addContent(runConfig);
+        super.writeExternal(element);
     }
 
     @Override
