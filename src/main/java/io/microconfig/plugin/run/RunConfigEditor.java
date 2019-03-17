@@ -41,46 +41,46 @@ public class RunConfigEditor extends SettingsEditor<RunConfig> {
             layout.setAutoCreateGaps(true);
             layout.setAutoCreateContainerGaps(true);
 
-            JLabel eLabel = new JLabel("Environment:");
+            JLabel envLabel = new JLabel("Environment:");
             envText = new JTextField(40);
 
-            JLabel gLabel = new JLabel("Groups:");
+            JLabel groupsLabel = new JLabel("Groups:");
             groupText = new JTextField(40);
 
-            JLabel sLabel = new JLabel("Services:");
+            JLabel servicesLabel = new JLabel("Services:");
             servicesText = new JTextField(40);
 
-            JLabel fLabel = new JLabel("Destination dir:");
+            JLabel destinationDir = new JLabel("Destination dir:");
             destinationText = new JTextField(40);
 
             layout.setHorizontalGroup(
                     layout.createParallelGroup(LEADING)
                             .addGroup(layout.createSequentialGroup()
-                                    .addComponent(eLabel)
+                                    .addComponent(envLabel)
                                     .addComponent(envText))
                             .addGroup(layout.createSequentialGroup()
-                                    .addComponent(gLabel)
+                                    .addComponent(groupsLabel)
                                     .addComponent(groupText))
                             .addGroup(layout.createSequentialGroup()
-                                    .addComponent(sLabel)
+                                    .addComponent(servicesLabel)
                                     .addComponent(servicesText))
                             .addGroup(layout.createSequentialGroup()
-                                    .addComponent(fLabel)
+                                    .addComponent(destinationDir)
                                     .addComponent(destinationText))
             );
 
             layout.setVerticalGroup(layout.createSequentialGroup()
                     .addGroup(layout.createParallelGroup(BASELINE)
-                            .addComponent(eLabel)
+                            .addComponent(envLabel)
                             .addComponent(envText))
                     .addGroup(layout.createParallelGroup(BASELINE)
-                            .addComponent(gLabel)
+                            .addComponent(groupsLabel)
                             .addComponent(groupText))
                     .addGroup(layout.createParallelGroup(BASELINE)
-                            .addComponent(sLabel)
+                            .addComponent(servicesLabel)
                             .addComponent(servicesText))
                     .addGroup(layout.createParallelGroup(BASELINE)
-                            .addComponent(fLabel)
+                            .addComponent(destinationDir)
                             .addComponent(destinationText))
             );
         }

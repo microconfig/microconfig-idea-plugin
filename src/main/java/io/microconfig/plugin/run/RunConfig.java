@@ -24,11 +24,11 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
 
     @Getter
     @Setter
-    private String groups = "group1,group2";
+    private String groups = "";
 
     @Getter
     @Setter
-    private String services = "service1,service2";
+    private String services = "";
 
     @Getter
     @Setter
@@ -37,7 +37,7 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
     public RunConfig(RunConfigFactory factory, Project project) {
         super(project, factory, "Generate " + project.getName());
         this.editor = new RunConfigEditor();
-        this.destination = project.getBasePath();
+        this.destination = project.getBasePath() + "/build/configs";
     }
 
     @NotNull
