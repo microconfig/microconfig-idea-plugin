@@ -7,6 +7,12 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.util.PathUtil;
 import io.microconfig.commands.buildconfig.entry.BuildConfigMain;
+import io.microconfig.plugin.microconfig.MicroconfigInitializerImpl;
+
+import java.io.File;
+import java.util.function.BiConsumer;
+
+import static io.microconfig.utils.StringUtils.isEmpty;
 
 public class RunnerState extends JavaCommandLineState {
     private final RunConfig configuration;
@@ -20,20 +26,26 @@ public class RunnerState extends JavaCommandLineState {
     protected JavaParameters createJavaParameters() {
         JavaParameters javaParams = new JavaParameters();
 
-        String jarPath = PathUtil.getJarPathForClass(BuildConfigMain.class);
-        javaParams.getClassPath().add(jarPath);
-
         Project project = getEnvironment().getProject();
-        ProjectRootManager manager = ProjectRootManager.getInstance(project);
-        javaParams.setJdk(manager.getProjectSdk());
+        javaParams.setJdk(ProjectRootManager.getInstance(project).getProjectSdk());
+        javaParams.getClassPath().add(PathUtil.getJarPathForClass(BuildConfigMain.class));
         javaParams.setMainClass(BuildConfigMain.class.getName());
 
-        javaParams.getProgramParametersList().add("root=" + project.getBasePath());
-        javaParams.getProgramParametersList().add("env=" + configuration.getEnv());
-        javaParams.getProgramParametersList().add("groups=" + configuration.getGroups());
-        javaParams.getProgramParametersList().add("services=" + configuration.getServices());
-        javaParams.getProgramParametersList().add("dest=" + configuration.getDestination());
+        BiConsumer<String, String> addParam = (key, value) -> {
+            if (isEmpty(value)) return;
+            javaParams.getProgramParametersList().add(key + "=" + value);
+        };
+
+        addParam.accept("root", "\"" + new MicroconfigInitializerImpl().findConfigRootDir(new File(project.getBasePath())) + "\"");
+        addParam.accept("env", trim(configuration.getEnv()));
+        addParam.accept("groups", trim(configuration.getGroups()));
+        addParam.accept("services", trim(configuration.getServices()));
+        addParam.accept("dest", configuration.getDestination().trim());
 
         return javaParams;
+    }
+
+    private String trim(String param) {
+        return param.replaceAll("\\s+", "");
     }
 }

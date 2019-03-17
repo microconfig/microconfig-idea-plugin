@@ -1,7 +1,5 @@
 package io.microconfig.plugin.microconfig;
 
-import io.microconfig.commands.Command;
-import io.microconfig.commands.buildconfig.factory.CommandFactory;
 import io.microconfig.commands.buildconfig.factory.ConfigType;
 import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 import io.microconfig.commands.buildconfig.factory.StandardConfigType;
@@ -45,11 +43,7 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     }
 
     @Override
-    public Command newBuildCommand(File projectRoot, File destination) {
-        return CommandFactory.newBuildCommand(findConfigRootDir(projectRoot), destination);
-    }
-
-    private File findConfigRootDir(File projectDir) {
+    public File findConfigRootDir(File projectDir) {
         Predicate<File> containsMicroconfigDirs = dir -> {
             File[] files = dir.listFiles();
             return files != null && stream(files)

@@ -15,10 +15,6 @@ import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-import static io.microconfig.utils.StringUtils.splitToList;
-
 public class RunConfig extends RunConfigurationBase implements RunnerSettings {
     private final RunConfigEditor editor;
 
@@ -84,13 +80,5 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
     @Override
     public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) {
         return new RunnerState(environment, this);
-    }
-
-    public List<String> getGroupsAsList() {
-        return splitToList(groups, ",");
-    }
-
-    public List<String> geComponentsAsList() {
-        return splitToList(services, ",");
     }
 }

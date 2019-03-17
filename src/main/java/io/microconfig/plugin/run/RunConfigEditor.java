@@ -1,6 +1,5 @@
 package io.microconfig.plugin.run;
 
-import com.intellij.openapi.options.ConfigurationException;
 import com.intellij.openapi.options.SettingsEditor;
 import org.jetbrains.annotations.NotNull;
 
@@ -24,7 +23,7 @@ public class RunConfigEditor extends SettingsEditor<RunConfig> {
     }
 
     @Override
-    protected void applyEditorTo(@NotNull RunConfig config) throws ConfigurationException {
+    protected void applyEditorTo(@NotNull RunConfig config)  {
         this.editorPanel.updateConfig(config);
     }
 
