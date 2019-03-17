@@ -3,8 +3,9 @@ package io.microconfig.plugin.run;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.runners.ExecutionEnvironment;
+import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.ex.PathUtilEx;
+import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.util.PathUtil;
 import io.microconfig.commands.buildconfig.entry.BuildConfigMain;
 import io.microconfig.plugin.microconfig.MicroconfigInitializerImpl;
@@ -33,8 +34,11 @@ public class RunnerState extends JavaCommandLineState {
         JavaParameters javaParams = new JavaParameters();
 
         Project project = getEnvironment().getProject();
-
-        javaParams.setJdk(PathUtilEx.getAnyJdk(project));
+        try {
+            javaParams.setJdk(JavaParametersUtil.createProjectJdk(project, System.getProperty("java.home")));
+        } catch (Exception e) {
+            javaParams.setJdk(ProjectRootManager.getInstance(project).getProjectSdk());
+        }
         javaParams.getClassPath().add(PathUtil.getJarPathForClass(BuildConfigMain.class));
         javaParams.setMainClass(BuildConfigMain.class.getName());
 
