@@ -1,6 +1,5 @@
 package io.microconfig.plugin.run;
 
-import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.runners.ExecutionEnvironment;
@@ -10,7 +9,6 @@ import com.intellij.util.PathUtil;
 import io.microconfig.commands.buildconfig.entry.BuildConfigMain;
 
 public class RunnerState extends JavaCommandLineState {
-
     private final RunConfig configuration;
 
     protected RunnerState(ExecutionEnvironment environment, RunConfig configuration) {
@@ -19,7 +17,7 @@ public class RunnerState extends JavaCommandLineState {
     }
 
     @Override
-    protected JavaParameters createJavaParameters() throws ExecutionException {
+    protected JavaParameters createJavaParameters() {
         JavaParameters javaParams = new JavaParameters();
 
         String jarPath = PathUtil.getJarPathForClass(BuildConfigMain.class);

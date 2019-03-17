@@ -5,7 +5,6 @@ import com.intellij.execution.runners.DefaultProgramRunner;
 import org.jetbrains.annotations.NotNull;
 
 public class Runner extends DefaultProgramRunner {
-
     @NotNull
     @Override
     public String getRunnerId() {

@@ -55,34 +55,34 @@ public class RunConfigEditor extends SettingsEditor<RunConfig> {
             destinationText = new JTextField(40);
 
             layout.setHorizontalGroup(
-                layout.createParallelGroup(LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(eLabel)
-                        .addComponent(envText))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(gLabel)
-                        .addComponent(groupText))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(sLabel)
-                        .addComponent(servicesText))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(fLabel)
-                        .addComponent(destinationText))
+                    layout.createParallelGroup(LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                    .addComponent(eLabel)
+                                    .addComponent(envText))
+                            .addGroup(layout.createSequentialGroup()
+                                    .addComponent(gLabel)
+                                    .addComponent(groupText))
+                            .addGroup(layout.createSequentialGroup()
+                                    .addComponent(sLabel)
+                                    .addComponent(servicesText))
+                            .addGroup(layout.createSequentialGroup()
+                                    .addComponent(fLabel)
+                                    .addComponent(destinationText))
             );
 
             layout.setVerticalGroup(layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(BASELINE)
-                    .addComponent(eLabel)
-                    .addComponent(envText))
-                .addGroup(layout.createParallelGroup(BASELINE)
-                    .addComponent(gLabel)
-                    .addComponent(groupText))
-                .addGroup(layout.createParallelGroup(BASELINE)
-                    .addComponent(sLabel)
-                    .addComponent(servicesText))
-                .addGroup(layout.createParallelGroup(BASELINE)
-                    .addComponent(fLabel)
-                    .addComponent(destinationText))
+                    .addGroup(layout.createParallelGroup(BASELINE)
+                            .addComponent(eLabel)
+                            .addComponent(envText))
+                    .addGroup(layout.createParallelGroup(BASELINE)
+                            .addComponent(gLabel)
+                            .addComponent(groupText))
+                    .addGroup(layout.createParallelGroup(BASELINE)
+                            .addComponent(sLabel)
+                            .addComponent(servicesText))
+                    .addGroup(layout.createParallelGroup(BASELINE)
+                            .addComponent(fLabel)
+                            .addComponent(destinationText))
             );
         }
 
@@ -93,7 +93,7 @@ public class RunConfigEditor extends SettingsEditor<RunConfig> {
             destinationText.setText(config.getDestination());
         }
 
-        void updateConfig(RunConfig config) throws ConfigurationException {
+        void updateConfig(RunConfig config) {
             config.setEnv(envText.getText());
             config.setGroups(groupText.getText());
             config.setServices(servicesText.getText());
