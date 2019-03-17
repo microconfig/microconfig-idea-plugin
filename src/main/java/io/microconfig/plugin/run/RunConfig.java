@@ -17,7 +17,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
+import static io.microconfig.plugin.run.RunnerState.*;
+
 public class RunConfig extends RunConfigurationBase implements RunnerSettings {
+    private static final String MICROCONFIG_RUN_CONFIG = "MicroconfigRunConfig";
     private final RunConfigEditor editor;
 
     @Getter
@@ -54,11 +57,11 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
 
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
-        Element runConfig = new Element("MicroconfigRunConfig");
-        runConfig.setAttribute("env", env);
-        runConfig.setAttribute("groups", groups);
-        runConfig.setAttribute("services", services);
-        runConfig.setAttribute("destination", destination);
+        Element runConfig = new Element(MICROCONFIG_RUN_CONFIG);
+        runConfig.setAttribute(ENV, env);
+        runConfig.setAttribute(GROUPS, groups);
+        runConfig.setAttribute(SERVICES, services);
+        runConfig.setAttribute(DESTINATION, destination);
 
         element.addContent(runConfig);
         super.writeExternal(element);
@@ -67,13 +70,13 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
     @Override
     public void readExternal(Element element) throws InvalidDataException {
         super.readExternal(element);
-        Element runConfig = element.getChild("MicroconfigRunConfig");
+        Element runConfig = element.getChild(MICROCONFIG_RUN_CONFIG);
         if (runConfig == null) return;
 
-        this.env = runConfig.getAttributeValue("env");
-        this.groups = runConfig.getAttributeValue("groups");
-        this.services = runConfig.getAttributeValue("services");
-        this.destination = runConfig.getAttributeValue("destination");
+        this.env = runConfig.getAttributeValue(ENV);
+        this.groups = runConfig.getAttributeValue(GROUPS);
+        this.services = runConfig.getAttributeValue(SERVICES);
+        this.destination = runConfig.getAttributeValue(DESTINATION);
         editor.resetEditorFrom(this);
     }
 

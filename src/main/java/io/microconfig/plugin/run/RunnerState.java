@@ -15,6 +15,12 @@ import java.util.function.BiConsumer;
 import static io.microconfig.utils.StringUtils.isEmpty;
 
 public class RunnerState extends JavaCommandLineState {
+    static final String ROOT = "root";
+    static final String ENV = "env";
+    static final String GROUPS = "groups";
+    static final String SERVICES = "services";
+    static final String DESTINATION = "dest";
+
     private final RunConfig configuration;
 
     protected RunnerState(ExecutionEnvironment environment, RunConfig configuration) {
@@ -36,13 +42,17 @@ public class RunnerState extends JavaCommandLineState {
             javaParams.getProgramParametersList().add(key + "=" + value);
         };
 
-        addParam.accept("root", "\"" + new MicroconfigInitializerImpl().findConfigRootDir(new File(project.getBasePath())) + "\"");
-        addParam.accept("env", trim(configuration.getEnv()));
-        addParam.accept("groups", trim(configuration.getGroups()));
-        addParam.accept("services", trim(configuration.getServices()));
-        addParam.accept("dest", configuration.getDestination().trim());
+        addParam.accept(ROOT, escapeParam(new MicroconfigInitializerImpl().findConfigRootDir(new File(project.getBasePath())).getAbsolutePath()));
+        addParam.accept(ENV, trim(configuration.getEnv()));
+        addParam.accept(GROUPS, trim(configuration.getGroups()));
+        addParam.accept(SERVICES, trim(configuration.getServices()));
+        addParam.accept(DESTINATION, escapeParam(configuration.getDestination()));
 
         return javaParams;
+    }
+
+    private String escapeParam(String param) {
+        return "\"" + param + "\"";
     }
 
     private String trim(String param) {
