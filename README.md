@@ -44,5 +44,5 @@ If this you have multiple placeholder key values for different environments they
 
 Due to how `Hints` work in Idea any mouse move will hide the hint. Better use hotkeys for this action.
 
-### Config Build
+### Config build
 You can create standard IDEA Run configuration for Microconfig to build configs with plugin (shift + F10).
