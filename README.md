@@ -22,6 +22,8 @@ Microconfig has two actions:
 - Jump to component (F10)
 - Resolve placeholder (Ctrl-F10 / Command-F10)
 
+Also you can create standard IDEA Run configuration for Microconfig to build configs with plugin (shift + F10).
+
 #### Jump to component
 
 `Jump to component` supports navigation from `#inlude component` line. Once chosen from menu or on hotkey press 
