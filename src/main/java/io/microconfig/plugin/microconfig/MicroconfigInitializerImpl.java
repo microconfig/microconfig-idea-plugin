@@ -14,7 +14,7 @@ import static io.microconfig.configs.io.tree.ComponentTreeCache.COMPONENTS_DIR;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
 import static java.util.Arrays.stream;
 
-class MicroconfigInitializerImpl implements MicroconfigInitializer {
+public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     @Override
     public MicroconfigFactory getMicroconfigFactory(File projectDir) {
         return MicroconfigFactory.init(
@@ -42,7 +42,8 @@ class MicroconfigInitializerImpl implements MicroconfigInitializer {
                 .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));
     }
 
-    private File findConfigRootDir(File projectDir) {
+    @Override
+    public File findConfigRootDir(File projectDir) {
         Predicate<File> containsMicroconfigDirs = dir -> {
             File[] files = dir.listFiles();
             return files != null && stream(files)

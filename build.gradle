@@ -16,9 +16,9 @@ repositories {
     mavenCentral()
 }
 
-intellij {
-    version 'IC-2017.3'
-    updateSinceUntilBuild false
+intellij {    
+    version 'IC-2017.1'
+    updateSinceUntilBuild true
 }
 
 patchPluginXml {
@@ -32,7 +32,7 @@ patchPluginXml {
 }
 
 dependencies {
-    implementation 'io.microconfig:microconfig-core:3.5.0:all'
+    implementation 'io.microconfig:microconfig-core:3.5.4:all'
 
     compileOnly "org.projectlombok:lombok:1.18.6"
     annotationProcessor "org.projectlombok:lombok:1.18.6"

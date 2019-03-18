@@ -9,4 +9,6 @@ public interface MicroconfigInitializer {
     MicroconfigFactory getMicroconfigFactory(File projectDir);
 
     ConfigType detectConfigType(File file);
+
+    File findConfigRootDir(File projectDir);
 }
