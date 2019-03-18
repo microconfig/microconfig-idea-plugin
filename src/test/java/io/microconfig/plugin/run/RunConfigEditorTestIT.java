@@ -10,5 +10,4 @@ class RunConfigEditorTestIT {
         frame.pack();
         frame.setVisible(true);
     }
-
 }
