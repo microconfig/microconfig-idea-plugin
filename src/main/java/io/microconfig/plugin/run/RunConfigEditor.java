@@ -27,7 +27,7 @@ public class RunConfigEditor extends SettingsEditor<RunConfig> {
         this.editorPanel.updateConfig(config);
     }
 
-    class MicroconfigRunConfigPanel extends JPanel {
+    static class MicroconfigRunConfigPanel extends JPanel {
         private final JTextField envText;
         private final JTextField groupText;
         private final JTextField servicesText;
