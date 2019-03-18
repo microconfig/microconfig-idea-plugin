@@ -57,7 +57,7 @@ public class RunnerState extends JavaCommandLineState {
     }
 
     private String escapeParam(String param) {
-        return "\"" + param + "\"";
+        return isEmpty(param) ? "" : "\"" + param + "\"";
     }
 
     private String trim(String param) {
