@@ -1,88 +1,79 @@
 package io.microconfig.plugin.run;
 
 import com.intellij.openapi.options.SettingsEditor;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
+import java.util.List;
 
+import static java.util.Arrays.asList;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
-import static javax.swing.GroupLayout.Alignment.LEADING;
+import static javax.swing.SwingConstants.HORIZONTAL;
+import static javax.swing.SwingConstants.RIGHT;
 
 public class RunConfigEditor extends SettingsEditor<RunConfig> {
-    private final MicroconfigRunConfigPanel editorPanel = new MicroconfigRunConfigPanel();
+    private final MicroconfigRunConfigPanel mcPanel = MicroconfigRunConfigPanel.create();
 
     @NotNull
     @Override
     protected JComponent createEditor() {
-        return editorPanel;
+        return mcPanel.getPanel();
     }
 
     @Override
     protected void resetEditorFrom(@NotNull RunConfig config) {
-        this.editorPanel.applyConfig(config);
+        this.mcPanel.applyConfig(config);
     }
 
     @Override
-    protected void applyEditorTo(@NotNull RunConfig config)  {
-        this.editorPanel.updateConfig(config);
+    protected void applyEditorTo(@NotNull RunConfig config) {
+        this.mcPanel.updateConfig(config);
     }
 
-    static class MicroconfigRunConfigPanel extends JPanel {
+    @RequiredArgsConstructor
+    static class MicroconfigRunConfigPanel {
+        private final JPanel panel;
+
         private final JTextField envText;
         private final JTextField groupText;
         private final JTextField servicesText;
         private final JTextField destinationText;
 
-        MicroconfigRunConfigPanel() {
-            super();
-            GroupLayout layout = new GroupLayout(this);
-            setLayout(layout);
-
+        static MicroconfigRunConfigPanel create() {
+            JPanel panel = new JPanel();
+            GroupLayout layout = new GroupLayout(panel);
+            panel.setLayout(layout);
             layout.setAutoCreateGaps(true);
             layout.setAutoCreateContainerGaps(true);
+            GroupLayout.ParallelGroup parallel = layout.createParallelGroup();
+            layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(parallel));
+            GroupLayout.SequentialGroup sequential = layout.createSequentialGroup();
+            layout.setVerticalGroup(sequential);
 
-            JLabel envLabel = new JLabel("Environment:");
-            envText = new JTextField(40);
+            List<String> names = asList("Environment: ", "Groups: ", "Services: ", "Destination: ");
+            JTextField[] fields = new JTextField[names.size()];
+            JLabel[] labels = new JLabel[names.size()];
+            for (int i = 0; i < names.size(); i++) {
+                labels[i] = new JLabel(names.get(i), RIGHT);
+                fields[i] = new JTextField(20);
+                labels[i].setLabelFor(fields[i]);
 
-            JLabel groupsLabel = new JLabel("Groups:");
-            groupText = new JTextField(40);
+                parallel.addGroup(
+                        layout.createSequentialGroup()
+                                .addComponent(labels[i])
+                                .addComponent(fields[i])
+                );
+                sequential.addGroup(
+                        layout.createParallelGroup(BASELINE)
+                                .addComponent(labels[i])
+                                .addComponent(fields[i])
+                );
 
-            JLabel servicesLabel = new JLabel("Services:");
-            servicesText = new JTextField(40);
+                layout.linkSize(HORIZONTAL, labels[i], labels[0]);
+            }
 
-            JLabel destinationDir = new JLabel("Destination:");
-            destinationText = new JTextField(40);
-
-            layout.setHorizontalGroup(
-                    layout.createParallelGroup(LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                    .addComponent(envLabel)
-                                    .addComponent(envText))
-                            .addGroup(layout.createSequentialGroup()
-                                    .addComponent(groupsLabel)
-                                    .addComponent(groupText))
-                            .addGroup(layout.createSequentialGroup()
-                                    .addComponent(servicesLabel)
-                                    .addComponent(servicesText))
-                            .addGroup(layout.createSequentialGroup()
-                                    .addComponent(destinationDir)
-                                    .addComponent(destinationText))
-            );
-
-            layout.setVerticalGroup(layout.createSequentialGroup()
-                    .addGroup(layout.createParallelGroup(BASELINE)
-                            .addComponent(envLabel)
-                            .addComponent(envText))
-                    .addGroup(layout.createParallelGroup(BASELINE)
-                            .addComponent(groupsLabel)
-                            .addComponent(groupText))
-                    .addGroup(layout.createParallelGroup(BASELINE)
-                            .addComponent(servicesLabel)
-                            .addComponent(servicesText))
-                    .addGroup(layout.createParallelGroup(BASELINE)
-                            .addComponent(destinationDir)
-                            .addComponent(destinationText))
-            );
+            return new MicroconfigRunConfigPanel(panel, fields[0], fields[1], fields[2], fields[3]);
         }
 
         void applyConfig(RunConfig config) {
@@ -97,6 +88,10 @@ public class RunConfigEditor extends SettingsEditor<RunConfig> {
             config.setGroups(groupText.getText());
             config.setServices(servicesText.getText());
             config.setDestination(destinationText.getText());
+        }
+
+        JPanel getPanel() {
+            return panel;
         }
     }
 }
