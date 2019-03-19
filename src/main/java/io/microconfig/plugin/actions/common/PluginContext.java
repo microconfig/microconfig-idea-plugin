@@ -1,6 +1,5 @@
 package io.microconfig.plugin.actions.common;
 
-import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
@@ -18,8 +17,14 @@ import java.io.File;
 import java.util.function.IntPredicate;
 import java.util.function.IntSupplier;
 
-import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
-import static io.microconfig.plugin.utils.FileUtil.*;
+import static com.intellij.codeInsight.hint.HintUtil.createErrorLabel;
+import static com.intellij.codeInsight.hint.HintUtil.createInformationLabel;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.CARET;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
+import static io.microconfig.plugin.utils.FileUtil.toFile;
+import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
+import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
 import static java.lang.Character.isAlphabetic;
 import static java.lang.Character.isDigit;
 
@@ -94,10 +99,7 @@ public class PluginContext {
     }
 
     public void showInfoHint(String message) {
-        JTextArea text = new JTextArea(message);
-        ComponentPopupBuilder textWindow = JBPopupFactory.getInstance().createComponentPopupBuilder(text, null);
-        JBPopup popup = textWindow.createPopup();
-        popup.showInBestPositionFor(editor);
+        showHint(createInformationLabel(message));
     }
 
     public void showErrorHint(Exception e) {
@@ -105,6 +107,12 @@ public class PluginContext {
     }
 
     public void showErrorHint(String message) {
-        HintManager.getInstance().showErrorHint(editor, message);
+        showHint(createErrorLabel(message));
+    }
+
+    private void showHint(JComponent hint) {
+        ComponentPopupBuilder textWindow = JBPopupFactory.getInstance().createComponentPopupBuilder(hint, null);
+        JBPopup popup = textWindow.createPopup();
+        popup.showInBestPositionFor(editor);
     }
 }
