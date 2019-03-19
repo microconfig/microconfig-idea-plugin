@@ -8,9 +8,6 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 
-import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
-import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
-
 @RequiredArgsConstructor
 public class FilePosition {
     private final File file;

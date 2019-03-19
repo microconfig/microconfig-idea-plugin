@@ -20,18 +20,13 @@ import java.util.function.IntSupplier;
 
 import static com.intellij.codeInsight.hint.HintManager.ABOVE;
 import static com.intellij.codeInsight.hint.HintManager.HIDE_BY_ANY_KEY;
-import static com.intellij.openapi.actionSystem.CommonDataKeys.CARET;
-import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
-import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
-import static io.microconfig.plugin.utils.FileUtil.toFile;
-import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
-import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
+import static io.microconfig.plugin.utils.FileUtil.*;
 import static java.lang.Character.isAlphabetic;
 import static java.lang.Character.isDigit;
 
 @RequiredArgsConstructor
 public class PluginContext {
-
     @Getter
     private final Project project;
     @Getter
@@ -59,10 +54,10 @@ public class PluginContext {
         Document doc = editor.getDocument();
         int lineNum = caret.getLogicalPosition().line;
         return doc.getCharsSequence()
-            .subSequence(
-                doc.getLineStartOffset(lineNum),
-                doc.getLineEndOffset(lineNum)
-            ).toString();
+                .subSequence(
+                        doc.getLineStartOffset(lineNum),
+                        doc.getLineEndOffset(lineNum)
+                ).toString();
     }
 
     public int currentColumn() {
@@ -74,9 +69,9 @@ public class PluginContext {
         int column = currentColumn();
 
         IntPredicate isAllowedNameSymbol = c -> isAlphabetic(c)
-            || isDigit(c)
-            || c == '_'
-            || c == '-';
+                || isDigit(c)
+                || c == '_'
+                || c == '-';
 
         IntSupplier startIndex = () -> {
             for (int i = column - 1; i >= 0; i--) {
@@ -98,7 +93,7 @@ public class PluginContext {
 
     public void navigateTo(File file) {
         toPsiFile(project, toVirtualFile(file))
-            .navigate(true);
+                .navigate(true);
     }
 
     public void showInfoHint(String message) {
