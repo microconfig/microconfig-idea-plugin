@@ -1,6 +1,7 @@
 package io.microconfig.plugin.actions.preview;
 
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.ui.components.JBScrollPane;
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.MicroconfigAction;
 import io.microconfig.plugin.actions.common.PluginContext;
@@ -48,7 +49,7 @@ public class PreviewAction extends MicroconfigAction {
             newsTextPane.setEditable(false);
             newsTextPane.setText(preview);
 
-            JScrollPane scrollPane = new JScrollPane(newsTextPane);
+            JScrollPane scrollPane = new JBScrollPane(newsTextPane);
             scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
             return scrollPane;
         }
