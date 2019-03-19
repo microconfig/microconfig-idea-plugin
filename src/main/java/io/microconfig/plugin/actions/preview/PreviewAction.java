@@ -63,7 +63,5 @@ public class PreviewAction extends MicroconfigAction {
             scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
             return scrollPane;
         }
-
     }
-
 }
