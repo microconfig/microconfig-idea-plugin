@@ -1,6 +1,5 @@
 package io.microconfig.plugin.actions.preview;
 
-import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.DialogWrapper;
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.MicroconfigAction;
@@ -19,7 +18,7 @@ public class PreviewAction extends MicroconfigAction {
     }
 
     private void onAction(PluginContext context, MicroconfigApi api) {
-        new PreviewDialog(context.getProject(), context, api).show();
+        new PreviewDialog(context, api).show();
     }
 
     private static class PreviewDialog extends DialogWrapper {
@@ -27,8 +26,9 @@ public class PreviewAction extends MicroconfigAction {
         private final MicroconfigApi api;
         private final JComponent textPane;
 
-        PreviewDialog(Project project, PluginContext context, MicroconfigApi api) {
-            super(project);
+        PreviewDialog(PluginContext context, MicroconfigApi api) {
+            super(context.getProject());
+
             this.context = context;
             this.api = api;
             this.textPane = textPane();
