@@ -32,7 +32,7 @@ public class RunConfigEditor extends SettingsEditor<RunConfig> {
     }
 
     @RequiredArgsConstructor
-    static class MicroconfigRunConfigPanel {
+    private static class MicroconfigRunConfigPanel {
         private final JPanel panel;
 
         private final JTextField envText;
