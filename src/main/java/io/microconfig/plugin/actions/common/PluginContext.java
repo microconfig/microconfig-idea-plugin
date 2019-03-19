@@ -5,7 +5,6 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
-import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.ui.awt.RelativePoint;
@@ -21,14 +20,11 @@ import java.util.function.IntSupplier;
 import static com.intellij.codeInsight.hint.HintManager.HIDE_BY_ANY_KEY;
 import static com.intellij.codeInsight.hint.HintUtil.createErrorLabel;
 import static com.intellij.codeInsight.hint.HintUtil.createInformationLabel;
-import static com.intellij.openapi.actionSystem.CommonDataKeys.CARET;
-import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
-import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
-import static io.microconfig.plugin.utils.FileUtil.toFile;
-import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
-import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
+import static io.microconfig.plugin.utils.FileUtil.*;
 import static java.lang.Character.isAlphabetic;
 import static java.lang.Character.isDigit;
+import static javax.swing.SwingUtilities.convertPointToScreen;
 
 @RequiredArgsConstructor
 public class PluginContext {
@@ -113,9 +109,12 @@ public class PluginContext {
     }
 
     private void showHint(JComponent hint) {
-        VisualPosition caretPosition = editor.getCaretModel().getVisualPosition();
-        Point point = editor.visualPositionToXY(caretPosition);
-        SwingUtilities.convertPointToScreen(point, editor.getComponent());
-        HintManager.getInstance().showHint(hint, new RelativePoint(point), HIDE_BY_ANY_KEY, 0);
+        Point point = editor.visualPositionToXY(editor.getCaretModel().getVisualPosition());
+        convertPointToScreen(point, editor.getComponent());
+        HintManager.getInstance()
+                .showHint(
+                        hint,
+                        new RelativePoint(point), HIDE_BY_ANY_KEY, 0
+                );
     }
 }
