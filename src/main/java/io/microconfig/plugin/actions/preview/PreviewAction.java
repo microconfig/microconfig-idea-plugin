@@ -31,7 +31,8 @@ public class PreviewAction extends MicroconfigAction {
             this.api = api;
             this.textPane = textPane();
             init();
-            setTitle(context.currentFile().getName());
+
+            setTitle(context.currentFile().getParentFile().getName() + ": " + context.currentFile().getName());
         }
 
         @Nullable
