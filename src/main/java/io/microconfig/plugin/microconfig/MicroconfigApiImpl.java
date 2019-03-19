@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import static io.microconfig.configs.Property.parse;
 import static io.microconfig.configs.resolver.placeholder.Placeholder.placeholderMatcher;
 import static io.microconfig.configs.sources.FileSource.fileSource;
+import static io.microconfig.environments.Component.bySourceFile;
 import static io.microconfig.plugin.actions.common.FilePosition.positionFromFileSource;
 import static java.lang.Math.max;
 import static java.util.Arrays.stream;
@@ -82,8 +83,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     @Override
     public Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir) {
-        MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
         ConfigType configType = initializer.detectConfigType(currentFile);
+        MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
         PropertyResolver propertyResolver = ((PropertyResolverHolder) factory.newConfigProvider(configType)).getResolver();
 
         Property property = parse(currentLine, "", fileSource(currentFile, 0, false));
@@ -107,6 +108,20 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         } catch (RuntimeException e) {
             return findFile(component, env, f -> true, projectDir);
         }
+    }
+
+    @Override
+    public String buildConfigs(File currentFile, File projectDir, String env) {
+        MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
+
+        Collection<Property> properties = factory
+                .newConfigProvider(initializer.detectConfigType(currentFile))
+                .getProperties(bySourceFile(currentFile), detectEnvOr(currentFile, () -> env))
+                .values();
+
+        return factory.getConfigIoService()
+                .writeTo(new File(currentFile.getName()))
+                .serialize(properties);
     }
 
     @Override

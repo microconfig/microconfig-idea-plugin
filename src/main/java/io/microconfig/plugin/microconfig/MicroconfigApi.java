@@ -22,5 +22,7 @@ public interface MicroconfigApi {
      */
     Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir);
 
+    String buildConfigs(File currentFile, File projectDir, String env);
+
     MicroconfigInitializer getMicroconfigInitializer();
 }
