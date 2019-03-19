@@ -120,7 +120,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .values();
 
         return factory.getConfigIoService()
-                .writeTo(new File(currentFile.getName()))
+                .writeTo(currentFile)
                 .serialize(properties);
     }
 
