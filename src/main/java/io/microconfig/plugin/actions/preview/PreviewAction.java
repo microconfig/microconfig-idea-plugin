@@ -15,7 +15,7 @@ import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 public class PreviewAction extends MicroconfigAction {
     @Override
-    protected ActionHandler chooseHandler(PluginContext context) {
+    protected ActionHandler chooseHandler(PluginContext ignore) {
         return (ctx, api) -> new PreviewDialog(ctx, api).show();
     }
 
