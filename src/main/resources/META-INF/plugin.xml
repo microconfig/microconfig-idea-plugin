@@ -33,6 +33,11 @@
                     description="Resolves property value for all ENVs">
                 <keyboard-shortcut first-keystroke="control F10" keymap="$default"/>
             </action>
+            <action id="Microconfig.PreviewAction" class="io.microconfig.plugin.actions.preview.PreviewAction"
+                    text="Preview component"
+                    description="Generates a preview for current component">
+                <keyboard-shortcut first-keystroke="F13" keymap="$default"/>
+            </action>
 
         </group>
     </actions>
