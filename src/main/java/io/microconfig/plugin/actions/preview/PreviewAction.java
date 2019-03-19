@@ -1,14 +1,16 @@
 package io.microconfig.plugin.actions.preview;
 
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.DialogWrapper;
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.MicroconfigAction;
 import io.microconfig.plugin.actions.common.PluginContext;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
+import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+
+import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 public class PreviewAction extends MicroconfigAction {
 
@@ -18,19 +20,42 @@ public class PreviewAction extends MicroconfigAction {
     }
 
     void onAction(PluginContext context, MicroconfigApi api) {
-        String preview = api.buildConfigsForService(context.currentFile(), context.projectDir(), "base");
+        PreviewDialog dialog = new PreviewDialog(context.getProject(), context, api);
+        dialog.show();
+    }
 
-        JTextPane newsTextPane = new JTextPane();
-        newsTextPane.setEditable(false);
-        newsTextPane.setText(preview);
+    private static class PreviewDialog extends DialogWrapper {
 
-        JScrollPane scrollPane = new JScrollPane(newsTextPane);
-        scrollPane.setVerticalScrollBarPolicy(
-            javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        private final PluginContext context;
+        private final MicroconfigApi api;
+        private final JComponent textPane;
 
-        ComponentPopupBuilder textWindow = JBPopupFactory.getInstance().createComponentPopupBuilder(scrollPane, null);
-        JBPopup popup = textWindow.createPopup();
-        popup.showInBestPositionFor(context.getEditor());
+        PreviewDialog(Project project, PluginContext context, MicroconfigApi api) {
+            super(project);
+            this.context = context;
+            this.api = api;
+            this.textPane = textPane();
+            init();
+        }
+
+        @Nullable
+        @Override
+        protected JComponent createCenterPanel() {
+            return textPane;
+        }
+
+        private JComponent textPane() {
+            String preview = api.buildConfigsForService(context.currentFile(), context.projectDir(), "base");
+
+            JTextPane newsTextPane = new JTextPane();
+            newsTextPane.setEditable(false);
+            newsTextPane.setText(preview);
+
+            JScrollPane scrollPane = new JScrollPane(newsTextPane);
+            scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
+            return scrollPane;
+        }
+
     }
 
 }

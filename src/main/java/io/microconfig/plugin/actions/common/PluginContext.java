@@ -34,6 +34,7 @@ public class PluginContext {
 
     @Getter
     private final Project project;
+    @Getter
     private final Editor editor;
     private final Caret caret;
     private final VirtualFile editorFile;
