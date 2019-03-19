@@ -1,5 +1,6 @@
 package io.microconfig.plugin.actions.common;
 
+import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Caret;
@@ -19,8 +20,6 @@ import java.util.function.IntSupplier;
 
 import static com.intellij.codeInsight.hint.HintManager.ABOVE;
 import static com.intellij.codeInsight.hint.HintManager.HIDE_BY_ANY_KEY;
-import static com.intellij.codeInsight.hint.HintUtil.createErrorLabel;
-import static com.intellij.codeInsight.hint.HintUtil.createInformationLabel;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.CARET;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
@@ -102,7 +101,7 @@ public class PluginContext {
     }
 
     public void showInfoHint(String message) {
-        showHint(createInformationLabel(message));
+        HintManager.getInstance().showInformationHint(editor, message);
     }
 
     public void showErrorHint(Exception e) {
@@ -110,7 +109,7 @@ public class PluginContext {
     }
 
     public void showErrorHint(String message) {
-        showHint(createErrorLabel(message));
+        HintManager.getInstance().showErrorHint(editor, message);
     }
 
     private void showHint(JComponent hint) {
