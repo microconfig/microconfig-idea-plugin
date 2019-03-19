@@ -1,22 +1,24 @@
 package io.microconfig.plugin.actions.common;
 
+import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
-import com.intellij.openapi.ui.popup.JBPopup;
-import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VirtualFile;
+import com.intellij.ui.awt.RelativePoint;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.util.function.IntPredicate;
 import java.util.function.IntSupplier;
 
+import static com.intellij.codeInsight.hint.HintManager.HIDE_BY_ANY_KEY;
 import static com.intellij.codeInsight.hint.HintUtil.createErrorLabel;
 import static com.intellij.codeInsight.hint.HintUtil.createInformationLabel;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.CARET;
@@ -111,8 +113,9 @@ public class PluginContext {
     }
 
     private void showHint(JComponent hint) {
-        ComponentPopupBuilder textWindow = JBPopupFactory.getInstance().createComponentPopupBuilder(hint, null);
-        JBPopup popup = textWindow.createPopup();
-        popup.showInBestPositionFor(editor);
+        VisualPosition caretPosition = editor.getCaretModel().getVisualPosition();
+        Point point = editor.visualPositionToXY(caretPosition);
+        SwingUtilities.convertPointToScreen(point, editor.getComponent());
+        HintManager.getInstance().showHint(hint, new RelativePoint(point), HIDE_BY_ANY_KEY, 0);
     }
 }
