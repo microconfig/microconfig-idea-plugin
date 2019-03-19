@@ -6,10 +6,14 @@ import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.popup.ComponentPopupBuilder;
+import com.intellij.openapi.ui.popup.JBPopup;
+import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.vfs.VirtualFile;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+import javax.swing.*;
 import java.io.File;
 import java.util.function.IntPredicate;
 import java.util.function.IntSupplier;
@@ -90,7 +94,10 @@ public class PluginContext {
     }
 
     public void showInfoHint(String message) {
-        HintManager.getInstance().showInformationHint(editor, message);
+        JTextArea text = new JTextArea(message);
+        ComponentPopupBuilder textWindow = JBPopupFactory.getInstance().createComponentPopupBuilder(text, null);
+        JBPopup popup = textWindow.createPopup();
+        popup.showInBestPositionFor(editor);
     }
 
     public void showErrorHint(Exception e) {
