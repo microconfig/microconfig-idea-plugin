@@ -24,14 +24,14 @@ intellij {
 patchPluginXml {
     changeNotes """
       Release 0.6.0<br>
-      &#183; Run configuration for builds from IDE<br>
+      &#183; Run configuration for builds from IDE
       Release 0.6.1<br>
       &#183; Yaml lists merging
       """
 }
 
 dependencies {
-    implementation 'io.microconfig:microconfig-core:3.5.5:all'
+    implementation 'io.microconfig:microconfig-core:3.5.6:all'
 
     compileOnly "org.projectlombok:lombok:1.18.6"
     annotationProcessor "org.projectlombok:lombok:1.18.6"
