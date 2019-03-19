@@ -43,7 +43,7 @@ public class PreviewAction extends MicroconfigAction {
         }
 
         private JComponent textPane() {
-            String preview = api.buildConfigsForService(context.currentFile(), context.projectDir(), "base");
+            String preview = api.buildConfigsForService(context.currentFile(), context.projectDir(), "");
 
             JTextPane newsTextPane = new JTextPane();
             newsTextPane.setEditable(false);
