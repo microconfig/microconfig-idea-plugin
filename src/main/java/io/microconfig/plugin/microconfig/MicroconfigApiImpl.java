@@ -111,7 +111,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     @Override
-    public String buildConfigs(File currentFile, File projectDir, String env) {
+    public String buildConfigsForService(File currentFile, File projectDir, String env) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
         Collection<Property> properties = factory
