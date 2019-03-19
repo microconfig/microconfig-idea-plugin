@@ -1,13 +1,13 @@
 package io.microconfig.plugin.actions.common;
 
-import com.intellij.codeInsight.hint.HintManager;
+import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.awt.RelativePoint;
+import com.intellij.ui.LightweightHint;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,17 +17,22 @@ import java.io.File;
 import java.util.function.IntPredicate;
 import java.util.function.IntSupplier;
 
+import static com.intellij.codeInsight.hint.HintManager.ABOVE;
 import static com.intellij.codeInsight.hint.HintManager.HIDE_BY_ANY_KEY;
 import static com.intellij.codeInsight.hint.HintUtil.createErrorLabel;
 import static com.intellij.codeInsight.hint.HintUtil.createInformationLabel;
-import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
-import static io.microconfig.plugin.utils.FileUtil.*;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.CARET;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.EDITOR;
+import static com.intellij.openapi.actionSystem.CommonDataKeys.VIRTUAL_FILE;
+import static io.microconfig.plugin.utils.FileUtil.toFile;
+import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
+import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
 import static java.lang.Character.isAlphabetic;
 import static java.lang.Character.isDigit;
-import static javax.swing.SwingUtilities.convertPointToScreen;
 
 @RequiredArgsConstructor
 public class PluginContext {
+
     @Getter
     private final Project project;
     private final Editor editor;
@@ -54,10 +59,10 @@ public class PluginContext {
         Document doc = editor.getDocument();
         int lineNum = caret.getLogicalPosition().line;
         return doc.getCharsSequence()
-                .subSequence(
-                        doc.getLineStartOffset(lineNum),
-                        doc.getLineEndOffset(lineNum)
-                ).toString();
+            .subSequence(
+                doc.getLineStartOffset(lineNum),
+                doc.getLineEndOffset(lineNum)
+            ).toString();
     }
 
     public int currentColumn() {
@@ -69,9 +74,9 @@ public class PluginContext {
         int column = currentColumn();
 
         IntPredicate isAllowedNameSymbol = c -> isAlphabetic(c)
-                || isDigit(c)
-                || c == '_'
-                || c == '-';
+            || isDigit(c)
+            || c == '_'
+            || c == '-';
 
         IntSupplier startIndex = () -> {
             for (int i = column - 1; i >= 0; i--) {
@@ -93,7 +98,7 @@ public class PluginContext {
 
     public void navigateTo(File file) {
         toPsiFile(project, toVirtualFile(file))
-                .navigate(true);
+            .navigate(true);
     }
 
     public void showInfoHint(String message) {
@@ -109,12 +114,10 @@ public class PluginContext {
     }
 
     private void showHint(JComponent hint) {
-        Point point = editor.visualPositionToXY(editor.getCaretModel().getVisualPosition());
-        convertPointToScreen(point, editor.getComponent());
-        HintManager.getInstance()
-                .showHint(
-                        hint,
-                        new RelativePoint(point), HIDE_BY_ANY_KEY, 0
-                );
+        HintManagerImpl hintManager = HintManagerImpl.getInstanceImpl();
+        LightweightHint hintHint = new LightweightHint(hint);
+        Point p = hintManager.getHintPosition(hintHint, editor, ABOVE);
+        hintManager.showEditorHint(hintHint, editor, p, HIDE_BY_ANY_KEY, 0, false);
     }
+
 }
