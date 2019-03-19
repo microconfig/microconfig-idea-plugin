@@ -13,19 +13,16 @@ import javax.swing.*;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 public class PreviewAction extends MicroconfigAction {
-
     @Override
     protected ActionHandler chooseHandler(PluginContext context) {
         return this::onAction;
     }
 
-    void onAction(PluginContext context, MicroconfigApi api) {
-        PreviewDialog dialog = new PreviewDialog(context.getProject(), context, api);
-        dialog.show();
+    private void onAction(PluginContext context, MicroconfigApi api) {
+        new PreviewDialog(context.getProject(), context, api).show();
     }
 
     private static class PreviewDialog extends DialogWrapper {
-
         private final PluginContext context;
         private final MicroconfigApi api;
         private final JComponent textPane;
@@ -55,7 +52,5 @@ public class PreviewAction extends MicroconfigAction {
             scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
             return scrollPane;
         }
-
     }
-
 }
