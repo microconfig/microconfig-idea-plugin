@@ -20,7 +20,6 @@ public class PreviewAction extends MicroconfigAction {
     }
 
     private static class PreviewDialog extends DialogWrapper {
-
         private final PluginContext context;
         private final MicroconfigApi api;
         private final JComponent textPane;
