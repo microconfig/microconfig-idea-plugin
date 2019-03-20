@@ -11,18 +11,30 @@ import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 public class PreviewAction extends MicroconfigAction {
+
     @Override
     protected ActionHandler chooseHandler(PluginContext ignore) {
         return (ctx, api) -> new PreviewDialog(ctx, api).show();
     }
 
     private static class PreviewDialog extends DialogWrapper {
+
         private final PluginContext context;
         private final MicroconfigApi api;
         private final JComponent textPane;
+        private final JComponent envPane;
+        private final JTextField envText = new JTextField("base", 20);
+        private final JTextPane previewText = new JTextPane();
+        private final Listener listener = new Listener();
 
         PreviewDialog(PluginContext context, MicroconfigApi api) {
             super(context.getProject());
@@ -30,6 +42,7 @@ public class PreviewAction extends MicroconfigAction {
             this.context = context;
             this.api = api;
             this.textPane = textPane();
+            this.envPane = envPane();
             init();
 
             setTitle(context.currentFile().getParentFile().getName() + "/" + context.currentFile().getName() + " result configuration");
@@ -44,25 +57,93 @@ public class PreviewAction extends MicroconfigAction {
         @Nullable
         @Override
         protected JComponent createNorthPanel() {
-            return new JLabel("North");
+            return envPane;
         }
 
         @NotNull
         @Override
         protected Action[] createActions() {
-            return new Action[]{getOKAction()};
+            return new Action[]{};
+        }
+
+        private JComponent envPane() {
+            JLabel envLabel = new JLabel("Environment: ");
+
+            JButton generate = new JButton("Generate");
+            generate.addActionListener(listener);
+            envText.addKeyListener(listener);
+
+            JPanel panel = new JPanel();
+            GroupLayout layout = new GroupLayout(panel);
+            panel.setLayout(layout);
+            layout.setAutoCreateGaps(true);
+            layout.setAutoCreateContainerGaps(true);
+            GroupLayout.ParallelGroup parallel = layout.createParallelGroup();
+            layout.setHorizontalGroup(layout.createSequentialGroup().addGroup(parallel));
+            GroupLayout.SequentialGroup sequential = layout.createSequentialGroup();
+            layout.setVerticalGroup(sequential);
+
+            parallel.addGroup(
+                layout.createSequentialGroup()
+                    .addComponent(envLabel)
+                    .addComponent(envText)
+                    .addComponent(generate)
+            );
+
+            sequential.addGroup(
+                layout.createParallelGroup(BASELINE)
+                    .addComponent(envLabel)
+                    .addComponent(envText)
+                    .addComponent(generate));
+
+            return panel;
         }
 
         private JComponent textPane() {
-            String preview = api.buildConfigsForService(context.currentFile(), context.projectDir(), "");
+            String preview = previewTextForEnv("");
 
-            JTextPane newsTextPane = new JTextPane();
-            newsTextPane.setEditable(false);
-            newsTextPane.setText(preview);
+            previewText.setEditable(false);
+            previewText.setText(preview);
 
-            JScrollPane scrollPane = new JBScrollPane(newsTextPane);
+            JScrollPane scrollPane = new JBScrollPane(previewText);
             scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
             return scrollPane;
         }
+
+        private String previewTextForEnv(String envName) {
+            return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName);
+        }
+
+        private class Listener implements ActionListener, KeyListener {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                updatePreviewText();
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode()==KeyEvent.VK_ENTER){
+                    updatePreviewText();
+                }
+            }
+
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+
+            }
+
+            private void updatePreviewText() {
+                previewText.setText(previewTextForEnv(envText.getText()));
+            }
+
+        }
+
     }
+
 }
