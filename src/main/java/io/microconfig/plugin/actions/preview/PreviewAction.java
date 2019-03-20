@@ -18,6 +18,7 @@ import java.awt.event.KeyListener;
 
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
+import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 public class PreviewAction extends MicroconfigAction {
@@ -43,6 +44,7 @@ public class PreviewAction extends MicroconfigAction {
             this.envPane = envPane();
 
             setTitle(context.currentFile().getParentFile().getName() + "/" + context.currentFile().getName() + " result configuration");
+
             this.listener.updatePreviewText();
         }
 
@@ -101,6 +103,7 @@ public class PreviewAction extends MicroconfigAction {
             previewText.setEditable(false);
             JScrollPane scrollPane = new JBScrollPane(previewText);
             scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
+            scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
             return scrollPane;
         }
 
@@ -132,6 +135,7 @@ public class PreviewAction extends MicroconfigAction {
 
             private void updatePreviewText() {
                 previewText.setText(previewTextForEnv(envText.getText()));
+                previewText.setCaretPosition(0);
                 init();
             }
 
