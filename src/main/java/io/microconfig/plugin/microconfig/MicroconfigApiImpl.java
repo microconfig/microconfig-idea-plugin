@@ -117,7 +117,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
         Collection<Property> properties = factory
                 .newConfigProvider(initializer.detectConfigType(currentFile))
-                .getProperties(bySourceFile(currentFile), detectEnvOr(currentFile, () -> env))
+                .getProperties(bySourceFile(currentFile), env)
                 .values();
 
         return factory.getConfigIoService()
@@ -173,7 +173,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .orElseThrow(() -> new PluginException("Component not found: " + component));
     }
 
-    private String detectEnvOr(File currentFile, Supplier<String> defaultEnv) {
+    @Override
+    public String detectEnvOr(File currentFile, Supplier<String> defaultEnv) {
         String name = currentFile.getName();
         int start = name.indexOf('.');
         int end = name.indexOf('.', start + 1);

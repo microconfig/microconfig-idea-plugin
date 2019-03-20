@@ -4,6 +4,7 @@ import io.microconfig.plugin.actions.common.FilePosition;
 
 import java.io.File;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public interface MicroconfigApi {
     File findIncludeSource(String includeLine, int currentColumn, File currentFile, File projectDir);
@@ -25,4 +26,6 @@ public interface MicroconfigApi {
     String buildConfigsForService(File currentFile, File projectDir, String env);
 
     MicroconfigInitializer getMicroconfigInitializer();
+
+    String detectEnvOr(File currentFile, Supplier<String> defaultEnv);
 }

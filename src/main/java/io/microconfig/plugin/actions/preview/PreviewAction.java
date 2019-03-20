@@ -23,35 +23,33 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 public class PreviewAction extends MicroconfigAction {
-
     @Override
     protected ActionHandler chooseHandler(PluginContext ignore) {
         return PreviewDialog::create;
     }
 
     private static class PreviewDialog extends DialogWrapper {
-
         private final JComponent textPane;
         private final JComponent envPane;
         private final JTextField envText = new JTextField("", 20);
         private final JTextPane previewText = new JTextPane();
 
-        PreviewDialog(PluginContext context, MicroconfigApi api) {
+        private static void create(PluginContext ctx, MicroconfigApi api) {
+            PreviewDialog dialog = new PreviewDialog(ctx, api);
+            dialog.init();
+            dialog.show();
+        }
+
+        private PreviewDialog(PluginContext context, MicroconfigApi api) {
             super(context.getProject());
 
             Listener listener = new Listener(context, api);
 
             this.textPane = initTextPane();
-            this.envPane = initEnvPane(context, listener);
+            this.envPane = initEnvPane(context, api, listener);
 
             setTitle(context.currentFile().getParentFile().getName() + "/" + context.currentFile().getName() + " result configuration");
             listener.updatePreviewText();
-        }
-
-        private static void create(PluginContext ctx, MicroconfigApi api) {
-            PreviewDialog dialog = new PreviewDialog(ctx, api);
-            dialog.init();
-            dialog.show();
         }
 
         @Nullable
@@ -72,8 +70,8 @@ public class PreviewAction extends MicroconfigAction {
             return new Action[]{};
         }
 
-        private JComponent initEnvPane(PluginContext context, Listener listener) {
-            envText.setText(envFromFile(context.currentFile().getName()));
+        private JComponent initEnvPane(PluginContext context, MicroconfigApi api, Listener listener) {
+            envText.setText(api.detectEnvOr(context.currentFile(), () -> ""));
 
             JLabel envLabel = new JLabel("Environment: ");
 
@@ -92,26 +90,19 @@ public class PreviewAction extends MicroconfigAction {
             layout.setVerticalGroup(sequential);
 
             parallel.addGroup(
-                layout.createSequentialGroup()
-                    .addComponent(envLabel)
-                    .addComponent(envText)
-                    .addComponent(generate)
+                    layout.createSequentialGroup()
+                            .addComponent(envLabel)
+                            .addComponent(envText)
+                            .addComponent(generate)
             );
 
             sequential.addGroup(
-                layout.createParallelGroup(BASELINE)
-                    .addComponent(envLabel)
-                    .addComponent(envText)
-                    .addComponent(generate));
+                    layout.createParallelGroup(BASELINE)
+                            .addComponent(envLabel)
+                            .addComponent(envText)
+                            .addComponent(generate));
 
             return panel;
-        }
-
-        private String envFromFile(String name) {
-            int first = name.indexOf('.');
-            if (first < 0 || first >= name.length() - 2) return "";
-            int last = name.indexOf('.', first + 1);
-            return last < 0 ? "" : name.substring(first + 1, last);
         }
 
         private JComponent initTextPane() {
@@ -124,7 +115,6 @@ public class PreviewAction extends MicroconfigAction {
 
         @RequiredArgsConstructor
         private class Listener implements ActionListener, KeyListener {
-
             private final PluginContext context;
             private final MicroconfigApi api;
 
@@ -162,9 +152,6 @@ public class PreviewAction extends MicroconfigAction {
                     return e.getMessage();
                 }
             }
-
         }
-
     }
-
 }
