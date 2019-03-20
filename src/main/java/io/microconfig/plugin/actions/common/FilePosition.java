@@ -1,5 +1,6 @@
 package io.microconfig.plugin.actions.common;
 
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
@@ -8,8 +9,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.io.File;
 
-import static io.microconfig.plugin.utils.FileUtil.toPsiFile;
-import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
+import static com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE;
 
 @RequiredArgsConstructor
 public class FilePosition {
@@ -18,8 +18,8 @@ public class FilePosition {
 
     public static FilePosition positionFromFileSource(FileSource source) {
         return new FilePosition(
-                source.getSource(),
-                source.getLineNumber()
+            source.getSource(),
+            source.getLineNumber()
         );
     }
 
@@ -30,9 +30,9 @@ public class FilePosition {
     }
 
     private void moveToLine(Project project) {
-        FileEditorManager.getInstance(project)
-                .getSelectedTextEditor()
-                .getCaretModel()
-                .moveToVisualPosition(new VisualPosition(lineNumber, 0));
+        Editor editor = FileEditorManager.getInstance(project).getSelectedTextEditor();
+        editor.getCaretModel().moveToVisualPosition(new VisualPosition(lineNumber, 0));
+        editor.getScrollingModel().scrollToCaret(MAKE_VISIBLE);
     }
+
 }
