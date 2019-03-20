@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -25,7 +26,7 @@ public class PreviewAction extends MicroconfigAction {
 
     @Override
     protected ActionHandler chooseHandler(PluginContext ignore) {
-        return (ctx, api) -> new PreviewDialog(ctx, api).show();
+        return PreviewDialog::create;
     }
 
     private static class PreviewDialog extends DialogWrapper {
@@ -42,10 +43,15 @@ public class PreviewAction extends MicroconfigAction {
 
             this.textPane = initTextPane();
             this.envPane = initEnvPane(listener);
-            init();
 
             setTitle(context.currentFile().getParentFile().getName() + "/" + context.currentFile().getName() + " result configuration");
             listener.updatePreviewText();
+        }
+
+        private static void create(PluginContext ctx, MicroconfigApi api) {
+            PreviewDialog dialog = new PreviewDialog(ctx, api);
+            dialog.init();
+            dialog.show();
         }
 
         @Nullable
@@ -134,9 +140,10 @@ public class PreviewAction extends MicroconfigAction {
             }
 
             private void updatePreviewText() {
+                Dimension size = getSize();
                 previewText.setText(previewTextForEnv(envText.getText()));
                 previewText.setCaretPosition(0);
-                show();
+                setSize(size.width, size.height);
             }
 
             private String previewTextForEnv(String envName) {
