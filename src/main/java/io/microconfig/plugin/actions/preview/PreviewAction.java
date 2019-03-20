@@ -32,18 +32,18 @@ public class PreviewAction extends MicroconfigAction {
         private final JTextField envText = new JTextField("", 20);
         private final JTextPane previewText = new JTextPane();
 
-        private final Listener listener;
 
         PreviewDialog(PluginContext context, MicroconfigApi api) {
             super(context.getProject());
 
-            this.listener = new Listener(context, api);
+            Listener listener = new Listener(context, api);
 
-            this.textPane = textPane();
-            this.envPane = envPane();
+            this.textPane = initTextPane();
+            this.envPane = initEnvPane(listener);
+            init();
 
             setTitle(context.currentFile().getParentFile().getName() + "/" + context.currentFile().getName() + " result configuration");
-            this.listener.updatePreviewText();
+            listener.updatePreviewText();
         }
 
         @Nullable
@@ -64,7 +64,7 @@ public class PreviewAction extends MicroconfigAction {
             return new Action[]{};
         }
 
-        private JComponent envPane() {
+        private JComponent initEnvPane(Listener listener) {
             JLabel envLabel = new JLabel("Environment: ");
 
             JButton generate = new JButton("Generate");
@@ -97,7 +97,7 @@ public class PreviewAction extends MicroconfigAction {
             return panel;
         }
 
-        private JComponent textPane() {
+        private JComponent initTextPane() {
             previewText.setEditable(false);
             JScrollPane scrollPane = new JBScrollPane(previewText);
             scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
@@ -132,7 +132,6 @@ public class PreviewAction extends MicroconfigAction {
 
             private void updatePreviewText() {
                 previewText.setText(previewTextForEnv(envText.getText()));
-                init();
             }
 
             private String previewTextForEnv(String envName) {
