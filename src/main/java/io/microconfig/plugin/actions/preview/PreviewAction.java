@@ -42,7 +42,7 @@ public class PreviewAction extends MicroconfigAction {
             Listener listener = new Listener(context, api);
 
             this.textPane = initTextPane();
-            this.envPane = initEnvPane(listener);
+            this.envPane = initEnvPane(context, listener);
 
             setTitle(context.currentFile().getParentFile().getName() + "/" + context.currentFile().getName() + " result configuration");
             listener.updatePreviewText();
@@ -72,7 +72,9 @@ public class PreviewAction extends MicroconfigAction {
             return new Action[]{};
         }
 
-        private JComponent initEnvPane(Listener listener) {
+        private JComponent initEnvPane(PluginContext context, Listener listener) {
+            envText.setText(envFromFile(context.currentFile().getName()));
+
             JLabel envLabel = new JLabel("Environment: ");
 
             JButton generate = new JButton("Generate");
@@ -103,6 +105,12 @@ public class PreviewAction extends MicroconfigAction {
                     .addComponent(generate));
 
             return panel;
+        }
+
+        private String envFromFile(String name) {
+            int first = name.indexOf('.');
+            int last = name.lastIndexOf('.');
+            return first == last ? "" : name.substring(first + 1, last);
         }
 
         private JComponent initTextPane() {
