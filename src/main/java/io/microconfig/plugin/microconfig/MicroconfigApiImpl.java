@@ -20,6 +20,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import static io.microconfig.commands.buildconfig.factory.StandardConfigType.SERVICE;
 import static io.microconfig.configs.Property.parse;
 import static io.microconfig.configs.resolver.placeholder.Placeholder.placeholderMatcher;
 import static io.microconfig.configs.sources.FileSource.fileSource;
@@ -104,7 +105,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public File findAnyComponentFile(String component, String env, File projectDir) {
         try {
-            return findFile(component, env, f -> f.getName().endsWith(".properties") || f.getName().endsWith(".yaml"), projectDir);
+            return findFile(component, env, containsConfigTypeExtension(SERVICE.getConfigType()), projectDir);
         } catch (RuntimeException e) {
             return findFile(component, env, f -> true, projectDir);
         }
@@ -150,12 +151,13 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private File findSourceFile(String component, String env, File currentFile, File projectDir) {
-        ConfigType configType = initializer.detectConfigType(currentFile);
-        Predicate<File> hasConfigTypeExtension = file -> configType.getConfigExtensions()
+        return findFile(component, env, containsConfigTypeExtension(initializer.detectConfigType(currentFile)), projectDir);
+    }
+
+    private Predicate<File> containsConfigTypeExtension(ConfigType configType) {
+        return file -> configType.getConfigExtensions()
                 .stream()
                 .anyMatch(ext -> file.getName().endsWith(ext));
-
-        return findFile(component, env, hasConfigTypeExtension, projectDir);
     }
 
     private File findFile(String component, String env, Predicate<File> predicate, File projectDir) {

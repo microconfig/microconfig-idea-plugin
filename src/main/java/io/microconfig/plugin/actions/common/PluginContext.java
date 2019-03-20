@@ -107,12 +107,4 @@ public class PluginContext {
     public void showErrorHint(String message) {
         HintManager.getInstance().showErrorHint(editor, message);
     }
-
-    private void showHint(JComponent hint) {
-        HintManagerImpl hintManager = HintManagerImpl.getInstanceImpl();
-        LightweightHint hintHint = new LightweightHint(hint);
-        Point p = hintManager.getHintPosition(hintHint, editor, ABOVE);
-        hintManager.showEditorHint(hintHint, editor, p, HIDE_BY_ANY_KEY, 0, false);
-    }
-
 }
