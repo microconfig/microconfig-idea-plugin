@@ -29,7 +29,14 @@ On Jump it will try to find `component` file and then a line with `key` inside i
 `Resolve placeholder` supports two modes. 
 
 If activated with cursor on a property' key it will try to resolve the whole property and show values grouped by env names in a small hint.
+
+![resolve](doc/resolve.png)
+
 If activated with cursor inside placeholder `${}` it will try to resolve only that placeholder.
+
+![resolve-placeholder](doc/resolve-placeholder.png)
 
 ### Config build
 You can create standard IDEA Run configuration for Microconfig to build configs with plugin.
+
+![run](doc/run.png)
