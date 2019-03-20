@@ -10,29 +10,27 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import static java.awt.event.KeyEvent.VK_ENTER;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 public class PreviewAction extends MicroconfigAction {
-
     @Override
     protected ActionHandler chooseHandler(PluginContext ignore) {
         return (ctx, api) -> new PreviewDialog(ctx, api).show();
     }
 
     private static class PreviewDialog extends DialogWrapper {
-
         private final PluginContext context;
         private final MicroconfigApi api;
         private final JComponent textPane;
         private final JComponent envPane;
-        private final JTextField envText = new JTextField("base", 20);
+        private final JTextField envText = new JTextField("", 20);
         private final JTextPane previewText = new JTextPane();
         private final Listener listener = new Listener();
 
@@ -84,17 +82,17 @@ public class PreviewAction extends MicroconfigAction {
             layout.setVerticalGroup(sequential);
 
             parallel.addGroup(
-                layout.createSequentialGroup()
-                    .addComponent(envLabel)
-                    .addComponent(envText)
-                    .addComponent(generate)
+                    layout.createSequentialGroup()
+                            .addComponent(envLabel)
+                            .addComponent(envText)
+                            .addComponent(generate)
             );
 
             sequential.addGroup(
-                layout.createParallelGroup(BASELINE)
-                    .addComponent(envLabel)
-                    .addComponent(envText)
-                    .addComponent(generate));
+                    layout.createParallelGroup(BASELINE)
+                            .addComponent(envLabel)
+                            .addComponent(envText)
+                            .addComponent(generate));
 
             return panel;
         }
@@ -111,11 +109,14 @@ public class PreviewAction extends MicroconfigAction {
         }
 
         private String previewTextForEnv(String envName) {
-            return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName);
+            try {
+                return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName);
+            } catch (RuntimeException e) {
+                return e.getMessage();
+            }
         }
 
         private class Listener implements ActionListener, KeyListener {
-
             @Override
             public void actionPerformed(ActionEvent e) {
                 updatePreviewText();
@@ -123,27 +124,22 @@ public class PreviewAction extends MicroconfigAction {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode()==KeyEvent.VK_ENTER){
+                if (e.getKeyCode() == VK_ENTER) {
                     updatePreviewText();
                 }
             }
 
             @Override
             public void keyTyped(KeyEvent e) {
-
             }
 
             @Override
             public void keyReleased(KeyEvent e) {
-
             }
 
             private void updatePreviewText() {
                 previewText.setText(previewTextForEnv(envText.getText()));
             }
-
         }
-
     }
-
 }
