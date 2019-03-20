@@ -109,8 +109,9 @@ public class PreviewAction extends MicroconfigAction {
 
         private String envFromFile(String name) {
             int first = name.indexOf('.');
-            int last = name.lastIndexOf('.');
-            return first == last ? "" : name.substring(first + 1, last);
+            if (first < 0 || first >= name.length() - 2) return "";
+            int last = name.indexOf('.', first + 1);
+            return last < 0 ? "" : name.substring(first + 1, last);
         }
 
         private JComponent initTextPane() {
