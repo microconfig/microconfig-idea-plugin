@@ -22,17 +22,18 @@ import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 public class PreviewAction extends MicroconfigAction {
+
     @Override
     protected ActionHandler chooseHandler(PluginContext ignore) {
         return (ctx, api) -> new PreviewDialog(ctx, api).show();
     }
 
     private static class PreviewDialog extends DialogWrapper {
+
         private final JComponent textPane;
         private final JComponent envPane;
         private final JTextField envText = new JTextField("", 20);
         private final JTextPane previewText = new JTextPane();
-
 
         PreviewDialog(PluginContext context, MicroconfigApi api) {
             super(context.getProject());
@@ -83,17 +84,17 @@ public class PreviewAction extends MicroconfigAction {
             layout.setVerticalGroup(sequential);
 
             parallel.addGroup(
-                    layout.createSequentialGroup()
-                            .addComponent(envLabel)
-                            .addComponent(envText)
-                            .addComponent(generate)
+                layout.createSequentialGroup()
+                    .addComponent(envLabel)
+                    .addComponent(envText)
+                    .addComponent(generate)
             );
 
             sequential.addGroup(
-                    layout.createParallelGroup(BASELINE)
-                            .addComponent(envLabel)
-                            .addComponent(envText)
-                            .addComponent(generate));
+                layout.createParallelGroup(BASELINE)
+                    .addComponent(envLabel)
+                    .addComponent(envText)
+                    .addComponent(generate));
 
             return panel;
         }
@@ -106,9 +107,9 @@ public class PreviewAction extends MicroconfigAction {
             return scrollPane;
         }
 
-
         @RequiredArgsConstructor
         private class Listener implements ActionListener, KeyListener {
+
             private final PluginContext context;
             private final MicroconfigApi api;
 
@@ -135,7 +136,7 @@ public class PreviewAction extends MicroconfigAction {
             private void updatePreviewText() {
                 previewText.setText(previewTextForEnv(envText.getText()));
                 previewText.setCaretPosition(0);
-                init();
+                show();
             }
 
             private String previewTextForEnv(String envName) {
@@ -145,6 +146,9 @@ public class PreviewAction extends MicroconfigAction {
                     return e.getMessage();
                 }
             }
+
         }
+
     }
+
 }
