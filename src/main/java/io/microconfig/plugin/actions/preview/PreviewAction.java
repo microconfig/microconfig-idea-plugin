@@ -6,6 +6,7 @@ import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.MicroconfigAction;
 import io.microconfig.plugin.actions.common.PluginContext;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
+import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -26,24 +27,23 @@ public class PreviewAction extends MicroconfigAction {
     }
 
     private static class PreviewDialog extends DialogWrapper {
-        private final PluginContext context;
-        private final MicroconfigApi api;
         private final JComponent textPane;
         private final JComponent envPane;
         private final JTextField envText = new JTextField("", 20);
         private final JTextPane previewText = new JTextPane();
-        private final Listener listener = new Listener();
+
+        private final Listener listener;
 
         PreviewDialog(PluginContext context, MicroconfigApi api) {
             super(context.getProject());
 
-            this.context = context;
-            this.api = api;
+            this.listener = new Listener(context, api);
+
             this.textPane = textPane();
             this.envPane = envPane();
-            init();
 
             setTitle(context.currentFile().getParentFile().getName() + "/" + context.currentFile().getName() + " result configuration");
+            this.listener.updatePreviewText();
         }
 
         @Nullable
@@ -98,25 +98,18 @@ public class PreviewAction extends MicroconfigAction {
         }
 
         private JComponent textPane() {
-            String preview = previewTextForEnv("");
-
             previewText.setEditable(false);
-            previewText.setText(preview);
-
             JScrollPane scrollPane = new JBScrollPane(previewText);
             scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
             return scrollPane;
         }
 
-        private String previewTextForEnv(String envName) {
-            try {
-                return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName);
-            } catch (RuntimeException e) {
-                return e.getMessage();
-            }
-        }
 
+        @RequiredArgsConstructor
         private class Listener implements ActionListener, KeyListener {
+            private final PluginContext context;
+            private final MicroconfigApi api;
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 updatePreviewText();
@@ -139,6 +132,15 @@ public class PreviewAction extends MicroconfigAction {
 
             private void updatePreviewText() {
                 previewText.setText(previewTextForEnv(envText.getText()));
+                init();
+            }
+
+            private String previewTextForEnv(String envName) {
+                try {
+                    return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName);
+                } catch (RuntimeException e) {
+                    return e.getMessage();
+                }
             }
         }
     }
