@@ -17,9 +17,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.util.Vector;
 
 import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.util.stream.Stream.concat;
+import static java.util.stream.Stream.of;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
@@ -73,10 +74,7 @@ public class PreviewAction extends MicroconfigAction {
         }
 
         private JComponent initEnvPane(PluginContext context, MicroconfigApi api, Listener listener) {
-            Vector<String> envs = new Vector<>();
-            envs.add("");
-            envs.addAll(api.getEnvs(context.projectDir()));
-            envsComboBox.setModel(new DefaultComboBoxModel<>(envs));
+            envsComboBox.setModel(new DefaultComboBoxModel<>(concat(of(""), api.getEnvs(context.projectDir()).stream()).toArray(String[]::new)));
             envsComboBox.setSelectedItem(api.detectEnvOr(context.currentFile(), () -> ""));
             envsComboBox.setEditable(true);
             envsComboBox.addActionListener(listener);
