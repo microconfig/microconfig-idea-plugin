@@ -30,6 +30,7 @@ import static java.lang.Math.max;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
@@ -120,9 +121,13 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .getProperties(bySourceFile(currentFile), env)
                 .values();
 
-        return factory.getConfigIoService()
-                .writeTo(currentFile)
-                .serialize(properties);
+        return properties.stream().map(p ->
+                span(p.getKey(), "green") + "=" + span(p.getValue(), "blue"))
+                .collect(joining("<br/>"));
+    }
+
+    private String span(String value, String color) {
+        return "<span style='color:" + color + "'>" + value + "</span>";
     }
 
     @Override
