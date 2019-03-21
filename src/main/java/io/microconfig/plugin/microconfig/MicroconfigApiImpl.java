@@ -194,4 +194,11 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                     .orElse(""); //otherwise will fail for env-specific prop
         };
     }
+
+    @Override
+    public String[] getEvsForFile(File currentFile, File projectDir) {
+        //todo implement
+        return new String[] {"test", "staging", "prod"};
+    }
+
 }

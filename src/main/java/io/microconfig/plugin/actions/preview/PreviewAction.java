@@ -1,5 +1,6 @@
 package io.microconfig.plugin.actions.preview;
 
+import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.components.JBScrollPane;
 import io.microconfig.plugin.actions.common.ActionHandler;
@@ -31,7 +32,7 @@ public class PreviewAction extends MicroconfigAction {
     private static class PreviewDialog extends DialogWrapper {
         private final JComponent textPane;
         private final JComponent envPane;
-        private final JTextField envText = new JTextField("", 20);
+        private final ComboBox<String> envsComboBox = new ComboBox<>(new String[0]);
         private final JTextPane previewText = new JTextPane();
 
         private static void create(PluginContext ctx, MicroconfigApi api) {
@@ -71,13 +72,16 @@ public class PreviewAction extends MicroconfigAction {
         }
 
         private JComponent initEnvPane(PluginContext context, MicroconfigApi api, Listener listener) {
-            envText.setText(api.detectEnvOr(context.currentFile(), () -> ""));
+            String[] envs = api.getEvsForFile(context.currentFile(), context.projectDir());
+            //todo second call or from envs?
+            envsComboBox.setSelectedItem(api.detectEnvOr(context.currentFile(), () -> ""));
+            envsComboBox.setModel(new DefaultComboBoxModel<>(envs));
+            envsComboBox.setEditable(true);
+            envsComboBox.addActionListener(listener);
 
             JLabel envLabel = new JLabel("Environment: ");
-
             JButton generate = new JButton("Generate");
             generate.addActionListener(listener);
-            envText.addKeyListener(listener);
 
             JPanel panel = new JPanel();
             GroupLayout layout = new GroupLayout(panel);
@@ -90,17 +94,17 @@ public class PreviewAction extends MicroconfigAction {
             layout.setVerticalGroup(sequential);
 
             parallel.addGroup(
-                    layout.createSequentialGroup()
-                            .addComponent(envLabel)
-                            .addComponent(envText)
-                            .addComponent(generate)
+                layout.createSequentialGroup()
+                    .addComponent(envLabel)
+                    .addComponent(envsComboBox)
+                    .addComponent(generate)
             );
 
             sequential.addGroup(
-                    layout.createParallelGroup(BASELINE)
-                            .addComponent(envLabel)
-                            .addComponent(envText)
-                            .addComponent(generate));
+                layout.createParallelGroup(BASELINE)
+                    .addComponent(envLabel)
+                    .addComponent(envsComboBox)
+                    .addComponent(generate));
 
             return panel;
         }
@@ -140,7 +144,8 @@ public class PreviewAction extends MicroconfigAction {
 
             private void updatePreviewText() {
                 Dimension size = getSize();
-                previewText.setText(previewTextForEnv(envText.getText()));
+                String chosenEnv = (String) envsComboBox.getSelectedItem();
+                previewText.setText(previewTextForEnv(chosenEnv));
                 previewText.setCaretPosition(0);
                 setSize(size.width, size.height);
             }
@@ -152,6 +157,9 @@ public class PreviewAction extends MicroconfigAction {
                     return e.getMessage();
                 }
             }
+
         }
+
     }
+
 }
