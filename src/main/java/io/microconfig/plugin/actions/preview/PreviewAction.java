@@ -17,6 +17,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Vector;
 
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
@@ -72,10 +73,11 @@ public class PreviewAction extends MicroconfigAction {
         }
 
         private JComponent initEnvPane(PluginContext context, MicroconfigApi api, Listener listener) {
-            String[] envs = api.getEvsForFile(context.currentFile(), context.projectDir());
-            //todo second call or from envs?
-            envsComboBox.setSelectedItem(api.detectEnvOr(context.currentFile(), () -> ""));
+            Vector<String> envs = new Vector<>();
+            envs.add("");
+            envs.addAll(api.getEnvs(context.projectDir()));
             envsComboBox.setModel(new DefaultComboBoxModel<>(envs));
+            envsComboBox.setSelectedItem(api.detectEnvOr(context.currentFile(), () -> ""));
             envsComboBox.setEditable(true);
             envsComboBox.addActionListener(listener);
 
@@ -94,17 +96,17 @@ public class PreviewAction extends MicroconfigAction {
             layout.setVerticalGroup(sequential);
 
             parallel.addGroup(
-                layout.createSequentialGroup()
-                    .addComponent(envLabel)
-                    .addComponent(envsComboBox)
-                    .addComponent(generate)
+                    layout.createSequentialGroup()
+                            .addComponent(envLabel)
+                            .addComponent(envsComboBox)
+                            .addComponent(generate)
             );
 
             sequential.addGroup(
-                layout.createParallelGroup(BASELINE)
-                    .addComponent(envLabel)
-                    .addComponent(envsComboBox)
-                    .addComponent(generate));
+                    layout.createParallelGroup(BASELINE)
+                            .addComponent(envLabel)
+                            .addComponent(envsComboBox)
+                            .addComponent(generate));
 
             return panel;
         }
@@ -157,9 +159,6 @@ public class PreviewAction extends MicroconfigAction {
                     return e.getMessage();
                 }
             }
-
         }
-
     }
-
 }

@@ -196,9 +196,9 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     @Override
-    public String[] getEvsForFile(File currentFile, File projectDir) {
-        //todo implement
-        return new String[] {"test", "staging", "prod"};
+    public Set<String> getEnvs(File projectDir) {
+        return initializer.getMicroconfigFactory(projectDir)
+                .getEnvironmentProvider()
+                .getEnvironmentNames();
     }
-
 }

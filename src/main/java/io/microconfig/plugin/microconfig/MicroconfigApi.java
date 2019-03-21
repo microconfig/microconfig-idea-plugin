@@ -4,6 +4,7 @@ import io.microconfig.plugin.actions.common.FilePosition;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public interface MicroconfigApi {
@@ -25,10 +26,10 @@ public interface MicroconfigApi {
 
     String buildConfigsForService(File currentFile, File projectDir, String env);
 
-    MicroconfigInitializer getMicroconfigInitializer();
-
     String detectEnvOr(File currentFile, Supplier<String> defaultEnv);
 
-    String[] getEvsForFile(File currentFile, File projectDir);
+    Set<String> getEnvs(File currentFile);
+
+    MicroconfigInitializer getMicroconfigInitializer();
 
 }
