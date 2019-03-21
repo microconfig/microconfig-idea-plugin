@@ -12,6 +12,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyleContext;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -24,6 +27,9 @@ import static java.util.stream.Stream.of;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
 import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
+import static javax.swing.text.SimpleAttributeSet.EMPTY;
+import static javax.swing.text.StyleConstants.Foreground;
+import static javax.swing.text.StyleContext.getDefaultStyleContext;
 
 public class PreviewAction extends MicroconfigAction {
     @Override
@@ -94,17 +100,17 @@ public class PreviewAction extends MicroconfigAction {
             layout.setVerticalGroup(sequential);
 
             parallel.addGroup(
-                    layout.createSequentialGroup()
-                            .addComponent(envLabel)
-                            .addComponent(envsComboBox)
-                            .addComponent(generate)
+                layout.createSequentialGroup()
+                    .addComponent(envLabel)
+                    .addComponent(envsComboBox)
+                    .addComponent(generate)
             );
 
             sequential.addGroup(
-                    layout.createParallelGroup(BASELINE)
-                            .addComponent(envLabel)
-                            .addComponent(envsComboBox)
-                            .addComponent(generate));
+                layout.createParallelGroup(BASELINE)
+                    .addComponent(envLabel)
+                    .addComponent(envsComboBox)
+                    .addComponent(generate));
 
             return panel;
         }
@@ -145,9 +151,32 @@ public class PreviewAction extends MicroconfigAction {
             private void updatePreviewText() {
                 Dimension size = getSize();
                 String chosenEnv = (String) envsComboBox.getSelectedItem();
-                previewText.setText(previewTextForEnv(chosenEnv));
+//                previewText.setText(previewTextForEnv(chosenEnv));
+                appendTwo(Color.BLUE, previewTextForEnv(chosenEnv));
                 previewText.setCaretPosition(0);
                 setSize(size.width, size.height);
+            }
+
+            public void appendTwo(Color c, String s) {
+                StyleContext sc = getDefaultStyleContext();
+                AttributeSet aset = sc.addAttribute(EMPTY, Foreground, c);
+                int len = previewText.getDocument().getLength();
+
+                try {
+                    previewText.getDocument().insertString(len, s, aset);
+                } catch (BadLocationException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            public void append(Color c, String s) {
+                StyleContext sc = getDefaultStyleContext();
+                AttributeSet aset = sc.addAttribute(EMPTY, Foreground, c);
+
+                int len = previewText.getDocument().getLength();
+                previewText.setCaretPosition(len);
+                previewText.setCharacterAttributes(aset, false);
+                previewText.replaceSelection(s);
             }
 
             private String previewTextForEnv(String envName) {
@@ -157,6 +186,9 @@ public class PreviewAction extends MicroconfigAction {
                     return e.getMessage();
                 }
             }
+
         }
+
     }
+
 }
