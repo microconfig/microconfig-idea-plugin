@@ -1,7 +1,8 @@
 package io.microconfig.plugin.actions.preview;
 
-import com.intellij.openapi.editor.colors.EditorColorsManager;
-import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
@@ -39,7 +40,7 @@ public class PreviewAction extends MicroconfigAction {
         private final JComponent textPane;
         private final JComponent envPane;
         private final ComboBox<String> envsComboBox = new ComboBox<>(new String[0]);
-        private final EditorTextField previewText = new EditorTextField();
+        private final EditorTextField previewText;
 
         private static void create(PluginContext ctx, MicroconfigApi api) {
             PreviewDialog dialog = new PreviewDialog(ctx, api);
@@ -51,7 +52,10 @@ public class PreviewAction extends MicroconfigAction {
             super(context.getProject());
 
             Listener listener = new Listener(context, api);
+            Document document = EditorFactory.getInstance().createDocument("");
+            FileType yaml = FileTypeManager.getInstance().getFileTypeByExtension("yaml"); //todo from current file extension
 
+            this.previewText = new EditorTextField(document, context.getProject(), yaml, true, false);
             this.textPane = initTextPane();
             this.envPane = initEnvPane(context, api, listener);
 
@@ -148,20 +152,15 @@ public class PreviewAction extends MicroconfigAction {
             private void updatePreviewText() {
                 Dimension size = getSize();
                 String chosenEnv = (String) envsComboBox.getSelectedItem();
-//                EditorHighlighter highlighter = HighlighterFactory.createHighlighter(context.getProject(), "text.yaml");
-                previewText.setFileType(FileTypeManager.getInstance().getFileTypeByExtension("yaml"));
-                previewText.setText(previewTextForEnv(chosenEnv));
                 previewText.setCaretPosition(0);
+                previewText.setText(previewTextForEnv(chosenEnv));
                 setSize(size.width, size.height);
             }
 
 
             private String previewTextForEnv(String envName) {
                 try {
-                    Color foreground = context.getEditor().getColorsScheme().getDefaultForeground();
-                    EditorColorsManager colorManager = EditorColorsManager.getInstance();
-                    EditorColorsScheme[] schemes = colorManager.getAllSchemes();
-                    return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName, foreground);
+                    return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName);
                 } catch (RuntimeException e) {
                     return e.getMessage();
                 }

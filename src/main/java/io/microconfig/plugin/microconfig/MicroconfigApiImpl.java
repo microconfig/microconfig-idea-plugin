@@ -13,11 +13,8 @@ import io.microconfig.configs.sources.FileSource;
 import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
 
-import java.awt.*;
 import java.io.File;
-import java.util.List;
 import java.util.*;
-import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -29,7 +26,6 @@ import static io.microconfig.configs.resolver.placeholder.Placeholder.placeholde
 import static io.microconfig.configs.sources.FileSource.fileSource;
 import static io.microconfig.environments.Component.bySourceFile;
 import static io.microconfig.plugin.actions.common.FilePosition.positionFromFileSource;
-import static java.lang.Integer.toHexString;
 import static java.lang.Math.max;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
@@ -117,7 +113,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     @Override
-    public String buildConfigsForService(File currentFile, File projectDir, String env, Color valueColor) {
+    public String buildConfigsForService(File currentFile, File projectDir, String env) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
         Collection<Property> properties = factory
@@ -125,14 +121,9 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .getProperties(bySourceFile(currentFile), env)
                 .values();
 
-        BinaryOperator<String> span = (value, color) -> "<span style='color:" + color + "'>" + value + "</span>";
-        return properties.stream().map(p ->
-                p.getKey() + ": "+p.getValue())
+        return properties.stream()
+                .map(p -> p.getKey() + ": " + p.getValue()) //todo match current file type props/yaml
                 .collect(joining("\n"));
-    }
-
-    private String toHexColor(Color color) {
-        return "#" + toHexString(color.getRed()) + toHexString(color.getGreen()) + toHexString(color.getBlue());
     }
 
     @Override
