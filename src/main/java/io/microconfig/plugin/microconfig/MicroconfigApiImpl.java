@@ -122,7 +122,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .values();
 
         return properties.stream().map(p ->
-                span(p.getKey(), "green") + "=" + span(p.getValue(), "blue"))
+                span(p.getKey(), "grey") + "=" + span(p.getValue(), "teal"))
                 .collect(joining("<br/>"));
     }
 
