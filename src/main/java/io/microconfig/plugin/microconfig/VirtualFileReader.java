@@ -1,7 +1,7 @@
 package io.microconfig.plugin.microconfig;
 
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import io.microconfig.utils.reader.ConfigFileReader;
+import io.microconfig.utils.reader.FilesReader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,7 +14,7 @@ import java.util.stream.Stream;
 import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
 import static java.util.stream.Collectors.toList;
 
-public class VirtualFileReader implements ConfigFileReader {
+public class VirtualFileReader implements FilesReader {
     @Override
     public String read(File file) {
         return FileDocumentManager.
