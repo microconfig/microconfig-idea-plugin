@@ -15,6 +15,7 @@ import io.microconfig.plugin.actions.common.PluginException;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -121,13 +122,10 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .getProperties(bySourceFile(currentFile), env)
                 .values();
 
+        BinaryOperator<String> span = (value, color) -> "<span style='color:" + color + "'>" + value + "</span>";
         return properties.stream().map(p ->
-                span(p.getKey(), "grey") + "=" + span(p.getValue(), "teal"))
+                span.apply(p.getKey(), "grey") + "=" + span.apply(p.getValue(), "teal"))
                 .collect(joining("<br/>"));
-    }
-
-    private String span(String value, String color) {
-        return "<span style='color:" + color + "'>" + value + "</span>";
     }
 
     @Override
