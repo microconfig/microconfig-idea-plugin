@@ -2,6 +2,7 @@ package io.microconfig.plugin.microconfig;
 
 import io.microconfig.plugin.actions.common.FilePosition;
 
+import javax.swing.plaf.ColorUIResource;
 import java.io.File;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +25,7 @@ public interface MicroconfigApi {
      */
     Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir);
 
-    String buildConfigsForService(File currentFile, File projectDir, String env);
+    String buildConfigsForService(File currentFile, File projectDir, String env, ColorUIResource valueColor);
 
     String detectEnvOr(File currentFile, Supplier<String> defaultEnv);
 
