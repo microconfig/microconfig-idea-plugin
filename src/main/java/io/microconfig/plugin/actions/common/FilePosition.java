@@ -18,8 +18,8 @@ public class FilePosition {
 
     public static FilePosition positionFromFileSource(FileSource source) {
         return new FilePosition(
-            source.getSource(),
-            source.getLineNumber()
+                source.getSource(),
+                source.getLineNumber()
         );
     }
 

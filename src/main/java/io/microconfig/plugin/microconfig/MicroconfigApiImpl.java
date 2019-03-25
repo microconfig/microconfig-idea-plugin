@@ -15,13 +15,9 @@ import io.microconfig.plugin.actions.common.PluginException;
 
 import java.awt.*;
 import java.io.File;
-import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
+import java.util.*;
+import java.util.function.BinaryOperator;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -108,7 +104,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         return envs(currentLine, currentFile, factory)
-            .collect(toMap(identity(), resolveProperty, (k1, k2) -> k1, TreeMap::new));
+                .collect(toMap(identity(), resolveProperty, (k1, k2) -> k1, TreeMap::new));
     }
 
     @Override
@@ -125,17 +121,14 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
         Collection<Property> properties = factory
-            .newConfigProvider(initializer.detectConfigType(currentFile))
-            .getProperties(bySourceFile(currentFile), env)
-            .values();
+                .newConfigProvider(initializer.detectConfigType(currentFile))
+                .getProperties(bySourceFile(currentFile), env)
+                .values();
 
+        BinaryOperator<String> span = (value, color) -> "<span style='color:" + color + "'>" + value + "</span>";
         return properties.stream().map(p ->
-            span(p.getKey(), "#D2691E") + "=" + span(p.getValue(), toHexColor(valueColor)))
-            .collect(joining("<br/>"));
-    }
-
-    private String span(String value, String color) {
-        return "<span style='color:" + color + "'>" + value + "</span>";
+                span.apply(p.getKey(), "#D2691E") + "=" + span.apply(p.getValue(), toHexColor(valueColor)))
+                .collect(joining("<br/>"));
     }
 
     private String toHexColor(Color color) {
@@ -152,18 +145,18 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
         if (currentFile.getName().indexOf('.') != currentFile.getName().lastIndexOf('.')) {
             String[] parts = currentFile
-                .getName()
-                .split("\\.");
+                    .getName()
+                    .split("\\.");
 
             return stream(parts)
-                .skip(1)
-                .limit(parts.length - 2);
+                    .skip(1)
+                    .limit(parts.length - 2);
         }
 
         return concat(of(""),
-            factory.getEnvironmentProvider()
-                .getEnvironmentNames()
-                .stream()
+                factory.getEnvironmentProvider()
+                        .getEnvironmentNames()
+                        .stream()
         );
     }
 
@@ -173,8 +166,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     private Predicate<File> containsConfigTypeExtension(ConfigType configType) {
         return file -> configType.getConfigExtensions()
-            .stream()
-            .anyMatch(ext -> file.getName().endsWith(ext));
+                .stream()
+                .anyMatch(ext -> file.getName().endsWith(ext));
     }
 
     private File findFile(String component, String env, Predicate<File> predicate, File projectDir) {
@@ -184,10 +177,10 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         return initializer.getMicroconfigFactory(projectDir)
-            .getComponentTree()
-            .getConfigFiles(component, predicate)
-            .min(priorityByEnv.get())
-            .orElseThrow(() -> new PluginException("Component not found: " + component));
+                .getComponentTree()
+                .getConfigFiles(component, predicate)
+                .min(priorityByEnv.get())
+                .orElseThrow(() -> new PluginException("Component not found: " + component));
     }
 
     @Override
@@ -205,18 +198,17 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     private Supplier<String> anyEnv(MicroconfigFactory factory) {
         return () -> {
             return factory.getEnvironmentProvider()
-                .getEnvironmentNames()
-                .stream()
-                .findFirst()
-                .orElse(""); //otherwise will fail for env-specific prop
+                    .getEnvironmentNames()
+                    .stream()
+                    .findFirst()
+                    .orElse(""); //otherwise will fail for env-specific prop
         };
     }
 
     @Override
     public Set<String> getEnvs(File projectDir) {
         return initializer.getMicroconfigFactory(projectDir)
-            .getEnvironmentProvider()
-            .getEnvironmentNames();
+                .getEnvironmentProvider()
+                .getEnvironmentNames();
     }
-
 }

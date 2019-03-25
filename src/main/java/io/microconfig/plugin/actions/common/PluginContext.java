@@ -1,25 +1,19 @@
 package io.microconfig.plugin.actions.common;
 
 import com.intellij.codeInsight.hint.HintManager;
-import com.intellij.codeInsight.hint.HintManagerImpl;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
-import com.intellij.ui.LightweightHint;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
-import javax.swing.*;
-import java.awt.*;
 import java.io.File;
 import java.util.function.IntPredicate;
 import java.util.function.IntSupplier;
 
-import static com.intellij.codeInsight.hint.HintManager.ABOVE;
-import static com.intellij.codeInsight.hint.HintManager.HIDE_BY_ANY_KEY;
 import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
 import static io.microconfig.plugin.utils.FileUtil.*;
 import static java.lang.Character.isAlphabetic;
