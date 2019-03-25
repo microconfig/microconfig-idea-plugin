@@ -12,7 +12,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
-import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -155,8 +154,8 @@ public class PreviewAction extends MicroconfigAction {
 
             private String previewTextForEnv(String envName) {
                 try {
-                    ColorUIResource valueColor = (ColorUIResource) UIManager.getLookAndFeel().getDefaults().get("TextArea.foreground");
-                    return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName, valueColor);
+                    Color foreground = context.getEditor().getColorsScheme().getDefaultForeground();
+                    return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName, foreground);
                 } catch (RuntimeException e) {
                     return e.getMessage();
                 }

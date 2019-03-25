@@ -13,7 +13,7 @@ import io.microconfig.configs.sources.FileSource;
 import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
 
-import javax.swing.plaf.ColorUIResource;
+import java.awt.*;
 import java.io.File;
 import java.util.Collection;
 import java.util.Comparator;
@@ -121,7 +121,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     @Override
-    public String buildConfigsForService(File currentFile, File projectDir, String env, ColorUIResource valueColor) {
+    public String buildConfigsForService(File currentFile, File projectDir, String env, Color valueColor) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
         Collection<Property> properties = factory
@@ -135,10 +135,10 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private String span(String value, String color) {
-        return "<span style='color:" + color + "'>" + value.replaceAll("\n","<br>") + "</span>";
+        return "<span style='color:" + color + "'>" + value + "</span>";
     }
 
-    private String toHexColor(ColorUIResource color) {
+    private String toHexColor(Color color) {
         return "#" + toHexString(color.getRed()) + toHexString(color.getGreen()) + toHexString(color.getBlue());
     }
 
