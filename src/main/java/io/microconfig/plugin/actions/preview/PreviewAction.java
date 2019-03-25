@@ -1,7 +1,11 @@
 package io.microconfig.plugin.actions.preview;
 
+import com.intellij.openapi.editor.colors.EditorColorsManager;
+import com.intellij.openapi.editor.colors.EditorColorsScheme;
+import com.intellij.openapi.fileTypes.FileTypeManager;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.ui.EditorTextField;
 import com.intellij.ui.components.JBScrollPane;
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.MicroconfigAction;
@@ -35,7 +39,7 @@ public class PreviewAction extends MicroconfigAction {
         private final JComponent textPane;
         private final JComponent envPane;
         private final ComboBox<String> envsComboBox = new ComboBox<>(new String[0]);
-        private final JTextPane previewText = new JTextPane();
+        private final EditorTextField previewText = new EditorTextField();
 
         private static void create(PluginContext ctx, MicroconfigApi api) {
             PreviewDialog dialog = new PreviewDialog(ctx, api);
@@ -110,7 +114,6 @@ public class PreviewAction extends MicroconfigAction {
         }
 
         private JComponent initTextPane() {
-            previewText.setEditable(false);
             JScrollPane scrollPane = new JBScrollPane(previewText);
             scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
             scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -145,7 +148,8 @@ public class PreviewAction extends MicroconfigAction {
             private void updatePreviewText() {
                 Dimension size = getSize();
                 String chosenEnv = (String) envsComboBox.getSelectedItem();
-                previewText.setContentType("text/html");
+//                EditorHighlighter highlighter = HighlighterFactory.createHighlighter(context.getProject(), "text.yaml");
+                previewText.setFileType(FileTypeManager.getInstance().getFileTypeByExtension("yaml"));
                 previewText.setText(previewTextForEnv(chosenEnv));
                 previewText.setCaretPosition(0);
                 setSize(size.width, size.height);
@@ -155,6 +159,8 @@ public class PreviewAction extends MicroconfigAction {
             private String previewTextForEnv(String envName) {
                 try {
                     Color foreground = context.getEditor().getColorsScheme().getDefaultForeground();
+                    EditorColorsManager colorManager = EditorColorsManager.getInstance();
+                    EditorColorsScheme[] schemes = colorManager.getAllSchemes();
                     return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName, foreground);
                 } catch (RuntimeException e) {
                     return e.getMessage();

@@ -127,8 +127,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
         BinaryOperator<String> span = (value, color) -> "<span style='color:" + color + "'>" + value + "</span>";
         return properties.stream().map(p ->
-                span.apply(p.getKey(), "#D2691E") + "=" + span.apply(p.getValue(), toHexColor(valueColor)))
-                .collect(joining("<br/>"));
+                p.getKey() + ": "+p.getValue())
+                .collect(joining("\n"));
     }
 
     private String toHexColor(Color color) {
