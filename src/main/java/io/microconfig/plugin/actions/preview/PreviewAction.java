@@ -23,12 +23,11 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import static com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE;
 import static io.microconfig.configs.io.ioservice.selector.FileFormat.YAML;
 import static io.microconfig.plugin.microconfig.ConfigOutput.getFileType;
-import static java.awt.event.KeyEvent.VK_ENTER;
+import static java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
@@ -62,9 +61,10 @@ public class PreviewAction extends MicroconfigAction {
                     true,
                     false);
 
-            Listener listener = new Listener(context, api);
+            Listener listener = new Listener(context, api, this);
             this.envPane = initEnvPane(context, api, listener);
             listener.updatePreviewText();
+            getCurrentKeyboardFocusManager().addKeyEventDispatcher(listener);
         }
 
         @Nullable
@@ -122,29 +122,15 @@ public class PreviewAction extends MicroconfigAction {
         }
 
         @RequiredArgsConstructor
-        private class Listener implements ActionListener, KeyListener {
+        private class Listener implements ActionListener, KeyEventDispatcher {
             private final PluginContext context;
             private final MicroconfigApi api;
+            private final PreviewDialog dialog;
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 lastEnv = (String) envsComboBox.getSelectedItem();
                 updatePreviewText();
-            }
-
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if (e.getKeyCode() == VK_ENTER) {
-                    actionPerformed(null);
-                }
-            }
-
-            @Override
-            public void keyTyped(KeyEvent e) {
-            }
-
-            @Override
-            public void keyReleased(KeyEvent e) {
             }
 
             private void updatePreviewText() {
@@ -164,7 +150,6 @@ public class PreviewAction extends MicroconfigAction {
 
             private void moveToTop() {
                 previewText.setCaretPosition(0);
-
                 Editor editor = previewText.getEditor();
                 if (editor != null) {
                     editor.getScrollingModel().scrollToCaret(MAKE_VISIBLE);
@@ -177,6 +162,15 @@ public class PreviewAction extends MicroconfigAction {
                 } catch (RuntimeException e) {
                     return new ConfigOutput(YAML, e.getMessage());
                 }
+            }
+
+            @Override
+            public boolean dispatchKeyEvent(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+                    dialog.close(0);
+                    getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
+                }
+                return false;
             }
         }
 
