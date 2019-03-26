@@ -1,11 +1,14 @@
 package io.microconfig.plugin.actions.preview;
 
 import com.intellij.openapi.editor.Document;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
+import com.intellij.openapi.editor.ex.EditorEx;
+import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.EditorTextField;
-import com.intellij.ui.components.JBScrollPane;
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.MicroconfigAction;
 import io.microconfig.plugin.actions.common.PluginContext;
@@ -22,14 +25,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import static com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE;
 import static io.microconfig.configs.io.ioservice.selector.FileFormat.YAML;
 import static io.microconfig.plugin.microconfig.ConfigOutput.getFileType;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
-import static javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED;
-import static javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED;
 
 public class PreviewAction extends MicroconfigAction {
     @Override
@@ -38,10 +40,9 @@ public class PreviewAction extends MicroconfigAction {
     }
 
     private static class PreviewDialog extends DialogWrapper {
-        private final JComponent textPane;
         private final JComponent envPane;
         private final ComboBox<String> envsComboBox = new ComboBox<>(new String[0]);
-        private final EditorTextField previewText;
+        private final PreviewText previewText;
 
         private static void create(PluginContext ctx, MicroconfigApi api) {
             PreviewDialog dialog = new PreviewDialog(ctx, api);
@@ -54,8 +55,7 @@ public class PreviewAction extends MicroconfigAction {
 
             Listener listener = new Listener(context, api);
             Document document = EditorFactory.getInstance().createDocument("");
-            this.previewText = new EditorTextField(document, context.getProject(), getFileType(YAML), true, false);
-            this.textPane = initTextPane();
+            this.previewText = new PreviewText(document, context.getProject(), getFileType(YAML), true, false);
             this.envPane = initEnvPane(context, api, listener);
 
             setTitle(context.currentFile().getParentFile().getName() + "/" + context.currentFile().getName() + " result configuration");
@@ -65,7 +65,7 @@ public class PreviewAction extends MicroconfigAction {
         @Nullable
         @Override
         protected JComponent createCenterPanel() {
-            return textPane;
+            return previewText;
         }
 
         @Nullable
@@ -116,13 +116,6 @@ public class PreviewAction extends MicroconfigAction {
             return panel;
         }
 
-        private JComponent initTextPane() {
-            JScrollPane scrollPane = new JBScrollPane(previewText);
-            scrollPane.setVerticalScrollBarPolicy(VERTICAL_SCROLLBAR_AS_NEEDED);
-            scrollPane.setHorizontalScrollBarPolicy(HORIZONTAL_SCROLLBAR_AS_NEEDED);
-            return scrollPane;
-        }
-
         @RequiredArgsConstructor
         private class Listener implements ActionListener, KeyListener {
             private final PluginContext context;
@@ -151,11 +144,20 @@ public class PreviewAction extends MicroconfigAction {
             private void updatePreviewText() {
                 Dimension size = getSize();
                 String chosenEnv = (String) envsComboBox.getSelectedItem();
-                previewText.setCaretPosition(0);
                 ConfigOutput configOutput = buildConfigs(chosenEnv);
                 previewText.setText(configOutput.getText());
                 previewText.setFileType(configOutput.fileType());
                 setSize(size.width, size.height);
+                moveToTop();
+            }
+
+            private void moveToTop() {
+                previewText.setCaretPosition(0);
+
+                Editor editor = previewText.getEditor();
+                if (editor != null) {
+                    editor.getScrollingModel().scrollToCaret(MAKE_VISIBLE);
+                }
             }
 
             private ConfigOutput buildConfigs(String envName) {
@@ -164,6 +166,20 @@ public class PreviewAction extends MicroconfigAction {
                 } catch (RuntimeException e) {
                     return new ConfigOutput(YAML, e.getMessage());
                 }
+            }
+        }
+
+        private static class PreviewText extends EditorTextField {
+            private PreviewText(Document document, Project project, FileType fileType, boolean isViewer, boolean oneLineMode) {
+                super(document, project, fileType, isViewer, oneLineMode);
+            }
+
+            @Override
+            protected EditorEx createEditor() {
+                EditorEx editor = super.createEditor();
+                editor.setVerticalScrollbarVisible(true);
+                editor.setHorizontalScrollbarVisible(true);
+                return editor;
             }
         }
     }
