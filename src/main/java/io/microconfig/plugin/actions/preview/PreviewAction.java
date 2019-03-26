@@ -34,14 +34,14 @@ import static java.util.stream.Stream.of;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 
 public class PreviewAction extends MicroconfigAction {
-    private static volatile String lastEnv = "";
-
     @Override
     protected ActionHandler chooseHandler(PluginContext ignore) {
         return PreviewDialog::create;
     }
 
     private static class PreviewDialog extends DialogWrapper {
+        private static volatile String lastEnv = "";
+
         private final JComponent envPane;
         private final ComboBox<String> envsComboBox = new ComboBox<>(new String[0]);
         private final PreviewText previewText;
