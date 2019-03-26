@@ -34,6 +34,8 @@ import static java.util.stream.Stream.of;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 
 public class PreviewAction extends MicroconfigAction {
+    private static volatile String lastEnv = "";
+
     @Override
     protected ActionHandler chooseHandler(PluginContext ignore) {
         return PreviewDialog::create;
@@ -57,8 +59,6 @@ public class PreviewAction extends MicroconfigAction {
             Document document = EditorFactory.getInstance().createDocument("");
             this.previewText = new PreviewText(document, context.getProject(), getFileType(YAML), true, false);
             this.envPane = initEnvPane(context, api, listener);
-
-            setTitle(context.currentFile().getParentFile().getName() + "/" + context.currentFile().getName() + " result configuration");
             listener.updatePreviewText();
         }
 
@@ -80,9 +80,9 @@ public class PreviewAction extends MicroconfigAction {
             return new Action[]{};
         }
 
-        private JComponent initEnvPane(PluginContext context, MicroconfigApi api, Listener listener) {
+        private JComponent initEnvPane(PluginContext context, MicroconfigApi api, ActionListener listener) {
             envsComboBox.setModel(new DefaultComboBoxModel<>(concat(of(""), api.getEnvs(context.projectDir()).stream()).toArray(String[]::new)));
-            envsComboBox.setSelectedItem(api.detectEnvOr(context.currentFile(), () -> ""));
+            envsComboBox.setSelectedItem(api.detectEnvOr(context.currentFile(), () -> lastEnv));
             envsComboBox.setEditable(true);
             envsComboBox.addActionListener(listener);
 
@@ -123,13 +123,14 @@ public class PreviewAction extends MicroconfigAction {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                lastEnv = (String) envsComboBox.getSelectedItem();
                 updatePreviewText();
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == VK_ENTER) {
-                    updatePreviewText();
+                    actionPerformed(null);
                 }
             }
 
@@ -142,9 +143,14 @@ public class PreviewAction extends MicroconfigAction {
             }
 
             private void updatePreviewText() {
+                String env = (String) envsComboBox.getSelectedItem();
+                setTitle(context.currentFile().getParentFile().getName()
+                        + "/" + context.currentFile().getName()
+                        + "[" + env + "]"
+                        + " result configuration"
+                );
                 Dimension size = getSize();
-                String chosenEnv = (String) envsComboBox.getSelectedItem();
-                ConfigOutput configOutput = buildConfigs(chosenEnv);
+                ConfigOutput configOutput = buildConfigs(env);
                 previewText.setText(configOutput.getText());
                 previewText.setFileType(configOutput.fileType());
                 setSize(size.width, size.height);
