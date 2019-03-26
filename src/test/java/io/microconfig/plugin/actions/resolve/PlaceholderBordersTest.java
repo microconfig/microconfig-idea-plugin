@@ -11,8 +11,8 @@ public class PlaceholderBordersTest {
 
     @Test
     public void textKeyPosition() {
-        assertThat(borders(LINE, 3).isInsidePlaceholder());
-        assertThat(borders(LINE, 10).isInsidePlaceholder());
+        assertThat(borders(LINE, 3).isInsidePlaceholder()).isFalse();
+        assertThat(borders(LINE, 10).isInsidePlaceholder()).isFalse();
     }
 
     @Test
