@@ -4,14 +4,16 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
 import io.microconfig.configs.io.ioservice.selector.FileFormat;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
-
-@RequiredArgsConstructor
 public class ConfigOutput {
     private final FileFormat format;
     @Getter
     private final String text;
+
+    public ConfigOutput(FileFormat format, String text) {
+        this.format = format;
+        this.text = text.replaceAll("\r\n", "\n");
+    }
 
     public FileType fileType() {
         return getFileType(format);
