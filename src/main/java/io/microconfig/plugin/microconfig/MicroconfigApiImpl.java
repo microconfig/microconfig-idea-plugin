@@ -3,6 +3,8 @@ package io.microconfig.plugin.microconfig;
 import io.microconfig.commands.buildconfig.factory.ConfigType;
 import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 import io.microconfig.configs.Property;
+import io.microconfig.configs.io.ioservice.ConfigWriter;
+import io.microconfig.configs.io.ioservice.yaml.YamlWriter;
 import io.microconfig.configs.provider.Include;
 import io.microconfig.configs.resolver.EnvComponent;
 import io.microconfig.configs.resolver.PropertyResolver;
@@ -22,6 +24,8 @@ import java.util.stream.Stream;
 
 import static io.microconfig.commands.buildconfig.factory.StandardConfigType.SERVICE;
 import static io.microconfig.configs.Property.parse;
+import static io.microconfig.configs.io.ioservice.selector.FileFormat.PROPERTIES;
+import static io.microconfig.configs.io.ioservice.selector.FileFormat.YAML;
 import static io.microconfig.configs.resolver.placeholder.Placeholder.placeholderMatcher;
 import static io.microconfig.configs.sources.FileSource.fileSource;
 import static io.microconfig.environments.Component.bySourceFile;
@@ -30,7 +34,6 @@ import static java.lang.Math.max;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.joining;
 import static java.util.stream.Collectors.toMap;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
@@ -113,7 +116,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     @Override
-    public String buildConfigsForService(File currentFile, File projectDir, String env) {
+    public ConfigOutput buildConfigsForService(File currentFile, File projectDir, String env) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
         Collection<Property> properties = factory
@@ -121,9 +124,9 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .getProperties(bySourceFile(currentFile), env)
                 .values();
 
-        return properties.stream()
-                .map(p -> p.getKey() + ": " + p.getValue()) //todo match current file type props/yaml
-                .collect(joining("\n"));
+        ConfigWriter configWriter = factory.getConfigIoService().writeTo(currentFile);
+        String output = configWriter.serialize(properties);
+        return new ConfigOutput(configWriter instanceof YamlWriter ? YAML : PROPERTIES, output);
     }
 
     @Override

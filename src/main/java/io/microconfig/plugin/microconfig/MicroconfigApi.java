@@ -24,7 +24,7 @@ public interface MicroconfigApi {
      */
     Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir);
 
-    String buildConfigsForService(File currentFile, File projectDir, String env);
+    ConfigOutput buildConfigsForService(File currentFile, File projectDir, String env);
 
     String detectEnvOr(File currentFile, Supplier<String> defaultEnv);
 

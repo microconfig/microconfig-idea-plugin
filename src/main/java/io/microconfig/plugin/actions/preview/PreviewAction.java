@@ -8,9 +8,11 @@ import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
 import com.intellij.ui.EditorTextField;
 import com.intellij.ui.components.JBScrollPane;
+import io.microconfig.configs.io.ioservice.selector.FileFormat;
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.MicroconfigAction;
 import io.microconfig.plugin.actions.common.PluginContext;
+import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import static io.microconfig.configs.io.ioservice.selector.FileFormat.YAML;
 import static java.awt.event.KeyEvent.VK_ENTER;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
@@ -53,9 +56,7 @@ public class PreviewAction extends MicroconfigAction {
 
             Listener listener = new Listener(context, api);
             Document document = EditorFactory.getInstance().createDocument("");
-            FileType yaml = FileTypeManager.getInstance().getFileTypeByExtension("yaml"); //todo from current file extension
-
-            this.previewText = new EditorTextField(document, context.getProject(), yaml, true, false);
+            this.previewText = new EditorTextField(document, context.getProject(), fileType(YAML), true, false);
             this.textPane = initTextPane();
             this.envPane = initEnvPane(context, api, listener);
 
@@ -124,6 +125,10 @@ public class PreviewAction extends MicroconfigAction {
             return scrollPane;
         }
 
+        private FileType fileType(FileFormat format) {
+            return FileTypeManager.getInstance().getFileTypeByExtension(format.name().toLowerCase());
+        }
+
         @RequiredArgsConstructor
         private class Listener implements ActionListener, KeyListener {
             private final PluginContext context;
@@ -153,16 +158,17 @@ public class PreviewAction extends MicroconfigAction {
                 Dimension size = getSize();
                 String chosenEnv = (String) envsComboBox.getSelectedItem();
                 previewText.setCaretPosition(0);
-                previewText.setText(previewTextForEnv(chosenEnv));
+                ConfigOutput configOutput = buildConfigs(chosenEnv);
+                previewText.setText(configOutput.getText());
+                previewText.setFileType(fileType(configOutput.getFormat()));
                 setSize(size.width, size.height);
             }
 
-
-            private String previewTextForEnv(String envName) {
+            private ConfigOutput buildConfigs(String envName) {
                 try {
                     return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName);
                 } catch (RuntimeException e) {
-                    return e.getMessage();
+                    return new ConfigOutput(YAML, e.getMessage());
                 }
             }
         }
