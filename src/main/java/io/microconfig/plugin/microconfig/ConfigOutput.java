@@ -19,7 +19,6 @@ public class ConfigOutput {
         return getFileType(format);
     }
 
-
     public static FileType getFileType(FileFormat format) {
         return FileTypeManager.getInstance().getFileTypeByExtension(format.name().toLowerCase());
     }
