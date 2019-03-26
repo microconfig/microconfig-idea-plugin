@@ -55,9 +55,14 @@ public class PreviewAction extends MicroconfigAction {
         private PreviewDialog(PluginContext context, MicroconfigApi api) {
             super(context.getProject());
 
+            this.previewText = new PreviewText(
+                    EditorFactory.getInstance().createDocument(""),
+                    context.getProject(),
+                    getFileType(YAML),
+                    true,
+                    false);
+
             Listener listener = new Listener(context, api);
-            Document document = EditorFactory.getInstance().createDocument("");
-            this.previewText = new PreviewText(document, context.getProject(), getFileType(YAML), true, false);
             this.envPane = initEnvPane(context, api, listener);
             listener.updatePreviewText();
         }
