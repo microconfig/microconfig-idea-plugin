@@ -38,3 +38,8 @@ If activated with cursor inside placeholder `${}` it will try to resolve only th
 You can create standard IDEA Run configuration for Microconfig to build configs with plugin.
 
 ![run](doc/run.png)
+
+### Configuration preview
+You can preview configuration for a component on the fly. Preview window even allows you to see resulting configs for different environments.
+
+![preview](doc/preview.png)
