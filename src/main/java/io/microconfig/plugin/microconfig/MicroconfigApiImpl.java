@@ -3,15 +3,12 @@ package io.microconfig.plugin.microconfig;
 import io.microconfig.commands.buildconfig.factory.ConfigType;
 import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 import io.microconfig.configs.Property;
-import io.microconfig.configs.io.ioservice.ConfigWriter;
-import io.microconfig.configs.io.ioservice.yaml.YamlWriter;
 import io.microconfig.configs.provider.Include;
 import io.microconfig.configs.resolver.EnvComponent;
 import io.microconfig.configs.resolver.PropertyResolver;
 import io.microconfig.configs.resolver.PropertyResolverHolder;
 import io.microconfig.configs.resolver.placeholder.Placeholder;
 import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
-import io.microconfig.configs.serializer.FilenameGeneratorImpl;
 import io.microconfig.configs.sources.FileSource;
 import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
@@ -127,9 +124,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .values();
 
         File resultFile = factory.getFilenameGenerator(configType).fileFor(currentFile.getParentFile().getName(), properties);
-        ConfigWriter configWriter = factory.getConfigIoService().writeTo(resultFile);
-        String output = configWriter.serialize(properties);
-        return new ConfigOutput(configWriter instanceof YamlWriter ? YAML : PROPERTIES, output);
+        String output = factory.getConfigIoService().writeTo(resultFile).serialize(properties);
+        return new ConfigOutput(resultFile.getName().endsWith(YAML.extension()) ? YAML : PROPERTIES, output);
     }
 
     @Override
