@@ -1,16 +1,16 @@
 package io.microconfig.plugin.microconfig;
 
-import io.microconfig.commands.buildconfig.factory.ConfigType;
-import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
-import io.microconfig.commands.buildconfig.factory.StandardConfigType;
+import io.microconfig.factory.ConfigType;
+import io.microconfig.factory.MicroconfigFactory;
+import io.microconfig.factory.StandardConfigTypes;
 import io.microconfig.plugin.actions.common.PluginException;
 
 import java.io.File;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.microconfig.commands.buildconfig.factory.MicroconfigFactory.ENV_DIR;
 import static io.microconfig.configs.io.tree.ComponentTreeCache.COMPONENTS_DIR;
+import static io.microconfig.factory.MicroconfigFactory.ENV_DIR;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
 import static java.util.Arrays.stream;
 
@@ -35,9 +35,9 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
         };
 
         String ext = fileExtension.get();
-        return stream(StandardConfigType.values())
+        return stream(StandardConfigTypes.values())
                 .filter(ct -> ct.type().getConfigExtensions().stream().anyMatch(e -> e.equals(ext)))
-                .map(StandardConfigType::type)
+                .map(StandardConfigTypes::type)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));
     }

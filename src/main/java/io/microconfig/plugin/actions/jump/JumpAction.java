@@ -7,7 +7,7 @@ import io.microconfig.plugin.actions.common.PluginContext;
 
 import java.io.File;
 
-import static io.microconfig.commands.buildconfig.factory.MicroconfigFactory.ENV_DIR;
+import static io.microconfig.factory.MicroconfigFactory.ENV_DIR;
 import static io.microconfig.plugin.actions.resolve.PlaceholderBorders.borders;
 
 public class JumpAction extends MicroconfigAction {

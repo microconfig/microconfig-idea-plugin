@@ -1,7 +1,5 @@
 package io.microconfig.plugin.microconfig;
 
-import io.microconfig.commands.buildconfig.factory.ConfigType;
-import io.microconfig.commands.buildconfig.factory.MicroconfigFactory;
 import io.microconfig.configs.Property;
 import io.microconfig.configs.provider.Include;
 import io.microconfig.configs.resolver.EnvComponent;
@@ -10,6 +8,8 @@ import io.microconfig.configs.resolver.PropertyResolverHolder;
 import io.microconfig.configs.resolver.placeholder.Placeholder;
 import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
 import io.microconfig.configs.sources.FileSource;
+import io.microconfig.factory.ConfigType;
+import io.microconfig.factory.MicroconfigFactory;
 import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
 
@@ -20,13 +20,13 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import static io.microconfig.commands.buildconfig.factory.StandardConfigType.APPLICATION;
 import static io.microconfig.configs.Property.parse;
 import static io.microconfig.configs.io.ioservice.selector.FileFormat.PROPERTIES;
 import static io.microconfig.configs.io.ioservice.selector.FileFormat.YAML;
 import static io.microconfig.configs.resolver.placeholder.Placeholder.placeholderMatcher;
 import static io.microconfig.configs.sources.FileSource.fileSource;
 import static io.microconfig.environments.Component.bySourceFile;
+import static io.microconfig.factory.StandardConfigTypes.APPLICATION;
 import static io.microconfig.plugin.actions.common.FilePosition.positionFromFileSource;
 import static java.lang.Math.max;
 import static java.util.Arrays.stream;
