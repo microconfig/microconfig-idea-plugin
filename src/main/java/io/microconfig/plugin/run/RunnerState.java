@@ -8,7 +8,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.roots.ProjectRootManager;
 import com.intellij.util.PathUtil;
 import io.microconfig.factory.BuildConfigMain;
-import io.microconfig.plugin.microconfig.MicroconfigInitializerImpl;
+import io.microconfig.plugin.microconfig.impl.MicroconfigInitializerImpl;
 
 import java.io.File;
 import java.util.function.BiConsumer;

@@ -1,8 +1,9 @@
-package io.microconfig.plugin.actions.common;
+package io.microconfig.plugin.actions.handler;
 
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import io.microconfig.plugin.microconfig.MicroconfigApiImpl;
+import io.microconfig.plugin.microconfig.PluginContext;
+import io.microconfig.plugin.microconfig.impl.MicroconfigApiImpl;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

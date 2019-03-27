@@ -1,4 +1,4 @@
-package io.microconfig.plugin.actions.common;
+package io.microconfig.plugin.microconfig;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;

@@ -1,6 +1,6 @@
 package io.microconfig.plugin.actions.resolve;
 
-import io.microconfig.plugin.actions.common.PluginContext;
+import io.microconfig.plugin.microconfig.PluginContext;
 
 import java.util.List;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package io.microconfig.plugin.actions.common;
+package io.microconfig.plugin.microconfig;
 
 import com.intellij.codeInsight.hint.HintManager;
 import com.intellij.openapi.actionSystem.AnActionEvent;

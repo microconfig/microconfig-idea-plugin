@@ -1,4 +1,4 @@
-package io.microconfig.plugin.microconfig;
+package io.microconfig.plugin.microconfig.impl;
 
 import com.intellij.openapi.fileEditor.FileDocumentManager;
 import io.microconfig.utils.reader.FilesReader;
