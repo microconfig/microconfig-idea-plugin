@@ -57,9 +57,7 @@ public class PreviewAction extends MicroconfigAction {
             this.previewText = new PreviewText(
                     EditorFactory.getInstance().createDocument(""),
                     context.getProject(),
-                    getFileType(YAML),
-                    true,
-                    false);
+                    getFileType(YAML));
 
             Listener listener = new Listener(context, api, this);
             this.envPane = initEnvPane(context, api, listener);
@@ -175,8 +173,8 @@ public class PreviewAction extends MicroconfigAction {
         }
 
         private static class PreviewText extends EditorTextField {
-            private PreviewText(Document document, Project project, FileType fileType, boolean isViewer, boolean oneLineMode) {
-                super(document, project, fileType, isViewer, oneLineMode);
+            private PreviewText(Document document, Project project, FileType fileType) {
+                super(document, project, fileType, true, false);
             }
 
             @Override
