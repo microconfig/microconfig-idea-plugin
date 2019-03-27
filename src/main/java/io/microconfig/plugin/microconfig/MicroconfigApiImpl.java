@@ -123,8 +123,12 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .getProperties(bySourceFile(currentFile), env)
                 .values();
 
-        File resultFile = factory.getFilenameGenerator(configType).fileFor(currentFile.getParentFile().getName(), properties);
-        String output = factory.getConfigIoService().writeTo(resultFile).serialize(properties);
+        File resultFile = factory.getFilenameGenerator(configType)
+                .fileFor(currentFile.getParentFile().getName(), properties);
+        String output = factory
+                .getConfigIoService()
+                .writeTo(resultFile)
+                .serialize(properties);
         return new ConfigOutput(resultFile.getName().endsWith(YAML.extension()) ? YAML : PROPERTIES, output);
     }
 
