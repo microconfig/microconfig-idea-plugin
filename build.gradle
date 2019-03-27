@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'io.micoconfig'
-version '0.7.0'
+version '0.7.1'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -24,7 +24,9 @@ intellij {
 patchPluginXml {
     changeNotes """
       Release 0.7.0<br>
-      &#183; Configuration preview
+      &#183; Configuration preview<br>
+      Release 0.7.1<br>
+      &#183; correct names for generated yaml configs
       """
 }
 
