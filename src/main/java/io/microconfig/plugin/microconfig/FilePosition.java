@@ -1,4 +1,4 @@
-package io.microconfig.plugin.actions.common;
+package io.microconfig.plugin.microconfig;
 
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
@@ -25,7 +25,6 @@ public class FilePosition {
 
     public void moveToPosition(PluginContext context) {
         context.navigateTo(file);
-
         moveToLine(context.getProject());
     }
 
@@ -34,5 +33,4 @@ public class FilePosition {
         editor.getCaretModel().moveToVisualPosition(new VisualPosition(lineNumber, 0));
         editor.getScrollingModel().scrollToCaret(MAKE_VISIBLE);
     }
-
 }

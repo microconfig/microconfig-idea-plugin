@@ -1,7 +1,4 @@
-package io.microconfig.plugin.actions.common;
-
-import io.microconfig.plugin.microconfig.ConfigOutput;
-import io.microconfig.plugin.microconfig.MicroconfigInitializer;
+package io.microconfig.plugin.microconfig;
 
 import java.io.File;
 import java.util.Map;

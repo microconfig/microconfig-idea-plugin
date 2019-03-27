@@ -1,8 +1,8 @@
 package io.microconfig.plugin.actions.jump;
 
-import io.microconfig.plugin.actions.common.ActionHandler;
-import io.microconfig.plugin.actions.common.PluginContext;
-import io.microconfig.plugin.actions.common.MicroconfigApi;
+import io.microconfig.plugin.actions.handler.ActionHandler;
+import io.microconfig.plugin.microconfig.MicroconfigApi;
+import io.microconfig.plugin.microconfig.PluginContext;
 import lombok.RequiredArgsConstructor;
 
 import static io.microconfig.plugin.actions.resolve.PlaceholderBorders.borders;

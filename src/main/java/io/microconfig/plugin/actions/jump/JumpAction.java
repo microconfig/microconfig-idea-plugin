@@ -1,9 +1,9 @@
 package io.microconfig.plugin.actions.jump;
 
 import io.microconfig.configs.provider.Include;
-import io.microconfig.plugin.actions.common.ActionHandler;
-import io.microconfig.plugin.actions.common.MicroconfigAction;
-import io.microconfig.plugin.actions.common.PluginContext;
+import io.microconfig.plugin.actions.handler.ActionHandler;
+import io.microconfig.plugin.actions.handler.MicroconfigAction;
+import io.microconfig.plugin.microconfig.PluginContext;
 
 import java.io.File;
 
