@@ -1,7 +1,5 @@
 # Microconfig IntelliJ IDEA plugin
 
-[![Build Status](https://travis-ci.com/microconfig/microconfig-idea-plugin.svg?token=dCuoGmvZ5nm4s7v5vo7S&branch=master)](https://travis-ci.com/microconfig/microconfig-idea-plugin)
-
 IntelliJ IDEA plugin for Microconfig that allows navigating to #include and placeholders' sources, resolving placeholders and other useful stuff.
 
 ### Installation
