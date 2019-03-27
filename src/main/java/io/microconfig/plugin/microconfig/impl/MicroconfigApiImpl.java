@@ -10,6 +10,7 @@ import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
 import io.microconfig.configs.sources.FileSource;
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
+import io.microconfig.plugin.actions.handler.PluginException;
 import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
