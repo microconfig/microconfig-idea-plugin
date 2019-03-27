@@ -36,7 +36,7 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
 
         String ext = fileExtension.get();
         return stream(StandardConfigType.values())
-                .filter(ct -> ct.getConfigExtensions().stream().anyMatch(e -> e.equals(ext)))
+                .filter(ct -> ct.type().getConfigExtensions().stream().anyMatch(e -> e.equals(ext)))
                 .map(StandardConfigType::type)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));

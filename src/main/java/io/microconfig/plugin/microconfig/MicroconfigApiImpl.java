@@ -20,7 +20,7 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import static io.microconfig.commands.buildconfig.factory.StandardConfigType.SERVICE;
+import static io.microconfig.commands.buildconfig.factory.StandardConfigType.APPLICATION;
 import static io.microconfig.configs.Property.parse;
 import static io.microconfig.configs.io.ioservice.selector.FileFormat.PROPERTIES;
 import static io.microconfig.configs.io.ioservice.selector.FileFormat.YAML;
@@ -107,7 +107,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public File findAnyComponentFile(String component, String env, File projectDir) {
         try {
-            return findFile(component, env, containsConfigTypeExtension(SERVICE.getConfigType()), projectDir);
+            return findFile(component, env, containsConfigTypeExtension(APPLICATION.getConfigType()), projectDir);
         } catch (RuntimeException e) {
             return findFile(component, env, f -> true, projectDir);
         }
@@ -124,7 +124,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .values();
 
         File resultFile = factory.getFilenameGenerator(configType)
-                .fileFor(currentFile.getParentFile().getName(), properties);
+                .fileFor(currentFile.getParentFile().getName(), env, properties);
         String output = factory
                 .getConfigIoService()
                 .writeTo(resultFile)
