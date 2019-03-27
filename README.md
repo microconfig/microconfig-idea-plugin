@@ -40,6 +40,9 @@ You can create standard IDEA Run configuration for Microconfig to build configs 
 ![run](doc/run.png)
 
 ### Configuration preview
-You can preview configuration for a component on the fly. Preview window even allows you to see resulting configs for different environments.
-
+You can preview configuration for a component on the fly. To open preview either activate `Microconfig -> Preview component` or use default hotkey (Shift-Ctrl-F10 / Shift-Command-F10). 
+Preview window allows you to see resulting configs for different environments and it even matches your current LookAndFeel. 
+ 
 ![preview](doc/preview.png)
+
+![preview](doc/preview_light.png)
