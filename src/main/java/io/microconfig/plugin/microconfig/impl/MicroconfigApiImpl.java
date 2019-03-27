@@ -10,7 +10,6 @@ import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
 import io.microconfig.configs.sources.FileSource;
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
-import io.microconfig.plugin.actions.handler.PluginException;
 import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
@@ -180,7 +179,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .getComponentTree()
                 .getConfigFiles(component, predicate)
                 .min(priorityByEnv.get())
-                .orElseThrow(() -> new PluginException("Component not found: " + component));
+                .orElseThrow(() -> new IllegalStateException("Component not found: " + component));
     }
 
     @Override

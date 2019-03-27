@@ -3,7 +3,6 @@ package io.microconfig.plugin.microconfig.impl;
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
 import io.microconfig.factory.StandardConfigTypes;
-import io.microconfig.plugin.actions.handler.PluginException;
 import io.microconfig.plugin.microconfig.MicroconfigInitializer;
 
 import java.io.File;
@@ -53,6 +52,6 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
         };
 
         return findDir(projectDir, containsMicroconfigDirs)
-                .orElseThrow(() -> new PluginException("Can't find 'components' and 'envs' folders on the same level"));
+                .orElseThrow(() -> new IllegalStateException("Can't find 'components' and 'envs' folders on the same level"));
     }
 }
