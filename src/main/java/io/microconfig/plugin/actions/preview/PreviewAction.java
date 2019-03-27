@@ -13,7 +13,7 @@ import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.MicroconfigAction;
 import io.microconfig.plugin.actions.common.PluginContext;
 import io.microconfig.plugin.microconfig.ConfigOutput;
-import io.microconfig.plugin.microconfig.MicroconfigApi;
+import io.microconfig.plugin.actions.common.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;

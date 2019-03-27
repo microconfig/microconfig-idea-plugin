@@ -3,7 +3,7 @@ package io.microconfig.plugin.actions.resolve;
 import io.microconfig.configs.Property;
 import io.microconfig.plugin.actions.common.ActionHandler;
 import io.microconfig.plugin.actions.common.PluginContext;
-import io.microconfig.plugin.microconfig.MicroconfigApi;
+import io.microconfig.plugin.actions.common.MicroconfigApi;
 import lombok.RequiredArgsConstructor;
 
 import java.util.Map;

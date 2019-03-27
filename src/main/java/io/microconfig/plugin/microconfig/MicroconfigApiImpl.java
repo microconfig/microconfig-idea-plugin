@@ -11,6 +11,7 @@ import io.microconfig.configs.sources.FileSource;
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
 import io.microconfig.plugin.actions.common.FilePosition;
+import io.microconfig.plugin.actions.common.MicroconfigApi;
 import io.microconfig.plugin.actions.common.PluginException;
 
 import java.io.File;

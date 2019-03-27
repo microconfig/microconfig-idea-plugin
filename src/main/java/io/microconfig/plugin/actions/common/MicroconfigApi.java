@@ -1,6 +1,7 @@
-package io.microconfig.plugin.microconfig;
+package io.microconfig.plugin.actions.common;
 
-import io.microconfig.plugin.actions.common.FilePosition;
+import io.microconfig.plugin.microconfig.ConfigOutput;
+import io.microconfig.plugin.microconfig.MicroconfigInitializer;
 
 import java.io.File;
 import java.util.Map;
@@ -31,5 +32,4 @@ public interface MicroconfigApi {
     Set<String> getEnvs(File currentFile);
 
     MicroconfigInitializer getMicroconfigInitializer();
-
 }
