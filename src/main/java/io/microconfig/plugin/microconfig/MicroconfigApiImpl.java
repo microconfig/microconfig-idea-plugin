@@ -11,6 +11,7 @@ import io.microconfig.configs.resolver.PropertyResolver;
 import io.microconfig.configs.resolver.PropertyResolverHolder;
 import io.microconfig.configs.resolver.placeholder.Placeholder;
 import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
+import io.microconfig.configs.serializer.FilenameGeneratorImpl;
 import io.microconfig.configs.sources.FileSource;
 import io.microconfig.plugin.actions.common.FilePosition;
 import io.microconfig.plugin.actions.common.PluginException;
@@ -119,12 +120,14 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     public ConfigOutput buildConfigsForService(File currentFile, File projectDir, String env) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
+        ConfigType configType = initializer.detectConfigType(currentFile);
         Collection<Property> properties = factory
-                .newConfigProvider(initializer.detectConfigType(currentFile))
+                .newConfigProvider(configType)
                 .getProperties(bySourceFile(currentFile), env)
                 .values();
 
-        ConfigWriter configWriter = factory.getConfigIoService().writeTo(currentFile);
+        File resultFile = factory.getFilenameGenerator(configType).fileFor(currentFile.getParentFile().getName(), properties);
+        ConfigWriter configWriter = factory.getConfigIoService().writeTo(resultFile);
         String output = configWriter.serialize(properties);
         return new ConfigOutput(configWriter instanceof YamlWriter ? YAML : PROPERTIES, output);
     }
