@@ -25,7 +25,6 @@ public class FilePosition {
 
     public void moveToPosition(PluginContext context) {
         context.navigateTo(file);
-
         moveToLine(context.getProject());
     }
 
@@ -34,5 +33,4 @@ public class FilePosition {
         editor.getCaretModel().moveToVisualPosition(new VisualPosition(lineNumber, 0));
         editor.getScrollingModel().scrollToCaret(MAKE_VISIBLE);
     }
-
 }
