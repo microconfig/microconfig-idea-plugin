@@ -90,8 +90,8 @@ public class PreviewAction extends MicroconfigAction {
             envsComboBox.addActionListener(listener);
 
             JLabel envLabel = new JLabel("Environment: ");
-            JButton generate = new JButton("Generate");
-            generate.addActionListener(listener);
+            JButton build = new JButton("Build");
+            build.addActionListener(listener);
 
             JPanel panel = new JPanel();
             GroupLayout layout = new GroupLayout(panel);
@@ -107,14 +107,14 @@ public class PreviewAction extends MicroconfigAction {
                     layout.createSequentialGroup()
                             .addComponent(envLabel)
                             .addComponent(envsComboBox)
-                            .addComponent(generate)
+                            .addComponent(build)
             );
 
             sequential.addGroup(
                     layout.createParallelGroup(BASELINE)
                             .addComponent(envLabel)
                             .addComponent(envsComboBox)
-                            .addComponent(generate));
+                            .addComponent(build));
 
             return panel;
         }
