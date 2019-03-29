@@ -3,9 +3,9 @@ package io.microconfig.plugin.run;
 import com.intellij.execution.configurations.JavaCommandLineState;
 import com.intellij.execution.configurations.JavaParameters;
 import com.intellij.execution.runners.ExecutionEnvironment;
-import com.intellij.execution.util.JavaParametersUtil;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.roots.ProjectRootManager;
+import com.intellij.openapi.projectRoots.JavaSdk;
+import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.util.PathUtil;
 import io.microconfig.factory.BuildConfigMain;
 import io.microconfig.plugin.microconfig.impl.MicroconfigInitializerImpl;
@@ -13,6 +13,7 @@ import io.microconfig.plugin.microconfig.impl.MicroconfigInitializerImpl;
 import java.io.File;
 import java.util.function.BiConsumer;
 
+import static com.intellij.util.SystemProperties.getJavaHome;
 import static io.microconfig.utils.StringUtils.isEmpty;
 
 public class RunnerState extends JavaCommandLineState {
@@ -34,11 +35,9 @@ public class RunnerState extends JavaCommandLineState {
         JavaParameters javaParams = new JavaParameters();
 
         Project project = getEnvironment().getProject();
-        try {
-            javaParams.setJdk(JavaParametersUtil.createProjectJdk(project, System.getProperty("java.home")));
-        } catch (Exception e) {
-            javaParams.setJdk(ProjectRootManager.getInstance(project).getProjectSdk());
-        }
+
+        Sdk javaHome = JavaSdk.getInstance().createJdk("javaHome", getJavaHome());
+        javaParams.setJdk(javaHome);
         javaParams.getClassPath().add(PathUtil.getJarPathForClass(BuildConfigMain.class));
         javaParams.setMainClass(BuildConfigMain.class.getName());
 

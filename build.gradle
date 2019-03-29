@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'io.micoconfig'
-version '0.7.1'
+version '0.7.2'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -26,7 +26,9 @@ patchPluginXml {
       Release 0.7.0<br>
       &#183; Configuration preview<br>
       Release 0.7.1<br>
-      &#183; correct names for generated yaml configs
+      &#183; correct names for generated yaml configs<br>
+      Release 0.7.2<br>
+      &#183; added support for other IDEs
       """
 }
 
