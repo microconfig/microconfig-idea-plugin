@@ -55,6 +55,7 @@ public class RunnerState extends CommandLineState {
         String jarPath = PathUtil.getJarPathForClass(BuildConfigMain.class);
 
         params.add(java);
+        params.add("-XX:TieredStopAtLevel=1");
         params.add("-jar");
         params.add(jarPath);
 
