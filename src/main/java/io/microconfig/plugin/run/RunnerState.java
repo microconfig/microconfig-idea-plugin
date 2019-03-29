@@ -3,12 +3,12 @@ package io.microconfig.plugin.run;
 import com.intellij.execution.ExecutionException;
 import com.intellij.execution.configurations.CommandLineState;
 import com.intellij.execution.configurations.GeneralCommandLine;
-import com.intellij.execution.configurations.JavaCommandLineStateUtil;
+import com.intellij.execution.process.OSProcessHandler;
 import com.intellij.execution.process.ProcessHandler;
+import com.intellij.execution.process.ProcessHandlerFactory;
+import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
-import com.intellij.openapi.projectRoots.JavaSdk;
-import com.intellij.openapi.projectRoots.Sdk;
 import com.intellij.util.PathUtil;
 import io.microconfig.factory.BuildConfigMain;
 import io.microconfig.plugin.microconfig.impl.MicroconfigInitializerImpl;
@@ -31,7 +31,7 @@ public class RunnerState extends CommandLineState {
 
     private final RunConfig configuration;
 
-    protected RunnerState(ExecutionEnvironment environment, RunConfig configuration) {
+    public RunnerState(ExecutionEnvironment environment, RunConfig configuration) {
         super(environment);
         this.configuration = configuration;
     }
@@ -39,14 +39,19 @@ public class RunnerState extends CommandLineState {
     @NotNull
     @Override
     protected ProcessHandler startProcess() throws ExecutionException {
-        return JavaCommandLineStateUtil.startProcess(new GeneralCommandLine(createJavaCmd()), true);
+        OSProcessHandler processHandler = ProcessHandlerFactory
+                .getInstance()
+                .createColoredProcessHandler(new GeneralCommandLine(createJavaCmd()));
+
+        ProcessTerminatedListener.attach(processHandler);
+        return processHandler;
+
     }
 
     private List<String> createJavaCmd() {
         List<String> params = new ArrayList<>();
 
-        Sdk sdk = JavaSdk.getInstance().createJdk("javaHome", getJavaHome());
-        String java = new File(sdk.getHomePath(), "/bin/java").getAbsolutePath();
+        String java = new File(getJavaHome(), "/bin/java").getAbsolutePath();
         String jarPath = PathUtil.getJarPathForClass(BuildConfigMain.class);
 
         params.add(java);
