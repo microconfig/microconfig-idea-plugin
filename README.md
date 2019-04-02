@@ -48,4 +48,4 @@ Preview window allows you to see resulting configs for different environments.
 ![preview](doc/preview_light.png)
 
 # Compatibility
-The plugin is compatible with any JetBrain IDE: IntelliJ IDEA,  PhpStorm,  WebStorm,  PyCharm,  RubyMine,  AppCode,  CLion, GoLand,  DataGrip,  Rider, MPS,  Android Studio
+The plugin is compatible with any JetBrains IDE: IntelliJ IDEA,  PhpStorm,  WebStorm,  PyCharm,  RubyMine,  AppCode,  CLion, GoLand,  DataGrip,  Rider, MPS,  Android Studio
