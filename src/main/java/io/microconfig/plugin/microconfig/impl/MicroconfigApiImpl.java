@@ -10,6 +10,7 @@ import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
 import io.microconfig.configs.sources.FileSource;
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
+import io.microconfig.factory.StandardConfigTypes;
 import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
@@ -17,6 +18,7 @@ import io.microconfig.plugin.microconfig.MicroconfigInitializer;
 
 import java.io.File;
 import java.util.*;
+import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -25,7 +27,6 @@ import java.util.stream.Stream;
 import static io.microconfig.configs.Property.parse;
 import static io.microconfig.configs.io.ioservice.selector.FileFormat.PROPERTIES;
 import static io.microconfig.configs.io.ioservice.selector.FileFormat.YAML;
-import static io.microconfig.configs.resolver.placeholder.Placeholder.placeholderMatcher;
 import static io.microconfig.configs.sources.FileSource.fileSource;
 import static io.microconfig.environments.Component.bySourceFile;
 import static io.microconfig.factory.StandardConfigTypes.APPLICATION;
@@ -71,7 +72,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         Placeholder placeholder = parsePlaceholder.get();
-        PlaceholderResolver resolver = factory.newPlaceholderResolver(factory.newFileBasedProvider(initializer.detectConfigType(currentFile)));
+        ConfigType configType = chooseConfigType(placeholder, currentFile);
+        PlaceholderResolver resolver = factory.newPlaceholderResolver(factory.newFileBasedProvider(configType), configType);
         Optional<Property> resolved = resolver.resolveToProperty(placeholder);
 
         if (resolved.isPresent() && resolved.get().getSource() instanceof FileSource) {
@@ -79,6 +81,19 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         }
 
         return new FilePosition(findSourceFile(placeholder.getComponent(), detectEnvOr(currentFile, () -> ""), currentFile, projectDir), 0);
+    }
+
+    private ConfigType chooseConfigType(Placeholder placeholder, File currentFile) {
+        Function<String, ConfigType> choosePlaceholderType = configType ->
+                of(StandardConfigTypes.values())
+                        .map(StandardConfigTypes::getConfigType)
+                        .filter(t -> t.getName().equals(configType))
+                        .findFirst()
+                        .orElseThrow(() -> new IllegalArgumentException("Unsupported config type: " + configType));
+
+        return placeholder.getConfigType()
+                .map(choosePlaceholderType)
+                .orElseGet(() -> initializer.detectConfigType(currentFile));
     }
 
     @Override
@@ -140,7 +155,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private Stream<String> envs(String currentLine, File currentFile, MicroconfigFactory factory) {
-        if (!placeholderMatcher(currentLine).find()) return of("");
+        if (!Placeholder.matcher(currentLine).find()) return of("");
 
         if (currentFile.getName().indexOf('.') != currentFile.getName().lastIndexOf('.')) {
             String[] parts = currentFile

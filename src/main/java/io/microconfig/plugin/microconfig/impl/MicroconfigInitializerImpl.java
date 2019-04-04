@@ -9,19 +9,22 @@ import java.io.File;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
-import static io.microconfig.configs.io.tree.ComponentTreeCache.COMPONENTS_DIR;
+import static io.microconfig.configs.io.components.ComponentTreeCache.COMPONENTS_DIR;
 import static io.microconfig.factory.MicroconfigFactory.ENV_DIR;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
 import static java.util.Arrays.stream;
+import static java.util.stream.Stream.of;
 
 public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     @Override
     public MicroconfigFactory getMicroconfigFactory(File projectDir) {
-        return MicroconfigFactory.init(
+        MicroconfigFactory factory = MicroconfigFactory.init(
                 findConfigRootDir(projectDir),
                 new File(projectDir, "build/output"),
                 new VirtualFileReader()
         );
+        of(StandardConfigTypes.values()).forEach(t -> factory.newConfigProvider(t.getConfigType()));
+        return factory;
     }
 
     @Override

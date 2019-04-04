@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'io.micoconfig'
-version '0.7.4'
+version '0.7.3'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -30,14 +30,12 @@ patchPluginXml {
       Release 0.7.2<br>
       &#183; added support for other IDEs<br>
       Release 0.7.3<br>
-      &#183; Complex keys in yaml support "foo.bar": value<br>
-      Release 0.7.4<br>
-      &#183; More readable yaml sorting
+      &#183; Complex keys in yaml support "foo.bar": value
       """
 }
 
 dependencies {
-    implementation 'io.microconfig:microconfig-core:3.6.9:all'
+    implementation 'io.microconfig:microconfig-core:3.7.0:all'
 
     compileOnly "org.projectlombok:lombok:1.18.6"
     annotationProcessor "org.projectlombok:lombok:1.18.6"
