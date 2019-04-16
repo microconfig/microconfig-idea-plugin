@@ -10,7 +10,7 @@ import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
 import io.microconfig.configs.sources.FileSource;
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
-import io.microconfig.factory.StandardConfigTypes;
+import io.microconfig.factory.configtypes.StandardConfigTypes;
 import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
@@ -29,7 +29,7 @@ import static io.microconfig.configs.io.ioservice.selector.FileFormat.PROPERTIES
 import static io.microconfig.configs.io.ioservice.selector.FileFormat.YAML;
 import static io.microconfig.configs.sources.FileSource.fileSource;
 import static io.microconfig.environments.Component.bySourceFile;
-import static io.microconfig.factory.StandardConfigTypes.APPLICATION;
+import static io.microconfig.factory.configtypes.StandardConfigTypes.APPLICATION;
 import static io.microconfig.plugin.microconfig.FilePosition.positionFromFileSource;
 import static java.lang.Math.max;
 import static java.util.Arrays.stream;
@@ -86,8 +86,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     private ConfigType chooseConfigType(Placeholder placeholder, File currentFile) {
         Function<String, ConfigType> choosePlaceholderType = configType ->
                 of(StandardConfigTypes.values())
-                        .map(StandardConfigTypes::getConfigType)
-                        .filter(t -> t.getName().equals(configType))
+                        .map(StandardConfigTypes::getType)
+                        .filter(t -> t.getType().equals(configType))
                         .findFirst()
                         .orElseThrow(() -> new IllegalArgumentException("Unsupported config type: " + configType));
 
@@ -124,7 +124,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public File findAnyComponentFile(String component, String env, File projectDir) {
         try {
-            return findFile(component, env, containsConfigTypeExtension(APPLICATION.getConfigType()), projectDir);
+            return findFile(component, env, containsConfigTypeExtension(APPLICATION.getType()), projectDir);
         } catch (RuntimeException e) {
             return findFile(component, env, f -> true, projectDir);
         }
@@ -179,7 +179,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private Predicate<File> containsConfigTypeExtension(ConfigType configType) {
-        return file -> configType.getConfigExtensions()
+        return file -> configType.getSourceExtensions()
                 .stream()
                 .anyMatch(ext -> file.getName().endsWith(ext));
     }

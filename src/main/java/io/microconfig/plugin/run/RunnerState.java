@@ -10,7 +10,7 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PathUtil;
-import io.microconfig.factory.BuildConfigMain;
+import io.microconfig.entry.BuildConfigMain;
 import io.microconfig.plugin.microconfig.impl.MicroconfigInitializerImpl;
 import org.jetbrains.annotations.NotNull;
 
