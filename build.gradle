@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'io.micoconfig'
-version '0.8.0'
+version '0.8.1'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
