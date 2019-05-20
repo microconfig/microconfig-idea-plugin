@@ -16,7 +16,7 @@ Microconfig has two actions:
 
 #### Jump to component
 
-`Jump to component` supports navigation from `#inlude component` line. Once chosen from the menu or on the hotkey press
+`Jump to component` supports navigation from `#include component` line. Once chosen from the menu or on the hotkey press
 it will try to find `component` in 'components' directory and open the corresponding file inside.
 
 Also it can jump to a component referenced in a placeholder like `${component@key}`. To choose a placeholder just place your cursor inside `{}`.
