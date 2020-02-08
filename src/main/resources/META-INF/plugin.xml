@@ -1,5 +1,5 @@
 <idea-plugin>
-    <idea-version since-build="170.*"/>
+    <idea-version since-build="180.*"/>
     <id>io.microconfig.idea-plugin</id>
     <name>Microconfig.io</name>
     <vendor email="support@microconfig.io" url="http://microconfig.io">Microconfig.IO</vendor>
@@ -41,7 +41,6 @@
                     description="Generates a preview for current component">
                 <keyboard-shortcut first-keystroke="control shift F10" keymap="$default"/>
             </action>
-
         </group>
     </actions>
 </idea-plugin>

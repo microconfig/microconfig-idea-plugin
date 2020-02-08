@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'io.micoconfig'
-version '0.8.1'
+version '0.8.2'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -17,19 +17,22 @@ repositories {
 }
 
 intellij {
-    version 'IC-2017.1'
+    version 'IC-2018.1'
     updateSinceUntilBuild false
 }
 
 patchPluginXml {
     changeNotes """
-      Release 0.8.0<br>
-      &#183; Placeholder references between different component types<br>
+      Release 0.8.2<br>
+      &#183; microconfig-core update to 3.9.11<br>
+      &#183; Update to IntelliJ IDEA 2018 SDK<br>
+      &#183; New Run Configuration logo<br>
+      &#183; Spread the word about microconfig if you enjoy using it :)<br>
       """
 }
 
 dependencies {
-    implementation 'io.microconfig:microconfig-core:3.7.0:all'
+    implementation 'io.microconfig:microconfig-core:3.9.11:all'
 
     compileOnly "org.projectlombok:lombok:1.18.6"
     annotationProcessor "org.projectlombok:lombok:1.18.6"
