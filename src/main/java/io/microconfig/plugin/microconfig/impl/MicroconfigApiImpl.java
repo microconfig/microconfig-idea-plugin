@@ -24,11 +24,11 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
+import static io.microconfig.core.environments.Component.bySourceFile;
 import static io.microconfig.core.properties.Property.parse;
 import static io.microconfig.core.properties.io.ioservice.selector.FileFormat.PROPERTIES;
 import static io.microconfig.core.properties.io.ioservice.selector.FileFormat.YAML;
 import static io.microconfig.core.properties.sources.FileSource.fileSource;
-import static io.microconfig.core.environments.Component.bySourceFile;
 import static io.microconfig.factory.configtypes.StandardConfigTypes.APPLICATION;
 import static io.microconfig.plugin.microconfig.FilePosition.positionFromFileSource;
 import static java.lang.Math.max;
@@ -72,7 +72,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         Placeholder placeholder = parsePlaceholder.get();
-        ConfigType configType = chooseConfigType(placeholder, currentFile);
+        ConfigType configType = chooseConfigType(placeholder, currentFile, projectDir);
         PlaceholderResolver resolver = factory.newPlaceholderResolver(factory.newFileBasedProvider(configType), configType);
         Optional<Property> resolved = resolver.resolveToProperty(placeholder);
 
@@ -83,7 +83,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         return new FilePosition(findSourceFile(placeholder.getComponent(), detectEnvOr(currentFile, () -> ""), currentFile, projectDir), 0);
     }
 
-    private ConfigType chooseConfigType(Placeholder placeholder, File currentFile) {
+    private ConfigType chooseConfigType(Placeholder placeholder, File currentFile, File projectDir) {
         Function<String, ConfigType> choosePlaceholderType = configType ->
                 of(StandardConfigTypes.values())
                         .map(StandardConfigTypes::getType)
@@ -93,7 +93,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
         return placeholder.getConfigType()
                 .map(choosePlaceholderType)
-                .orElseGet(() -> initializer.detectConfigType(currentFile));
+                .orElseGet(() -> initializer.detectConfigType(currentFile, projectDir));
     }
 
     @Override
@@ -103,7 +103,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     @Override
     public Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir) {
-        ConfigType configType = initializer.detectConfigType(currentFile);
+        ConfigType configType = initializer.detectConfigType(currentFile, projectDir);
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
         PropertyResolver propertyResolver = ((PropertyResolverHolder) factory.newConfigProvider(configType)).getResolver();
 
@@ -134,7 +134,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     public ConfigOutput buildConfigsForService(File currentFile, File projectDir, String env) {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
-        ConfigType configType = initializer.detectConfigType(currentFile);
+        ConfigType configType = initializer.detectConfigType(currentFile, projectDir);
         Collection<Property> properties = factory
                 .newConfigProvider(configType)
                 .getProperties(bySourceFile(currentFile), env)
@@ -175,7 +175,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private File findSourceFile(String component, String env, File currentFile, File projectDir) {
-        return findFile(component, env, containsConfigTypeExtension(initializer.detectConfigType(currentFile)), projectDir);
+        return findFile(component, env, containsConfigTypeExtension(initializer.detectConfigType(currentFile, projectDir)), projectDir);
     }
 
     private Predicate<File> containsConfigTypeExtension(ConfigType configType) {

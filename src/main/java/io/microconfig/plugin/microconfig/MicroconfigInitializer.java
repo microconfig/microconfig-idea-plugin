@@ -9,7 +9,7 @@ import java.io.File;
 public interface MicroconfigInitializer {
     MicroconfigFactory getMicroconfigFactory(File projectDir);
 
-    ConfigType detectConfigType(File file);
+    ConfigType detectConfigType(File file, File projectDir);
 
     File findConfigRootDir(File projectDir);
 }

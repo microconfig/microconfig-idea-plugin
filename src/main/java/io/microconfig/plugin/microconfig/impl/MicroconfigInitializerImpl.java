@@ -2,45 +2,51 @@ package io.microconfig.plugin.microconfig.impl;
 
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
+import io.microconfig.factory.configtypes.ConfigTypeFileProvider;
 import io.microconfig.factory.configtypes.StandardConfigTypes;
 import io.microconfig.plugin.microconfig.MicroconfigInitializer;
 
 import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
-import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 import static io.microconfig.core.properties.io.tree.CachedComponentTree.COMPONENTS_DIR;
 import static io.microconfig.factory.MicroconfigFactory.ENV_DIR;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
 import static java.util.Arrays.stream;
-import static java.util.stream.Stream.of;
+import static java.util.stream.Collectors.toList;
 
 public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     @Override
     public MicroconfigFactory getMicroconfigFactory(File projectDir) {
+        File configRoot = findConfigRootDir(projectDir);
         MicroconfigFactory factory = MicroconfigFactory.init(
-                findConfigRootDir(projectDir),
+                configRoot,
                 new File(projectDir, "build/output"),
                 new VirtualFileReader()
         );
-        of(StandardConfigTypes.values()).forEach(t -> factory.newConfigProvider(t.getType()));
+        supportedConfigTypes(projectDir).forEach(factory::newConfigProvider);
         return factory;
     }
 
+    private List<ConfigType> supportedConfigTypes(File configRoot) {
+        Stream<ConfigType> customTypes = new ConfigTypeFileProvider().getConfigTypes(configRoot).stream();
+        Stream<ConfigType> standardTypes = Arrays.stream(StandardConfigTypes.values()).map(StandardConfigTypes::getType);
+        return Stream.concat(customTypes, standardTypes).collect(toList());
+    }
+
     @Override
-    public ConfigType detectConfigType(File file) {
-        Supplier<String> fileExtension = () -> {
-            String name = file.getName();
-            int lastDot = name.lastIndexOf('.');
-            if (lastDot >= 0) return name.substring(lastDot);
+    public ConfigType detectConfigType(File file, File projectDir) {
+        String name = file.getName();
+        int lastDot = name.lastIndexOf('.');
+        if (lastDot < 0) throw new IllegalArgumentException("File " + file + " doesn't have an extension. Unable to resolve component type.");
+        String ext = name.substring(lastDot);
 
-            throw new IllegalArgumentException("File " + file + " doesn't have an extension. Unable to resolve component type.");
-        };
-
-        String ext = fileExtension.get();
-        return stream(StandardConfigTypes.values())
-                .filter(ct -> ct.getType().getSourceExtensions().stream().anyMatch(e -> e.equals(ext)))
-                .map(StandardConfigTypes::getType)
+        File configRoot = findConfigRootDir(projectDir);
+        return supportedConfigTypes(configRoot).stream()
+                .filter(ct -> ct.getSourceExtensions().stream().anyMatch(e -> e.equals(ext)))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));
     }
