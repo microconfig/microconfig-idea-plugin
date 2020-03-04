@@ -1,13 +1,13 @@
 package io.microconfig.plugin.microconfig.impl;
 
-import io.microconfig.configs.Property;
-import io.microconfig.configs.provider.Include;
-import io.microconfig.configs.resolver.EnvComponent;
-import io.microconfig.configs.resolver.PropertyResolver;
-import io.microconfig.configs.resolver.PropertyResolverHolder;
-import io.microconfig.configs.resolver.placeholder.Placeholder;
-import io.microconfig.configs.resolver.placeholder.PlaceholderResolver;
-import io.microconfig.configs.sources.FileSource;
+import io.microconfig.core.properties.Property;
+import io.microconfig.core.properties.provider.Include;
+import io.microconfig.core.properties.resolver.EnvComponent;
+import io.microconfig.core.properties.resolver.PropertyResolver;
+import io.microconfig.core.properties.resolver.PropertyResolverHolder;
+import io.microconfig.core.properties.resolver.placeholder.Placeholder;
+import io.microconfig.core.properties.resolver.placeholder.PlaceholderResolver;
+import io.microconfig.core.properties.sources.FileSource;
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
 import io.microconfig.factory.configtypes.StandardConfigTypes;
@@ -24,11 +24,11 @@ import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import static io.microconfig.configs.Property.parse;
-import static io.microconfig.configs.io.ioservice.selector.FileFormat.PROPERTIES;
-import static io.microconfig.configs.io.ioservice.selector.FileFormat.YAML;
-import static io.microconfig.configs.sources.FileSource.fileSource;
-import static io.microconfig.environments.Component.bySourceFile;
+import static io.microconfig.core.properties.Property.parse;
+import static io.microconfig.core.properties.io.ioservice.selector.FileFormat.PROPERTIES;
+import static io.microconfig.core.properties.io.ioservice.selector.FileFormat.YAML;
+import static io.microconfig.core.properties.sources.FileSource.fileSource;
+import static io.microconfig.core.environments.Component.bySourceFile;
 import static io.microconfig.factory.configtypes.StandardConfigTypes.APPLICATION;
 import static io.microconfig.plugin.microconfig.FilePosition.positionFromFileSource;
 import static java.lang.Math.max;

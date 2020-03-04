@@ -25,7 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
 import static com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE;
-import static io.microconfig.configs.io.ioservice.selector.FileFormat.YAML;
+import static io.microconfig.core.properties.io.ioservice.selector.FileFormat.YAML;
 import static io.microconfig.plugin.microconfig.ConfigOutput.getFileType;
 import static java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager;
 import static java.util.stream.Stream.concat;

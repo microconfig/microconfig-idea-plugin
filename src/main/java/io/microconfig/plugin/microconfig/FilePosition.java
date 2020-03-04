@@ -4,7 +4,7 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.VisualPosition;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
-import io.microconfig.configs.sources.FileSource;
+import io.microconfig.core.properties.sources.FileSource;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;

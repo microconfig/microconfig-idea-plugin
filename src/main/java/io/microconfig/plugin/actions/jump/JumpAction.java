@@ -1,6 +1,6 @@
 package io.microconfig.plugin.actions.jump;
 
-import io.microconfig.configs.provider.Include;
+import io.microconfig.core.properties.provider.Include;
 import io.microconfig.plugin.actions.handler.ActionHandler;
 import io.microconfig.plugin.actions.handler.MicroconfigAction;
 import io.microconfig.plugin.microconfig.PluginContext;

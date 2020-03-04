@@ -1,6 +1,6 @@
 package io.microconfig.plugin.actions.jump;
 
-import io.microconfig.environments.Component;
+import io.microconfig.core.environments.Component;
 import io.microconfig.plugin.actions.handler.ActionHandler;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.PluginContext;

@@ -2,7 +2,7 @@ package io.microconfig.plugin.microconfig;
 
 import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.fileTypes.FileTypeManager;
-import io.microconfig.configs.io.ioservice.selector.FileFormat;
+import io.microconfig.core.properties.io.ioservice.selector.FileFormat;
 import lombok.Getter;
 
 public class ConfigOutput {
