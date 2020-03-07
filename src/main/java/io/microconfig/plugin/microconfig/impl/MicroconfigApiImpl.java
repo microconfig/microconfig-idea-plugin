@@ -6,6 +6,7 @@ import io.microconfig.core.properties.resolver.EnvComponent;
 import io.microconfig.core.properties.resolver.PropertyResolver;
 import io.microconfig.core.properties.resolver.PropertyResolverHolder;
 import io.microconfig.core.properties.resolver.placeholder.Placeholder;
+import io.microconfig.core.properties.resolver.placeholder.PlaceholderBorder;
 import io.microconfig.core.properties.resolver.placeholder.PlaceholderResolver;
 import io.microconfig.core.properties.sources.FileSource;
 import io.microconfig.factory.ConfigType;
@@ -71,7 +72,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
 
         Supplier<Placeholder> parsePlaceholder = () -> {
-            Placeholder p = Placeholder.parse(placeholderValue, detectEnvOr(currentFile, anyEnv(factory)));
+            Placeholder p = PlaceholderBorder.parse(new StringBuilder(placeholderValue)).toPlaceholder(detectEnvOr(currentFile, anyEnv(factory)));
             return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
         };
 
@@ -152,7 +153,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private Stream<String> envs(String currentLine, File currentFile, MicroconfigFactory factory) {
-        if (!Placeholder.matcher(currentLine).find()) return of("");
+        if (!PlaceholderBorder.parse(new StringBuilder(currentLine)).isValid()) return of("");
 
         if (currentFile.getName().indexOf('.') != currentFile.getName().lastIndexOf('.')) {
             String[] parts = currentFile
