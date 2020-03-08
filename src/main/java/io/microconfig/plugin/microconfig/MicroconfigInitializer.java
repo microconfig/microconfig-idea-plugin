@@ -12,4 +12,6 @@ public interface MicroconfigInitializer {
     ConfigType detectConfigType(File file, File projectDir);
 
     File findConfigRootDir(File projectDir);
+
+    ConfigType configType(String configType, File projectDir);
 }

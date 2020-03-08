@@ -31,12 +31,6 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
         return factory;
     }
 
-    private List<ConfigType> supportedConfigTypes(File configRoot) {
-        Stream<ConfigType> customTypes = new ConfigTypeFileProvider().getConfigTypes(configRoot).stream();
-        Stream<ConfigType> standardTypes = Arrays.stream(StandardConfigTypes.values()).map(StandardConfigTypes::getType);
-        return Stream.concat(customTypes, standardTypes).collect(toList());
-    }
-
     @Override
     public ConfigType detectConfigType(File file, File projectDir) {
         String name = file.getName();
@@ -45,10 +39,19 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
         String ext = name.substring(lastDot);
 
         File configRoot = findConfigRootDir(projectDir);
-        return supportedConfigTypes(configRoot).stream()
+        return supportedConfigTypes(configRoot)
                 .filter(ct -> ct.getSourceExtensions().stream().anyMatch(e -> e.equals(ext)))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));
+    }
+
+    @Override
+    public ConfigType configType(String configType, File projectDir) {
+        File configDir = findConfigRootDir(projectDir);
+        return supportedConfigTypes(configDir)
+            .filter(t -> t.getType().equals(configType))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Unsupported config type: " + configType));
     }
 
     @Override
@@ -62,5 +65,11 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
 
         return findDir(projectDir, containsMicroconfigDirs)
                 .orElseThrow(() -> new IllegalStateException("Can't find 'components' and 'envs' folders on the same level"));
+    }
+
+    private Stream<ConfigType> supportedConfigTypes(File configRoot) {
+        Stream<ConfigType> customTypes = new ConfigTypeFileProvider().getConfigTypes(configRoot).stream();
+        Stream<ConfigType> standardTypes = Arrays.stream(StandardConfigTypes.values()).map(StandardConfigTypes::getType);
+        return Stream.concat(customTypes, standardTypes);
     }
 }

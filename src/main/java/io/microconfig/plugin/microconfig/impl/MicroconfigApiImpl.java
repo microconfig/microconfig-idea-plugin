@@ -10,15 +10,19 @@ import io.microconfig.core.properties.resolver.placeholder.PlaceholderResolver;
 import io.microconfig.core.properties.sources.FileSource;
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
-import io.microconfig.factory.configtypes.StandardConfigTypes;
 import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.MicroconfigInitializer;
 
 import java.io.File;
-import java.util.*;
-import java.util.function.Function;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
@@ -84,16 +88,9 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private ConfigType chooseConfigType(Placeholder placeholder, File currentFile, File projectDir) {
-        Function<String, ConfigType> choosePlaceholderType = configType ->
-                of(StandardConfigTypes.values())
-                        .map(StandardConfigTypes::getType)
-                        .filter(t -> t.getType().equals(configType))
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("Unsupported config type: " + configType));
-
         return placeholder.getConfigType()
-                .map(choosePlaceholderType)
-                .orElseGet(() -> initializer.detectConfigType(currentFile, projectDir));
+            .map(t -> initializer.configType(t, projectDir))
+            .orElseGet(() -> initializer.detectConfigType(currentFile, projectDir));
     }
 
     @Override
@@ -118,7 +115,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         return envs(currentLine, currentFile, factory)
-                .collect(toMap(identity(), resolveProperty, (k1, k2) -> k1, TreeMap::new));
+            .collect(toMap(identity(), resolveProperty, (k1, k2) -> k1, TreeMap::new));
     }
 
     @Override
@@ -136,16 +133,16 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
         ConfigType configType = initializer.detectConfigType(currentFile, projectDir);
         Collection<Property> properties = factory
-                .newConfigProvider(configType)
-                .getProperties(bySourceFile(currentFile), env)
-                .values();
+            .newConfigProvider(configType)
+            .getProperties(bySourceFile(currentFile), env)
+            .values();
 
         File resultFile = factory.getFilenameGenerator(configType)
-                .fileFor(currentFile.getParentFile().getName(), env, properties);
+            .fileFor(currentFile.getParentFile().getName(), env, properties);
         String output = factory
-                .getConfigIoService()
-                .writeTo(resultFile)
-                .serialize(properties);
+            .getConfigIoService()
+            .writeTo(resultFile)
+            .serialize(properties);
         return new ConfigOutput(resultFile.getName().endsWith(YAML.extension()) ? YAML : PROPERTIES, output);
     }
 
@@ -159,18 +156,18 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
         if (currentFile.getName().indexOf('.') != currentFile.getName().lastIndexOf('.')) {
             String[] parts = currentFile
-                    .getName()
-                    .split("\\.");
+                .getName()
+                .split("\\.");
 
             return stream(parts)
-                    .skip(1)
-                    .limit(parts.length - 2);
+                .skip(1)
+                .limit(parts.length - 2);
         }
 
         return concat(of(""),
-                factory.getEnvironmentProvider()
-                        .getEnvironmentNames()
-                        .stream()
+            factory.getEnvironmentProvider()
+                .getEnvironmentNames()
+                .stream()
         );
     }
 
@@ -180,8 +177,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     private Predicate<File> containsConfigTypeExtension(ConfigType configType) {
         return file -> configType.getSourceExtensions()
-                .stream()
-                .anyMatch(ext -> file.getName().endsWith(ext));
+            .stream()
+            .anyMatch(ext -> file.getName().endsWith(ext));
     }
 
     private File findFile(String component, String env, Predicate<File> predicate, File projectDir) {
@@ -191,10 +188,10 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         return initializer.getMicroconfigFactory(projectDir)
-                .getComponentTree()
-                .getConfigFiles(component, predicate)
-                .min(priorityByEnv.get())
-                .orElseThrow(() -> new IllegalStateException("Component not found: " + component));
+            .getComponentTree()
+            .getConfigFiles(component, predicate)
+            .min(priorityByEnv.get())
+            .orElseThrow(() -> new IllegalStateException("Component not found: " + component));
     }
 
     @Override
@@ -212,17 +209,17 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     private Supplier<String> anyEnv(MicroconfigFactory factory) {
         return () -> {
             return factory.getEnvironmentProvider()
-                    .getEnvironmentNames()
-                    .stream()
-                    .findFirst()
-                    .orElse(""); //otherwise will fail for env-specific prop
+                .getEnvironmentNames()
+                .stream()
+                .findFirst()
+                .orElse(""); //otherwise will fail for env-specific prop
         };
     }
 
     @Override
     public Set<String> getEnvs(File projectDir) {
         return initializer.getMicroconfigFactory(projectDir)
-                .getEnvironmentProvider()
-                .getEnvironmentNames();
+            .getEnvironmentProvider()
+            .getEnvironmentNames();
     }
 }
