@@ -2,11 +2,7 @@ package io.microconfig.plugin.microconfig.impl;
 
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
-import io.microconfig.factory.configtypes.CompositeConfigTypeProvider;
-import io.microconfig.factory.configtypes.ConfigTypeFileProvider;
-import io.microconfig.factory.configtypes.StandardConfigTypes;
 import io.microconfig.plugin.microconfig.MicroconfigInitializer;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.function.Predicate;
@@ -14,7 +10,6 @@ import java.util.stream.Stream;
 
 import static io.microconfig.core.properties.io.tree.CachedComponentTree.COMPONENTS_DIR;
 import static io.microconfig.factory.MicroconfigFactory.ENV_DIR;
-import static io.microconfig.factory.configtypes.CompositeConfigTypeProvider.composite;
 import static io.microconfig.factory.configtypes.CompositeConfigTypeProvider.compositeProvider;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
 import static java.util.Arrays.stream;
