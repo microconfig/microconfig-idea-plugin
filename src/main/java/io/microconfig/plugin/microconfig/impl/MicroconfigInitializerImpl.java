@@ -2,6 +2,7 @@ package io.microconfig.plugin.microconfig.impl;
 
 import io.microconfig.factory.ConfigType;
 import io.microconfig.factory.MicroconfigFactory;
+import io.microconfig.factory.configtypes.CompositeConfigTypeProvider;
 import io.microconfig.factory.configtypes.ConfigTypeFileProvider;
 import io.microconfig.factory.configtypes.StandardConfigTypes;
 import io.microconfig.plugin.microconfig.MicroconfigInitializer;
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
 import static io.microconfig.core.properties.io.tree.CachedComponentTree.COMPONENTS_DIR;
 import static io.microconfig.factory.MicroconfigFactory.ENV_DIR;
 import static io.microconfig.factory.configtypes.CompositeConfigTypeProvider.composite;
+import static io.microconfig.factory.configtypes.CompositeConfigTypeProvider.compositeProvider;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
 import static java.util.Arrays.stream;
 
@@ -64,9 +66,7 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     }
 
     private Stream<ConfigType> supportedConfigTypes(File configRoot) {
-        return composite(new ConfigTypeFileProvider(), StandardConfigTypes.asProvider())
-                .getConfigTypes(configRoot)
-                .stream();
+        return compositeProvider().getConfigTypes(configRoot).stream();
     }
 
     private String getExtension(File file) {
