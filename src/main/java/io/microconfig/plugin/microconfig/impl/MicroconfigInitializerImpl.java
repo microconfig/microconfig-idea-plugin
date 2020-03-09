@@ -31,18 +31,16 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     public ConfigType detectConfigType(File file, File projectDir) {
         String ext = getExtension(file);
 
-        File configRoot = findConfigRootDir(projectDir);
-        return supportedConfigTypes(configRoot)
-                .filter(ct -> ct.getSourceExtensions().stream().anyMatch(e -> e.equals(ext)))
+        return supportedConfigTypes(findConfigRootDir(projectDir))
+                .filter(type -> type.getSourceExtensions().stream().anyMatch(e -> e.equals(ext)))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Can't find ConfigType for extension " + ext));
     }
 
     @Override
     public ConfigType configType(String configType, File projectDir) {
-        File configDir = findConfigRootDir(projectDir);
-        return supportedConfigTypes(configDir)
-                .filter(t -> t.getType().equals(configType))
+        return supportedConfigTypes(findConfigRootDir(projectDir))
+                .filter(type -> type.getType().equals(configType))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Unsupported config type: " + configType));
     }
