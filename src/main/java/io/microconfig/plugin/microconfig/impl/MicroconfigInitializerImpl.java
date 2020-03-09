@@ -5,18 +5,17 @@ import io.microconfig.factory.MicroconfigFactory;
 import io.microconfig.factory.configtypes.ConfigTypeFileProvider;
 import io.microconfig.factory.configtypes.StandardConfigTypes;
 import io.microconfig.plugin.microconfig.MicroconfigInitializer;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import static io.microconfig.core.properties.io.tree.CachedComponentTree.COMPONENTS_DIR;
 import static io.microconfig.factory.MicroconfigFactory.ENV_DIR;
+import static io.microconfig.factory.configtypes.CompositeConfigTypeProvider.composite;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
 import static java.util.Arrays.stream;
-import static java.util.stream.Collectors.toList;
 
 public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     @Override
@@ -33,10 +32,7 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
 
     @Override
     public ConfigType detectConfigType(File file, File projectDir) {
-        String name = file.getName();
-        int lastDot = name.lastIndexOf('.');
-        if (lastDot < 0) throw new IllegalArgumentException("File " + file + " doesn't have an extension. Unable to resolve component type.");
-        String ext = name.substring(lastDot);
+        String ext = getExtension(file);
 
         File configRoot = findConfigRootDir(projectDir);
         return supportedConfigTypes(configRoot)
@@ -49,9 +45,9 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     public ConfigType configType(String configType, File projectDir) {
         File configDir = findConfigRootDir(projectDir);
         return supportedConfigTypes(configDir)
-            .filter(t -> t.getType().equals(configType))
-            .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Unsupported config type: " + configType));
+                .filter(t -> t.getType().equals(configType))
+                .findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Unsupported config type: " + configType));
     }
 
     @Override
@@ -68,8 +64,17 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     }
 
     private Stream<ConfigType> supportedConfigTypes(File configRoot) {
-        Stream<ConfigType> customTypes = new ConfigTypeFileProvider().getConfigTypes(configRoot).stream();
-        Stream<ConfigType> standardTypes = Arrays.stream(StandardConfigTypes.values()).map(StandardConfigTypes::getType);
-        return Stream.concat(customTypes, standardTypes);
+        return composite(new ConfigTypeFileProvider(), StandardConfigTypes.asProvider())
+                .getConfigTypes(configRoot)
+                .stream();
+    }
+
+    private String getExtension(File file) {
+        String name = file.getName();
+        int lastDot = name.lastIndexOf('.');
+        if (lastDot < 0) {
+            throw new IllegalArgumentException("File " + file + " doesn't have an extension. Unable to resolve component type.");
+        }
+        return name.substring(lastDot);
     }
 }
