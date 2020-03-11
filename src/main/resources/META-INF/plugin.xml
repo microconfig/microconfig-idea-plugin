@@ -18,8 +18,10 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
     <extensions defaultExtensionNs="com.intellij">
-        <configurationType implementation="io.microconfig.plugin.run.RunConfigType" />
+        <configurationType implementation="io.microconfig.plugin.run.RunConfigType"/>
+        <applicationService serviceImplementation="io.microconfig.plugin.MicroconfigSettings"/>
         <programRunner implementation="io.microconfig.plugin.run.Runner"/>
+        <postStartupActivity implementation="io.microconfig.plugin.Greeter"/>
     </extensions>
 
     <actions>
