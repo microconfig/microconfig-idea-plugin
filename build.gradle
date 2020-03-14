@@ -3,7 +3,7 @@ plugins {
 }
 
 group 'io.micoconfig'
-version '0.8.5'
+version '0.9.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -23,6 +23,7 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+      &#183; new logo<br>
       &#183; microconfig-core update to 3.12.0<br>
       &#183; plugin now supports custom types with microconfig.yaml<br>
       &#183; Spread the word about microconfig if you enjoy using it :)<br>
