@@ -13,7 +13,6 @@ import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.MicroconfigInitializer;
-import io.microconfig.utils.StringUtils;
 
 import java.io.File;
 import java.util.*;

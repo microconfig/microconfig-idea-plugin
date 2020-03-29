@@ -12,7 +12,6 @@ import com.intellij.openapi.ui.popup.Balloon;
 import com.intellij.openapi.wm.IdeFrame;
 import com.intellij.openapi.wm.WindowManager;
 import com.intellij.ui.awt.RelativePoint;
-import org.jetbrains.annotations.NotNull;
 
 import java.awt.*;
 
@@ -29,7 +28,7 @@ public class Greeter implements StartupActivity {
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
-    public void runActivity(@NotNull Project project) {
+    public void runActivity(Project project) {
         MicroconfigSettings settings = ServiceManager.getService(MicroconfigSettings.class);
         System.out.println("Settings version: " + settings.getVersion());
         IdeaPluginDescriptor descriptor = PluginManager.getPlugin(PluginId.getId("io.microconfig.idea-plugin"));

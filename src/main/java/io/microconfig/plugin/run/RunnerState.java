@@ -12,7 +12,6 @@ import com.intellij.openapi.project.Project;
 import com.intellij.util.PathUtil;
 import io.microconfig.MicroconfigMain;
 import io.microconfig.plugin.microconfig.impl.MicroconfigInitializerImpl;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -36,7 +35,7 @@ public class RunnerState extends CommandLineState {
         this.configuration = configuration;
     }
 
-    @NotNull
+
     @Override
     protected ProcessHandler startProcess() throws ExecutionException {
         OSProcessHandler processHandler = ProcessHandlerFactory

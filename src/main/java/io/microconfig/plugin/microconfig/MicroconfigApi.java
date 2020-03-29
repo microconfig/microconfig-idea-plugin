@@ -4,7 +4,6 @@ import java.io.File;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public interface MicroconfigApi {
     File findIncludeSource(String includeLine, int currentColumn, File currentFile, File projectDir);

@@ -12,7 +12,6 @@ import com.intellij.openapi.util.WriteExternalException;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
@@ -36,7 +35,7 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
         this.destination = new File(project.getBasePath(), "/build/configs/").getAbsolutePath();
     }
 
-    @NotNull
+
     @Override
     public SettingsEditor<RunConfig> getConfigurationEditor() {
         return editor;
@@ -73,7 +72,7 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
 
     @Nullable
     @Override
-    public RunProfileState getState(@NotNull Executor executor, @NotNull ExecutionEnvironment environment) {
+    public RunProfileState getState(Executor executor, ExecutionEnvironment environment) {
         return new RunnerState(environment, this);
     }
 }

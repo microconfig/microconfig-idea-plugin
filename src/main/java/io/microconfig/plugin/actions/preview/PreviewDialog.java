@@ -13,7 +13,6 @@ import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.PluginContext;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import javax.swing.*;
@@ -70,7 +69,7 @@ class PreviewDialog extends DialogWrapper {
         return envPane;
     }
 
-    @NotNull
+
     @Override
     protected Action[] createActions() {
         return new Action[]{};
