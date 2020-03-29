@@ -126,7 +126,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public ConfigOutput buildConfigs(File currentFile, File projectDir, String env) {
         Microconfig microconfig = initializer.getMicroconfig(projectDir);
-        TypedProperties properties = microconfig.inEnvironment(env)
+        TypedProperties properties = microconfig.environments()
+                .getOrCreateByName(env)
                 .getOrCreateComponentWithName(currentFile.getParentFile().getName()) //todo alias
                 .getPropertiesFor(configTypeWithExtensionOf(currentFile))
                 .first()
