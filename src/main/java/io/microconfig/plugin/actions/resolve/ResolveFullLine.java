@@ -1,6 +1,7 @@
 package io.microconfig.plugin.actions.resolve;
 
 import io.microconfig.core.properties.DeclaringComponentImpl;
+import io.microconfig.core.properties.Property;
 import io.microconfig.plugin.actions.handler.ActionHandler;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.PluginContext;
@@ -16,13 +17,8 @@ import static io.microconfig.plugin.actions.resolve.Hints.showHint;
 public class ResolveFullLine implements ActionHandler {
     @Override
     public void onAction(PluginContext context, MicroconfigApi api) {
-        String currentLine = context.currentLine();
-        Map<String, String> valueByEnv = api.resolveFullLineForEachEnv(currentLine, context.currentFile(), context.projectDir());
-
-        showHint(getKey(currentLine), valueByEnv, context);
-    }
-
-    private String getKey(String currentLine) {
-        return parse(currentLine, PROPERTIES, new DeclaringComponentImpl("", "", "")).getKey();
+        Property property = parse(context.currentLine(), PROPERTIES, new DeclaringComponentImpl("", "", ""));
+        Map<String, String> valueByEnv = api.resolveFullLineForEachEnv(property.getValue(), context.currentFile(), context.projectDir());
+        showHint(property.getKey(), valueByEnv, context);
     }
 }

@@ -90,7 +90,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     @Override
     public Map<String, String> resolvePlaceholderForEachEnv(String placeholderValue, File currentFile, File projectDir) {
-        return resolveFullLineForEachEnv("key=" + placeholderValue, currentFile, projectDir);
+        return resolveFullLineForEachEnv(placeholderValue, currentFile, projectDir);
     }
 
     @Override
