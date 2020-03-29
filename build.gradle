@@ -25,7 +25,6 @@ intellij {
 patchPluginXml {
     changeNotes """
       &#183; microconfig-core update to 4.0.0<br>
-      &#183; plugin now supports custom types with microconfig.yaml<br>
       &#183; Spread the word about microconfig if you enjoy using it :)<br>
       """
 }

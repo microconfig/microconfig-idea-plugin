@@ -23,11 +23,11 @@ import static com.intellij.util.SystemProperties.getJavaHome;
 import static io.microconfig.utils.StringUtils.isEmpty;
 
 public class RunnerState extends CommandLineState {
-    static final String ROOT = "root";
-    static final String ENV = "env";
-    static final String GROUPS = "groups";
-    static final String SERVICES = "services";
-    static final String DESTINATION = "dest";
+    static final String ROOT = "-r";
+    static final String ENV = "-e";
+    static final String GROUPS = "-g";
+    static final String SERVICES = "-s";
+    static final String DESTINATION = "-d";
 
     private final RunConfig configuration;
 
