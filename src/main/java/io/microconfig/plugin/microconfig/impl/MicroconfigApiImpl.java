@@ -81,6 +81,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         return placeholder.isSelfReferenced() ? placeholder.withComponent(currentFile.getParentFile().getName()) : placeholder;
     }
 
+    //todo don't use cache
     private File findSourceFile(String component, String env, File currentFile, Microconfig microconfig) {
         List<ConfigFile> configFiles = microconfig.getDependencies()
                 .getConfigFileRepository()
