@@ -12,19 +12,13 @@ public interface MicroconfigApi {
 
     FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir);
 
-    /**
-     * @return resolved placeholder values for each env: env -> value
-     */
     Map<String, String> resolvePlaceholderForEachEnv(String placeholderValue, File currentFile, File projectDir);
 
-    /**
-     * @return full line with resolved placeholder values for each env: env -> line
-     */
     Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir);
-
-    ConfigOutput buildConfigsForService(File currentFile, File projectDir, String env);
 
     String detectEnvOr(File currentFile, Supplier<String> defaultEnv);
 
-    Set<String> getEnvs(File currentFile);
+    Set<String> getEnvs(File projectDir);
+
+    ConfigOutput buildConfigs(File currentFile, File projectDir, String env);
 }

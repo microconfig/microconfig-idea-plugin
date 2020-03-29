@@ -1,4 +1,4 @@
-package io.microconfig.plugin.microconfig.impl;
+package io.microconfig.plugin.microconfig;
 
 import io.microconfig.core.Microconfig;
 

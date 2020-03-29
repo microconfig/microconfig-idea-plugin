@@ -1,12 +1,12 @@
 package io.microconfig.plugin.microconfig.impl;
 
 import io.microconfig.core.Microconfig;
-import io.microconfig.core.configtypes.ConfigType;
+import io.microconfig.plugin.microconfig.MicroconfigInitializer;
 
 import java.io.File;
 import java.util.function.Predicate;
-import java.util.stream.Stream;
 
+import static io.microconfig.core.Microconfig.searchConfigsIn;
 import static io.microconfig.core.environments.repository.FileEnvironmentRepository.ENV_DIR;
 import static io.microconfig.core.properties.repository.ConfigFileRepositoryImpl.COMPONENTS_DIR;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
@@ -16,7 +16,7 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     @Override
     public Microconfig getMicroconfig(File projectDir) {
         File configRoot = findConfigRootDir(projectDir);
-        return Microconfig.searchConfigsIn(configRoot)
+        return searchConfigsIn(configRoot)
                 .withDestinationDir(new File(projectDir, "build/output"))
                 .withFsReader(new VirtualFileReader());
     }

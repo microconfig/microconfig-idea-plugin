@@ -163,7 +163,7 @@ class PreviewDialog extends DialogWrapper {
 
         private ConfigOutput buildConfigs(String envName) {
             try {
-                return api.buildConfigsForService(context.currentFile(), context.projectDir(), envName);
+                return api.buildConfigs(context.currentFile(), context.projectDir(), envName);
             } catch (RuntimeException e) {
                 return new ConfigOutput(YAML, e.getMessage());
             }
