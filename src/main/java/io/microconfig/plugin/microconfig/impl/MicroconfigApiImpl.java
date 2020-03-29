@@ -54,14 +54,12 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     @Override
     public FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir) {
-        Placeholder placeholder = findPlaceholderIn(placeholderValue)
-                .orElseThrow(() -> new IllegalStateException("Can't parse " + placeholderValue))
-                .toPlaceholder("some", "some");
+        Placeholder placeholder = parsePlaceholder(placeholderValue, currentFile);
 
         Microconfig microconfig = initializer.getMicroconfig(projectDir);
         Optional<Property> resolved = microconfig
                 .environments()
-                .getOrCreateByName(detectEnvOr(currentFile).orElse(""))
+                .getOrCreateByName(placeholder.getEnvironment())
                 .getOrCreateComponentWithName(placeholder.getComponent())
                 .getPropertiesFor(configTypeWithExtensionOf(currentFile))
                 .getPropertyWithKey(placeholder.getKey());
@@ -74,6 +72,13 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                     File sourceFile = findSourceFile(placeholder.getComponent(), placeholder.getEnvironment(), currentFile, microconfig);
                     return new FilePosition(sourceFile, 0);
                 });
+    }
+
+    private Placeholder parsePlaceholder(String placeholderValue, File currentFile) {
+        Placeholder placeholder = findPlaceholderIn(placeholderValue)
+                .orElseThrow(() -> new IllegalStateException("Can't parse " + placeholderValue))
+                .toPlaceholder("some", detectEnvOr(currentFile).orElse(""));
+        return placeholder.isSelfReferenced() ? placeholder.withComponent(currentFile.getParentFile().getName()) : placeholder;
     }
 
     private File findSourceFile(String component, String env, File currentFile, Microconfig microconfig) {

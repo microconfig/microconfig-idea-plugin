@@ -42,6 +42,6 @@ public class JumpAction extends MicroconfigAction {
     }
 
     private String parentOf(File currentFile) {
-        return currentFile.getParentFile().getAbsolutePath().replace('\\', '/');
+        return currentFile.getParentFile().getAbsolutePath().replace('\\', '/') + "/";
     }
 }
