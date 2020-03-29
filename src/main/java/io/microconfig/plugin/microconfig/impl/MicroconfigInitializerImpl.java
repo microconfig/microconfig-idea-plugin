@@ -1,12 +1,16 @@
 package io.microconfig.plugin.microconfig.impl;
 
 import io.microconfig.core.Microconfig;
+import io.microconfig.core.configtypes.ConfigType;
+import io.microconfig.core.configtypes.ConfigTypeFilters;
 import io.microconfig.plugin.microconfig.MicroconfigInitializer;
 
 import java.io.File;
+import java.util.List;
 import java.util.function.Predicate;
 
 import static io.microconfig.core.Microconfig.searchConfigsIn;
+import static io.microconfig.core.configtypes.ConfigTypeFilters.configTypeWithExtensionOf;
 import static io.microconfig.core.environments.repository.FileEnvironmentRepository.ENV_DIR;
 import static io.microconfig.core.properties.repository.ConfigFileRepositoryImpl.COMPONENTS_DIR;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
@@ -32,5 +36,17 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
 
         return findDir(projectDir, containsMicroconfigDirs)
                 .orElseThrow(() -> new IllegalStateException("Can't find 'components' and 'envs' folders on the same level"));
+    }
+
+    @Override
+    public ConfigType detectConfigTypeOf(File currentFile, File projectDir) {
+        List<ConfigType> supportedConfigTypes = getMicroconfig(projectDir)
+                .getDependencies()
+                .getConfigTypeRepository()
+                .getConfigTypes();
+
+        return configTypeWithExtensionOf(currentFile)
+                .selectTypes(supportedConfigTypes)
+                .get(0);
     }
 }

@@ -2,8 +2,10 @@ package io.microconfig.plugin.microconfig.impl;
 
 import io.microconfig.core.Microconfig;
 import io.microconfig.core.configtypes.ConfigType;
+import io.microconfig.core.configtypes.ConfigTypeImpl;
 import io.microconfig.core.properties.*;
-import io.microconfig.core.properties.Properties;
+import io.microconfig.core.properties.repository.ConfigFile;
+import io.microconfig.core.properties.repository.ConfigFileRepository;
 import io.microconfig.core.properties.repository.Include;
 import io.microconfig.core.properties.repository.Includes;
 import io.microconfig.core.properties.resolvers.placeholder.Placeholder;
@@ -14,7 +16,6 @@ import io.microconfig.plugin.microconfig.MicroconfigInitializer;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
@@ -27,9 +28,9 @@ import static io.microconfig.core.properties.resolvers.placeholder.PlaceholderBo
 import static io.microconfig.core.properties.serializers.PropertySerializers.asString;
 import static java.lang.Math.max;
 import static java.util.Arrays.stream;
-import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
 
@@ -80,28 +81,32 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     @Override
     public Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir) {
+        String configType = initializer.detectConfigTypeOf(currentFile, projectDir).getName();
+        String component = currentFile.getParentFile().getName();
         Microconfig microconfig = initializer.getMicroconfig(projectDir);
+        Resolver resolver = microconfig.resolver();
         UnaryOperator<String> resolveValue = env -> {
             try {
-
-                Property p = property.withNewEnv(env);
-                return propertyResolver.resolve(p, new EnvComponent(p.getSource().getComponent(), p.getEnvContext()));
+                DeclaringComponent root = new DeclaringComponentImpl(configType, component, env);
+                return resolver.resolve(currentLine, root, root);
             } catch (RuntimeException e) {
                 return "ERROR";
             }
         };
 
-        return envs(currentLine, currentFile, microconfig)
+        return envsFor(currentLine, currentFile, microconfig)
                 .collect(toMap(identity(), resolveValue, (k1, k2) -> k1, TreeMap::new));
     }
 
     @Override
     public File findAnyComponentFile(String component, String env, File projectDir) {
-        try {
-            return findFile(component, env, containsConfigTypeExtension(APPLICATION), projectDir);
-        } catch (RuntimeException e) {
-            return findFile(component, env, f -> true, projectDir);
+        Microconfig microconfig = initializer.getMicroconfig(projectDir);
+        ConfigFileRepository configFileRepository = microconfig.getDependencies().getConfigFileRepository();
+        List<ConfigFile> configFiles = configFileRepository.getConfigFilesOf(component, env, APPLICATION);
+        if (configFiles.isEmpty()) {
+            configFiles = configFileRepository.getConfigFilesOf(component, env, compositeConfigType(microconfig));
         }
+        return configFiles.get(configFiles.size() - 1).getFile();
     }
 
     @Override
@@ -114,15 +119,27 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 .resolveBy(microconfig.resolver());
 
         return new ConfigOutput(
-                properties.getProperties().stream().anyMatch(p->p.getConfigFormat() == YAML) ? YAML : PROPERTIES,
+                properties.getProperties().stream().anyMatch(p -> p.getConfigFormat() == YAML) ? YAML : PROPERTIES,
                 properties.save(asString())
         );
     }
 
-    private Stream<String> envs(String currentLine, File currentFile, Microconfig microconfig) {
-        if (!Placeholder.parse(new StringBuilder(currentLine)).isValid()) return of("");
+    @Override
+    public String detectEnvOr(File currentFile, Supplier<String> defaultEnv) {
+        String name = currentFile.getName();
+        int start = name.indexOf('.');
+        int end = name.indexOf('.', start + 1);
+        if (end > 0) {
+            return name.substring(start + 1, end);
+        }
 
-        if (currentFile.getName().indexOf('.') != currentFile.getName().lastIndexOf('.')) {
+        return defaultEnv.get();
+    }
+
+    private Stream<String> envsFor(String currentLine, File currentFile, Microconfig microconfig) {
+        if (!findPlaceholderIn(currentLine).isPresent()) return of("");
+
+        if (isEnvSpecificConfig(currentFile)) {
             String[] parts = currentFile
                     .getName()
                     .split("\\.");
@@ -138,45 +155,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         );
     }
 
-    private Predicate<File> containsConfigTypeExtension(ConfigType configType) {
-        return file -> configType.getSourceExtensions()
-                .stream()
-                .anyMatch(ext -> file.getName().endsWith(ext));
-    }
-
-    private File findFile(String component, String env, Predicate<File> predicate, File projectDir) {
-        Supplier<Comparator<File>> priorityByEnv = () -> {
-            Comparator<File> comparator = comparing(f1 -> f1.getName().contains(env + ".") ? 0 : 1);
-            return comparator.thenComparing(f -> f.getName().length());
-        };
-
-        return initializer.getMicroconfig(projectDir)
-                .getComponentTree()
-                .getConfigFiles(component, predicate)
-                .min(priorityByEnv.get())
-                .orElseThrow(() -> new IllegalStateException("Component not found: " + component));
-    }
-
-    @Override
-    public String detectEnvOr(File currentFile, Supplier<String> defaultEnv) {
-        String name = currentFile.getName();
-        int start = name.indexOf('.');
-        int end = name.indexOf('.', start + 1);
-        if (end > 0) {
-            return name.substring(start + 1, end);
-        }
-
-        return defaultEnv.get();
-    }
-
-    private Supplier<String> anyEnv(Microconfig microconfig) {
-        return () -> {
-            return microconfig.environments()
-                    .environmentNames()
-                    .stream()
-                    .findFirst()
-                    .orElse(""); //otherwise will fail for env-specific prop
-        };
+    private boolean isEnvSpecificConfig(File currentFile) {
+        return currentFile.getName().indexOf('.') != currentFile.getName().lastIndexOf('.');
     }
 
     @Override
@@ -196,7 +176,12 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         return componentIndex;
     }
 
-    private File findSourceFile(String component, String env, File currentFile, File projectDir) {
-        return findFile(component, env, containsConfigTypeExtension(initializer.detectConfigType(currentFile, projectDir)), projectDir);
+    private ConfigType compositeConfigType(Microconfig microconfig) {
+        Set<String> allConfigTypeExtensions = microconfig.getDependencies()
+                .getConfigTypeRepository()
+                .getConfigTypes().stream()
+                .flatMap(ct -> ct.getSourceExtensions().stream())
+                .collect(toSet());
+        return new ConfigTypeImpl("fake", allConfigTypeExtensions, "fake");
     }
 }
