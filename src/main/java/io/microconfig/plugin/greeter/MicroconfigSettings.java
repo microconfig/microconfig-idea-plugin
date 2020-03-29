@@ -1,4 +1,4 @@
-package io.microconfig.plugin;
+package io.microconfig.plugin.greeter;
 
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.State;
@@ -11,8 +11,7 @@ import org.jetbrains.annotations.Nullable;
 @Data
 @State(name = "MicroconfigSettings", storages = @Storage("microconfig.xml"), defaultStateAsResource = true)
 public class MicroconfigSettings implements PersistentStateComponent<MicroconfigSettings> {
-
-    public String version = "0.0.0";
+    private String version = "0.0.0";
 
     @Nullable
     @Override
@@ -25,4 +24,3 @@ public class MicroconfigSettings implements PersistentStateComponent<Microconfig
         XmlSerializerUtil.copyBean(state, this);
     }
 }
-

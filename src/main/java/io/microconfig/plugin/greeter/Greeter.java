@@ -1,4 +1,4 @@
-package io.microconfig.plugin;
+package io.microconfig.plugin.greeter;
 
 import com.intellij.ide.plugins.IdeaPluginDescriptor;
 import com.intellij.ide.plugins.PluginManager;
@@ -23,19 +23,18 @@ import static com.intellij.notification.impl.NotificationsManagerImpl.createBall
 import static com.intellij.ui.BalloonLayoutData.fullContent;
 
 public class Greeter implements StartupActivity {
-
-    private final String displayId = "io.microconfig.plugin";
-    private final String message = "<br/>Thank you for using <b><a href=\"https://microconfig.io\">Microconfig.IO</a></b>!<br/>" +
+    private static final String displayId = "io.microconfig.plugin";
+    private static final String message = "<br/>Thank you for using <b><a href=\"https://microconfig.io\">Microconfig.IO</a></b>!<br/>" +
             "If you have any questions or ideas you can join our <b><a href=\"https://join.slack.com/t/microconfig/shared_invite/zt-couuwwuo-vt5miXcv5RMmuXlNv1oKEQ\">Slack</a></b>";
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
     public void runActivity(@NotNull Project project) {
         MicroconfigSettings settings = ServiceManager.getService(MicroconfigSettings.class);
-        System.out.println("Settings version: "+ settings.getVersion());
+        System.out.println("Settings version: " + settings.getVersion());
         IdeaPluginDescriptor descriptor = PluginManager.getPlugin(PluginId.getId("io.microconfig.idea-plugin"));
 
-        if (!descriptor.getVersion().equals(settings.version)) {
+        if (descriptor != null && !descriptor.getVersion().equals(settings.getVersion())) {
             settings.setVersion(descriptor.getVersion());
             Notification notification = createNotification();
             IdeFrame frame = WindowManager.getInstance().getIdeFrame(project);
@@ -55,7 +54,7 @@ public class Greeter implements StartupActivity {
                         fullContent(),
                         project);
                 balloon.show(target, Balloon.Position.atLeft);
-            } catch (Exception e) {
+            } catch (RuntimeException e) {
                 notification.notify(project);
             }
         }
@@ -65,5 +64,4 @@ public class Greeter implements StartupActivity {
         NotificationGroup group = new NotificationGroup(displayId, STICKY_BALLOON, true);
         return group.createNotification("Microconfig plugin updated", message, INFORMATION, URL_OPENING_LISTENER);
     }
-
 }

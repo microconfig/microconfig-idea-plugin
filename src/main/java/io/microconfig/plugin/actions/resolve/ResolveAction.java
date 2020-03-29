@@ -4,10 +4,12 @@ import io.microconfig.plugin.actions.handler.ActionHandler;
 import io.microconfig.plugin.actions.handler.MicroconfigAction;
 import io.microconfig.plugin.microconfig.PluginContext;
 
+import static io.microconfig.plugin.actions.resolve.PlaceholderBorder.borders;
+
 public class ResolveAction extends MicroconfigAction {
     @Override
     protected ActionHandler chooseHandler(PluginContext context) {
-        PlaceholderBorders borders = PlaceholderBorders.borders(context.currentLine(), context.currentColumn());
+        PlaceholderBorder borders = borders(context.currentLine(), context.currentColumn());
         if (borders.isInsidePlaceholder()) {
             return new ResolvePlaceholder(borders.value());
         }

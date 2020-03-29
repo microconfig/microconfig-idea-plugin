@@ -27,6 +27,4 @@ public interface MicroconfigApi {
     String detectEnvOr(File currentFile, Supplier<String> defaultEnv);
 
     Set<String> getEnvs(File currentFile);
-
-    MicroconfigInitializer getMicroconfigInitializer();
 }

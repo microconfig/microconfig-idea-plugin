@@ -10,7 +10,7 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PathUtil;
-import io.microconfig.BuildConfigMain;
+import io.microconfig.MicroconfigMain;
 import io.microconfig.plugin.microconfig.impl.MicroconfigInitializerImpl;
 import org.jetbrains.annotations.NotNull;
 
@@ -52,7 +52,7 @@ public class RunnerState extends CommandLineState {
         List<String> params = new ArrayList<>();
 
         String java = new File(getJavaHome(), "/bin/java").getAbsolutePath();
-        String jarPath = PathUtil.getJarPathForClass(BuildConfigMain.class);
+        String jarPath = PathUtil.getJarPathForClass(MicroconfigMain.class);
 
         params.add(java);
         params.add("-XX:TieredStopAtLevel=1");

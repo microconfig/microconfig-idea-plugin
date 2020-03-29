@@ -1,24 +1,24 @@
 package io.microconfig.plugin.actions.jump;
 
-import io.microconfig.core.properties.provider.Include;
 import io.microconfig.plugin.actions.handler.ActionHandler;
 import io.microconfig.plugin.actions.handler.MicroconfigAction;
 import io.microconfig.plugin.microconfig.PluginContext;
 
 import java.io.File;
 
-import static io.microconfig.factory.MicroconfigFactory.ENV_DIR;
-import static io.microconfig.plugin.actions.resolve.PlaceholderBorders.borders;
+import static io.microconfig.core.environments.repository.FileEnvironmentRepository.ENV_DIR;
+import static io.microconfig.core.properties.repository.Includes.isInclude;
+import static io.microconfig.plugin.actions.resolve.PlaceholderBorder.borders;
 
 public class JumpAction extends MicroconfigAction {
     @Override
     protected ActionHandler chooseHandler(PluginContext context) {
         String currentLine = context.currentLine();
 
-        if (Include.isInclude(currentLine)) {
+        if (isInclude(currentLine)) {
             return new JumpToInclude();
         }
-        if (borders(currentLine, context.currentColumn()).isInsidePlaceholder()) {
+        if (isInsidePlaceholder(context, currentLine)) {
             return new JumpToPlaceholder();
         }
         if (isEnvDescriptor(context.currentFile())) {
@@ -28,12 +28,16 @@ public class JumpAction extends MicroconfigAction {
         return null;
     }
 
+    private boolean isInsidePlaceholder(PluginContext context, String currentLine) {
+        return borders(currentLine, context.currentColumn()).isInsidePlaceholder();
+    }
+
     private boolean isEnvDescriptor(File currentFile) {
         return (currentFile.getName().endsWith(".yaml")
                 || currentFile.getName().endsWith(".json"))
                 && currentFile.getParentFile()
                 .getAbsolutePath()
                 .replace('\\', '/')
-                .contains(ENV_DIR);
+                .contains('/' + ENV_DIR + '/');
     }
 }

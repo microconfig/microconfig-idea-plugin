@@ -1,7 +1,7 @@
 package io.microconfig.plugin.microconfig.impl;
 
 import com.intellij.openapi.fileEditor.FileDocumentManager;
-import io.microconfig.utils.reader.FilesReader;
+import io.microconfig.io.FsReader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,9 +14,9 @@ import java.util.stream.Stream;
 import static io.microconfig.plugin.utils.FileUtil.toVirtualFile;
 import static java.util.stream.Collectors.toList;
 
-public class VirtualFileReader implements FilesReader {
+public class VirtualFileReader implements FsReader {
     @Override
-    public String read(File file) {
+    public String readFully(File file) {
         return FileDocumentManager.
                 getInstance()
                 .getDocument(toVirtualFile(file))
@@ -30,13 +30,13 @@ public class VirtualFileReader implements FilesReader {
     }
 
     @Override
-    public Optional<String> firstLine(File file, Predicate<String> predicate) {
+    public Optional<String> firstLineOf(File file, Predicate<String> predicate) {
         return lines(file)
                 .filter(predicate)
                 .findFirst();
     }
 
     private Stream<String> lines(File file) {
-        return new BufferedReader(new StringReader(read(file))).lines();
+        return new BufferedReader(new StringReader(readFully(file))).lines();
     }
 }

@@ -13,8 +13,8 @@ import static java.util.stream.Collectors.*;
 class Hints {
     private static final String DEFAULT_ENV_KEY = "";
 
-    public static void showHint(String line, Map<String, String> envToValue, PluginContext context) {
-        if (envToValue.isEmpty()) {
+    public static void showHint(String line, Map<String, String> valueByEnv, PluginContext context) {
+        if (valueByEnv.isEmpty()) {
             context.showErrorHint("Can't resolve '" + line + "'");
             return;
         }
@@ -24,9 +24,9 @@ class Hints {
                 .append(LINES_SEPARATOR)
                 .append(LINES_SEPARATOR);
 
-        addDefaultValue(envToValue, hint);
+        addDefaultValue(valueByEnv, hint);
 
-        Map<String, List<String>> valueToEnv = groupByValue(envToValue);
+        Map<String, List<String>> valueToEnv = groupByValue(valueByEnv);
         addValues(valueToEnv, hint);
 
         context.showInfoHint(hint.toString());

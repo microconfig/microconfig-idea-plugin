@@ -1,9 +1,10 @@
 plugins {
     id 'org.jetbrains.intellij' version '0.4.2'
 }
+apply from: 'lib.gradle'
 
 group 'io.micoconfig'
-version '0.9.0'
+version '1.0.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -23,21 +24,20 @@ intellij {
 
 patchPluginXml {
     changeNotes """
-      &#183; new logo<br>
-      &#183; microconfig-core update to 3.12.0<br>
+      &#183; microconfig-core update to 4.0.0<br>
       &#183; plugin now supports custom types with microconfig.yaml<br>
       &#183; Spread the word about microconfig if you enjoy using it :)<br>
       """
 }
 
 dependencies {
-    implementation 'io.microconfig:microconfig-core:3.12.0:all'
+    implementation platform(lib.spring_bom)
+    implementation lib.microconfig
 
-    compileOnly "org.projectlombok:lombok:1.18.12"
-    annotationProcessor "org.projectlombok:lombok:1.18.12"
-    
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.0',
-            "org.assertj:assertj-core:3.11.1"
+    compileOnly lib.lombok
+    annotationProcessor lib.lombok
+
+    testImplementation lib.junit, lib.mokito
 }
 
 test {

@@ -5,17 +5,17 @@ import lombok.ToString;
 
 @ToString
 @RequiredArgsConstructor
-public class PlaceholderBorders {
+public class PlaceholderBorder {
     private final String value;
 
     private final int start;
     private final int end;
 
-    private static PlaceholderBorders empty() {
-        return new PlaceholderBorders(null, -1, -1);
+    private static PlaceholderBorder empty() {
+        return new PlaceholderBorder(null, -1, -1);
     }
 
-    public static PlaceholderBorders borders(String line, int offset) {
+    public static PlaceholderBorder borders(String line, int offset) {
         int start = line.lastIndexOf("${", offset);
         if (start < 0) return empty();
 
@@ -23,9 +23,10 @@ public class PlaceholderBorders {
         if (middle < 0) return empty();
 
         int finish = findFinishIndex(line, middle);
-        return (finish < 0 || finish < offset) ? empty() : new PlaceholderBorders(line.substring(start, finish), start, finish);
+        return (finish < 0 || finish < offset) ? empty() : new PlaceholderBorder(line.substring(start, finish), start, finish);
     }
 
+    //todo
     private static int findFinishIndex(String line, int middle) {
         int openBrackets = 1;
         for (int i = middle + 1; i < line.length(); i++) {

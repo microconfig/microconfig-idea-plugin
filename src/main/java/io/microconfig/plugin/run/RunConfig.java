@@ -19,24 +19,15 @@ import java.io.File;
 
 import static io.microconfig.plugin.run.RunnerState.*;
 
+@Getter
+@Setter
 public class RunConfig extends RunConfigurationBase implements RunnerSettings {
     private static final String MICROCONFIG_RUN_CONFIG = "MicroconfigRunConfig";
     private final RunConfigEditor editor;
 
-    @Getter
-    @Setter
     private String env = "dev";
-
-    @Getter
-    @Setter
     private String groups = "";
-
-    @Getter
-    @Setter
     private String services = "";
-
-    @Getter
-    @Setter
     private String destination;
 
     public RunConfig(RunConfigFactory factory, Project project) {
