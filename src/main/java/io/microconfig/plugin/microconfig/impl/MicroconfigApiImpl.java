@@ -2,9 +2,11 @@ package io.microconfig.plugin.microconfig.impl;
 
 import io.microconfig.core.Microconfig;
 import io.microconfig.core.configtypes.ConfigType;
-import io.microconfig.core.properties.Property;
+import io.microconfig.core.properties.*;
+import io.microconfig.core.properties.Properties;
 import io.microconfig.core.properties.repository.Include;
 import io.microconfig.core.properties.repository.Includes;
+import io.microconfig.core.properties.resolvers.placeholder.Placeholder;
 import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
@@ -21,7 +23,8 @@ import static io.microconfig.core.configtypes.ConfigTypeFilters.configTypeWithEx
 import static io.microconfig.core.configtypes.StandardConfigType.APPLICATION;
 import static io.microconfig.core.properties.ConfigFormat.PROPERTIES;
 import static io.microconfig.core.properties.ConfigFormat.YAML;
-import static io.microconfig.plugin.microconfig.FilePosition.positionFromFileSource;
+import static io.microconfig.core.properties.resolvers.placeholder.PlaceholderBorders.findPlaceholderIn;
+import static io.microconfig.core.properties.serializers.PropertySerializers.asString;
 import static java.lang.Math.max;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
@@ -49,29 +52,25 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     @Override
     public FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir) {
-        Microconfig microconfig = initializer.getMicroconfig(projectDir);
+        Placeholder placeholder = findPlaceholderIn(placeholderValue)
+                .orElseThrow(() -> new IllegalStateException("Can't parse " + placeholderValue))
+                .toPlaceholder("some", "some");
 
-        Supplier<Placeholder> parsePlaceholder = () -> {
-            Placeholder p = Placeholder.parse(new StringBuilder(placeholderValue)).toPlaceholder(detectEnvOr(currentFile, anyEnv(microconfig)));
-            return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
-        };
+        Optional<Property> resolved = initializer.getMicroconfig(projectDir)
+                .environments()
+                .getOrCreateByName(detectEnvOr(currentFile, () -> ""))
+                .getOrCreateComponentWithName(placeholder.getComponent())
+                .getPropertiesFor(configTypeWithExtensionOf(currentFile))
+                .getPropertyWithKey(placeholder.getKey());
 
-        Placeholder placeholder = parsePlaceholder.get();
-        ConfigType configType = chooseConfigType(placeholder, currentFile, projectDir);
-        PlaceholderResolver resolver = microconfig.newPlaceholderResolver(microconfig.newFileBasedProvider(configType), configType);
-        Optional<Property> resolved = resolver.resolveToProperty(placeholder);
-
-        if (resolved.isPresent() && resolved.get().getSource() instanceof FileSource) {
-            return positionFromFileSource((FileSource) resolved.get().getSource());
-        }
-
-        return new FilePosition(findSourceFile(placeholder.getComponent(), detectEnvOr(currentFile, () -> ""), currentFile, projectDir), 0);
-    }
-
-    private ConfigType chooseConfigType(Placeholder placeholder, File currentFile, File projectDir) {
-        return placeholder.getConfigType()
-                .map(t -> initializer.toConfigType(t, projectDir))
-                .orElseGet(() -> initializer.detectConfigType(currentFile, projectDir));
+        return resolved.map(Property::getDeclaringComponent)
+                .filter(dc -> dc instanceof FileBasedComponent)
+                .map(FileBasedComponent.class::cast)
+                .map(FilePosition::positionFromFileSource)
+                .orElseGet(() -> {
+                    File sourceFile = findSourceFile(placeholder.getComponent(), placeholder.getEnvironment(), currentFile, projectDir);
+                    return new FilePosition(sourceFile, 0);
+                });
     }
 
     @Override
@@ -82,8 +81,9 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir) {
         Microconfig microconfig = initializer.getMicroconfig(projectDir);
-        UnaryOperator<String> resolveProperty = env -> {
+        UnaryOperator<String> resolveValue = env -> {
             try {
+
                 Property p = property.withNewEnv(env);
                 return propertyResolver.resolve(p, new EnvComponent(p.getSource().getComponent(), p.getEnvContext()));
             } catch (RuntimeException e) {
@@ -92,7 +92,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         };
 
         return envs(currentLine, currentFile, microconfig)
-                .collect(toMap(identity(), resolveProperty, (k1, k2) -> k1, TreeMap::new));
+                .collect(toMap(identity(), resolveValue, (k1, k2) -> k1, TreeMap::new));
     }
 
     @Override
@@ -107,25 +107,16 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public ConfigOutput buildConfigs(File currentFile, File projectDir, String env) {
         Microconfig microconfig = initializer.getMicroconfig(projectDir);
-        microconfig.inEnvironment(env)
+        TypedProperties properties = microconfig.inEnvironment(env)
                 .getOrCreateComponentWithName(currentFile.getParentFile().getName()) //todo alias
                 .getPropertiesFor(configTypeWithExtensionOf(currentFile))
-                .resolveBy(microconfig.resolver())
-                .getProperties();
+                .first()
+                .resolveBy(microconfig.resolver());
 
-        ConfigType configType = initializer.detectConfigType(currentFile, projectDir);
-        Collection<Property> properties = microconfig.
-                .newConfigProvider(configType)
-                .getProperties(bySourceFile(currentFile), env)
-                .values();
-
-        File resultFile = microconfig.getFilenameGenerator(configType)
-                .fileFor(currentFile.getParentFile().getName(), env, properties);
-        String output = microconfig
-                .getConfigIoService()
-                .writeTo(resultFile)
-                .serialize(properties);
-        return new ConfigOutput(resultFile.getName().endsWith(YAML.extension()) ? YAML : PROPERTIES, output);
+        return new ConfigOutput(
+                properties.getProperties().stream().anyMatch(p->p.getConfigFormat() == YAML) ? YAML : PROPERTIES,
+                properties.save(asString())
+        );
     }
 
     private Stream<String> envs(String currentLine, File currentFile, Microconfig microconfig) {
