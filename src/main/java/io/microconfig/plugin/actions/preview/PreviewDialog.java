@@ -78,7 +78,7 @@ class PreviewDialog extends DialogWrapper {
 
     private JComponent initEnvPane(PluginContext context, MicroconfigApi api, ActionListener listener) {
         envsComboBox.setModel(new DefaultComboBoxModel<>(concat(of(""), api.getEnvs(context.projectDir()).stream()).toArray(String[]::new)));
-        envsComboBox.setSelectedItem(api.detectEnvOr(context.currentFile(), () -> lastEnv));
+        envsComboBox.setSelectedItem(api.detectEnvOr(context.currentFile()).orElseGet(() -> lastEnv));
         envsComboBox.setEditable(true);
         envsComboBox.addActionListener(listener);
 

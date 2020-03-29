@@ -2,6 +2,7 @@ package io.microconfig.plugin.microconfig;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 
@@ -16,7 +17,7 @@ public interface MicroconfigApi {
 
     Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir);
 
-    String detectEnvOr(File currentFile, Supplier<String> defaultEnv);
+    Optional<String> detectEnvOr(File currentFile);
 
     Set<String> getEnvs(File projectDir);
 
