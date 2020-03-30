@@ -9,7 +9,6 @@ public class RunConfigFactory extends ConfigurationFactory {
         super(type);
     }
 
-
     @Override
     public RunConfiguration createTemplateConfiguration(Project project) {
         return new RunConfig(this, project);

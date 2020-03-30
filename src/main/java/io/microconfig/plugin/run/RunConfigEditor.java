@@ -14,7 +14,6 @@ import static javax.swing.SwingConstants.RIGHT;
 public class RunConfigEditor extends SettingsEditor<RunConfig> {
     private final MicroconfigRunConfigPanel mcPanel = MicroconfigRunConfigPanel.create();
 
-
     @Override
     protected JComponent createEditor() {
         return mcPanel.getPanel();

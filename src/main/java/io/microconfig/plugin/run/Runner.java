@@ -4,7 +4,6 @@ import com.intellij.execution.configurations.RunProfile;
 import com.intellij.execution.runners.DefaultProgramRunner;
 
 public class Runner extends DefaultProgramRunner {
-
     @Override
     public String getRunnerId() {
         return "Runner";

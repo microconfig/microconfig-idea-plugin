@@ -22,11 +22,11 @@ import static com.intellij.util.SystemProperties.getJavaHome;
 import static io.microconfig.utils.StringUtils.isEmpty;
 
 public class RunnerState extends CommandLineState {
-    static final String ROOT = "-r";
-    static final String ENV = "-e";
-    static final String GROUPS = "-g";
-    static final String SERVICES = "-s";
-    static final String DESTINATION = "-d";
+    static final String ROOT = "r";
+    static final String ENV = "e";
+    static final String GROUPS = "g";
+    static final String SERVICES = "s";
+    static final String DESTINATION = "d";
 
     private final RunConfig configuration;
 
@@ -34,7 +34,6 @@ public class RunnerState extends CommandLineState {
         super(environment);
         this.configuration = configuration;
     }
-
 
     @Override
     protected ProcessHandler startProcess() throws ExecutionException {
@@ -60,15 +59,16 @@ public class RunnerState extends CommandLineState {
 
         BiConsumer<String, String> addParam = (key, value) -> {
             if (isEmpty(value)) return;
-            params.add(key + "=" + value);
+            params.add(key);
+            params.add(value);
         };
 
         Project project = getEnvironment().getProject();
-        addParam.accept(ROOT, escapeParam(new MicroconfigInitializerImpl().findConfigRootDir(new File(project.getBasePath())).getAbsolutePath()));
-        addParam.accept(ENV, trim(configuration.getEnv()));
-        addParam.accept(GROUPS, trim(configuration.getGroups()));
-        addParam.accept(SERVICES, trim(configuration.getServices()));
-        addParam.accept(DESTINATION, escapeParam(configuration.getDestination()));
+        addParam.accept('-' + ROOT, escapeParam(new MicroconfigInitializerImpl().findConfigRootDir(new File(project.getBasePath())).getAbsolutePath()));
+        addParam.accept('-' + ENV, trim(configuration.getEnv()));
+        addParam.accept('-' + GROUPS, trim(configuration.getGroups()));
+        addParam.accept('-' + SERVICES, trim(configuration.getServices()));
+        addParam.accept('-' + DESTINATION, escapeParam(configuration.getDestination()));
 
         return params;
     }
