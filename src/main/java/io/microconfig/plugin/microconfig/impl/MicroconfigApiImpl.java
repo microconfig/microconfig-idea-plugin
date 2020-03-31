@@ -2,6 +2,7 @@ package io.microconfig.plugin.microconfig.impl;
 
 import io.microconfig.core.Microconfig;
 import io.microconfig.core.configtypes.ConfigType;
+import io.microconfig.core.configtypes.ConfigTypeFilter;
 import io.microconfig.core.configtypes.ConfigTypeImpl;
 import io.microconfig.core.properties.*;
 import io.microconfig.core.properties.repository.ConfigFile;
@@ -13,6 +14,7 @@ import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.MicroconfigInitializer;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
@@ -21,6 +23,7 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
 import static io.microconfig.core.configtypes.ConfigTypeFilters.configTypeWithExtensionOf;
+import static io.microconfig.core.configtypes.ConfigTypeFilters.configTypeWithName;
 import static io.microconfig.core.configtypes.StandardConfigType.APPLICATION;
 import static io.microconfig.core.properties.ConfigFormat.PROPERTIES;
 import static io.microconfig.core.properties.ConfigFormat.YAML;
@@ -57,11 +60,13 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         Placeholder placeholder = parsePlaceholder(placeholderValue, currentFile);
 
         Microconfig microconfig = initializer.getMicroconfig(projectDir);
+        ConfigTypeFilter configTypeFilter = placeholder.getConfigType().isEmpty() ? configTypeWithName(placeholder.getConfigType()) : configTypeWithName(placeholder.getConfigType());
+
         Optional<Property> resolved = microconfig
                 .environments()
                 .getOrCreateByName(placeholder.getEnvironment())
                 .getOrCreateComponentWithName(placeholder.getComponent())
-                .getPropertiesFor(configTypeWithExtensionOf(currentFile))
+                .getPropertiesFor(configTypeFilter)
                 .getPropertyWithKey(placeholder.getKey());
 
         return resolved.map(Property::getDeclaringComponent)
@@ -77,11 +82,10 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     private Placeholder parsePlaceholder(String placeholderValue, File currentFile) {
         Placeholder placeholder = findPlaceholderIn(placeholderValue)
                 .orElseThrow(() -> new IllegalStateException("Can't parse " + placeholderValue))
-                .toPlaceholder("some", detectEnvOr(currentFile).orElse(""));
+                .toPlaceholder("", detectEnvOr(currentFile).orElse(""));
         return placeholder.isSelfReferenced() ? placeholder.withComponent(currentFile.getParentFile().getName()) : placeholder;
     }
 
-    //todo don't use cache
     private File findSourceFile(String component, String env, File currentFile, Microconfig microconfig) {
         List<ConfigFile> configFiles = microconfig.getDependencies()
                 .getConfigFileRepository()
