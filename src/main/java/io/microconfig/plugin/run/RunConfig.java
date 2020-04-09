@@ -27,7 +27,7 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
     private String env = "dev";
     private String groups = "";
     private String services = "";
-    private String destination;
+    private String destination = "";
 
     public RunConfig(RunConfigFactory factory, Project project) {
         super(project, factory, "Generate " + project.getName());
@@ -48,10 +48,10 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
     @Override
     public void writeExternal(Element element) throws WriteExternalException {
         Element runConfig = new Element(MICROCONFIG_RUN_CONFIG);
-        runConfig.setAttribute(ENV, env);
-        runConfig.setAttribute(GROUPS, groups);
-        runConfig.setAttribute(SERVICES, services);
-        runConfig.setAttribute(DESTINATION, destination);
+        runConfig.setAttribute(ENV, valueOrEmpty(env));
+        runConfig.setAttribute(GROUPS, valueOrEmpty(groups));
+        runConfig.setAttribute(SERVICES, valueOrEmpty(services));
+        runConfig.setAttribute(DESTINATION, valueOrEmpty(destination));
 
         element.addContent(runConfig);
         super.writeExternal(element);
@@ -63,10 +63,10 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
         Element runConfig = element.getChild(MICROCONFIG_RUN_CONFIG);
         if (runConfig == null) return;
 
-        this.env = runConfig.getAttributeValue(ENV);
-        this.groups = runConfig.getAttributeValue(GROUPS);
-        this.services = runConfig.getAttributeValue(SERVICES);
-        this.destination = runConfig.getAttributeValue(DESTINATION);
+        this.env = valueOrEmpty(runConfig.getAttributeValue(ENV));
+        this.groups = valueOrEmpty(runConfig.getAttributeValue(GROUPS));
+        this.services = valueOrEmpty(runConfig.getAttributeValue(SERVICES));
+        this.destination = valueOrEmpty(runConfig.getAttributeValue(DESTINATION));
         editor.resetEditorFrom(this);
     }
 
@@ -74,5 +74,9 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
     @Override
     public RunProfileState getState(Executor executor, ExecutionEnvironment environment) {
         return new RunnerState(environment, this);
+    }
+
+    private String valueOrEmpty(String value) {
+        return value != null ? value : "";
     }
 }
