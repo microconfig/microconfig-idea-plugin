@@ -5,8 +5,8 @@ import io.microconfig.core.configtypes.ConfigType;
 import io.microconfig.core.configtypes.ConfigTypeFilter;
 import io.microconfig.core.configtypes.ConfigTypeImpl;
 import io.microconfig.core.properties.*;
+import io.microconfig.core.properties.repository.ComponentGraph;
 import io.microconfig.core.properties.repository.ConfigFile;
-import io.microconfig.core.properties.repository.ConfigFileRepository;
 import io.microconfig.core.properties.repository.Include;
 import io.microconfig.core.properties.repository.Includes;
 import io.microconfig.core.properties.resolvers.placeholder.Placeholder;
@@ -14,7 +14,6 @@ import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.MicroconfigInitializer;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.*;
@@ -60,7 +59,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         Placeholder placeholder = parsePlaceholder(placeholderValue, currentFile);
 
         Microconfig microconfig = initializer.getMicroconfig(projectDir);
-        ConfigTypeFilter configTypeFilter = placeholder.getConfigType().isEmpty() ? configTypeWithName(placeholder.getConfigType()) : configTypeWithName(placeholder.getConfigType());
+        ConfigTypeFilter configTypeFilter = placeholder.getConfigType().isEmpty() ? configTypeWithExtensionOf(currentFile) : configTypeWithName(placeholder.getConfigType());
 
         Optional<Property> resolved = microconfig
                 .environments()
@@ -87,8 +86,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private File findSourceFile(String component, String env, File currentFile, Microconfig microconfig) {
-        List<ConfigFile> configFiles = microconfig.getDependencies()
-                .getConfigFileRepository()
+        List<ConfigFile> configFiles = microconfig.dependencies()
+                .componentGraph()
                 .getConfigFilesOf(component, env, configTypeOf(currentFile, microconfig));
         return configFiles.get(configFiles.size() - 1).getFile();
     }
@@ -120,7 +119,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public File findAnyComponentFile(String component, String env, File projectDir) {
         Microconfig microconfig = initializer.getMicroconfig(projectDir);
-        ConfigFileRepository configFileRepository = microconfig.getDependencies().getConfigFileRepository();
+        ComponentGraph configFileRepository = microconfig.dependencies().componentGraph();
         List<ConfigFile> configFiles = configFileRepository.getConfigFilesOf(component, env, APPLICATION);
         if (configFiles.isEmpty()) {
             configFiles = configFileRepository.getConfigFilesOf(component, env, compositeConfigType(microconfig));
@@ -193,8 +192,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private ConfigType compositeConfigType(Microconfig microconfig) {
-        Set<String> allConfigTypeExtensions = microconfig.getDependencies()
-                .getConfigTypeRepository()
+        Set<String> allConfigTypeExtensions = microconfig.dependencies()
+                .configTypeRepository()
                 .getConfigTypes().stream()
                 .flatMap(ct -> ct.getSourceExtensions().stream())
                 .collect(toSet());
@@ -202,8 +201,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private ConfigType configTypeOf(File currentFile, Microconfig microconfig) {
-        List<ConfigType> supportedConfigTypes = microconfig.getDependencies()
-                .getConfigTypeRepository()
+        List<ConfigType> supportedConfigTypes = microconfig.dependencies()
+                .configTypeRepository()
                 .getConfigTypes();
 
         return configTypeWithExtensionOf(currentFile)

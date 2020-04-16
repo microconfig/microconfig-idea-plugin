@@ -8,7 +8,7 @@ import java.util.function.Predicate;
 
 import static io.microconfig.core.Microconfig.searchConfigsIn;
 import static io.microconfig.core.environments.repository.FileEnvironmentRepository.ENV_DIR;
-import static io.microconfig.core.properties.repository.ConfigFileRepositoryImpl.COMPONENTS_DIR;
+import static io.microconfig.core.properties.repository.ComponentGraphImpl.COMPONENTS_DIR;
 import static io.microconfig.plugin.utils.FileUtil.findDir;
 import static java.util.Arrays.stream;
 
