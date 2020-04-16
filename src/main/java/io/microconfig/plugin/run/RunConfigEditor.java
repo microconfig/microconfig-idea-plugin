@@ -2,7 +2,6 @@ package io.microconfig.plugin.run;
 
 import com.intellij.openapi.options.SettingsEditor;
 import lombok.RequiredArgsConstructor;
-import org.jetbrains.annotations.NotNull;
 
 import javax.swing.*;
 import java.util.List;
@@ -15,19 +14,18 @@ import static javax.swing.SwingConstants.RIGHT;
 public class RunConfigEditor extends SettingsEditor<RunConfig> {
     private final MicroconfigRunConfigPanel mcPanel = MicroconfigRunConfigPanel.create();
 
-    @NotNull
     @Override
     protected JComponent createEditor() {
         return mcPanel.getPanel();
     }
 
     @Override
-    protected void resetEditorFrom(@NotNull RunConfig config) {
+    protected void resetEditorFrom(RunConfig config) {
         this.mcPanel.applyConfig(config);
     }
 
     @Override
-    protected void applyEditorTo(@NotNull RunConfig config) {
+    protected void applyEditorTo(RunConfig config) {
         this.mcPanel.updateConfig(config);
     }
 

@@ -19,9 +19,9 @@
     <depends>com.intellij.modules.lang</depends>
     <extensions defaultExtensionNs="com.intellij">
         <configurationType implementation="io.microconfig.plugin.run.RunConfigType"/>
-        <applicationService serviceImplementation="io.microconfig.plugin.MicroconfigSettings"/>
+        <applicationService serviceImplementation="io.microconfig.plugin.greeter.MicroconfigSettings"/>
         <programRunner implementation="io.microconfig.plugin.run.Runner"/>
-        <postStartupActivity implementation="io.microconfig.plugin.Greeter"/>
+        <postStartupActivity implementation="io.microconfig.plugin.greeter.Greeter"/>
     </extensions>
 
     <actions>

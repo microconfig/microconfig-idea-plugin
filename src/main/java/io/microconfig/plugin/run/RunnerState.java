@@ -10,9 +10,8 @@ import com.intellij.execution.process.ProcessTerminatedListener;
 import com.intellij.execution.runners.ExecutionEnvironment;
 import com.intellij.openapi.project.Project;
 import com.intellij.util.PathUtil;
-import io.microconfig.BuildConfigMain;
+import io.microconfig.MicroconfigMain;
 import io.microconfig.plugin.microconfig.impl.MicroconfigInitializerImpl;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,11 +22,11 @@ import static com.intellij.util.SystemProperties.getJavaHome;
 import static io.microconfig.utils.StringUtils.isEmpty;
 
 public class RunnerState extends CommandLineState {
-    static final String ROOT = "root";
-    static final String ENV = "env";
-    static final String GROUPS = "groups";
-    static final String SERVICES = "services";
-    static final String DESTINATION = "dest";
+    static final String ROOT = "r";
+    static final String ENV = "e";
+    static final String GROUPS = "g";
+    static final String SERVICES = "s";
+    static final String DESTINATION = "d";
 
     private final RunConfig configuration;
 
@@ -36,7 +35,6 @@ public class RunnerState extends CommandLineState {
         this.configuration = configuration;
     }
 
-    @NotNull
     @Override
     protected ProcessHandler startProcess() throws ExecutionException {
         OSProcessHandler processHandler = ProcessHandlerFactory
@@ -52,7 +50,7 @@ public class RunnerState extends CommandLineState {
         List<String> params = new ArrayList<>();
 
         String java = new File(getJavaHome(), "/bin/java").getAbsolutePath();
-        String jarPath = PathUtil.getJarPathForClass(BuildConfigMain.class);
+        String jarPath = PathUtil.getJarPathForClass(MicroconfigMain.class);
 
         params.add(java);
         params.add("-XX:TieredStopAtLevel=1");
@@ -61,15 +59,16 @@ public class RunnerState extends CommandLineState {
 
         BiConsumer<String, String> addParam = (key, value) -> {
             if (isEmpty(value)) return;
-            params.add(key + "=" + value);
+            params.add(key);
+            params.add(value);
         };
 
         Project project = getEnvironment().getProject();
-        addParam.accept(ROOT, escapeParam(new MicroconfigInitializerImpl().findConfigRootDir(new File(project.getBasePath())).getAbsolutePath()));
-        addParam.accept(ENV, trim(configuration.getEnv()));
-        addParam.accept(GROUPS, trim(configuration.getGroups()));
-        addParam.accept(SERVICES, trim(configuration.getServices()));
-        addParam.accept(DESTINATION, escapeParam(configuration.getDestination()));
+        addParam.accept('-' + ROOT, escapeParam(new MicroconfigInitializerImpl().findConfigRootDir(new File(project.getBasePath())).getAbsolutePath()));
+        addParam.accept('-' + ENV, trim(configuration.getEnv()));
+        addParam.accept('-' + GROUPS, trim(configuration.getGroups()));
+        addParam.accept('-' + SERVICES, trim(configuration.getServices()));
+        addParam.accept('-' + DESTINATION, escapeParam(configuration.getDestination()));
 
         return params;
     }

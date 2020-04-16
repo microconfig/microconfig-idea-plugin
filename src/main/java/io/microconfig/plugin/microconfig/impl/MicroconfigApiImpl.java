@@ -1,15 +1,15 @@
 package io.microconfig.plugin.microconfig.impl;
 
-import io.microconfig.core.properties.Property;
-import io.microconfig.core.properties.provider.Include;
-import io.microconfig.core.properties.resolver.EnvComponent;
-import io.microconfig.core.properties.resolver.PropertyResolver;
-import io.microconfig.core.properties.resolver.PropertyResolverHolder;
-import io.microconfig.core.properties.resolver.placeholder.Placeholder;
-import io.microconfig.core.properties.resolver.placeholder.PlaceholderResolver;
-import io.microconfig.core.properties.sources.FileSource;
-import io.microconfig.factory.ConfigType;
-import io.microconfig.factory.MicroconfigFactory;
+import io.microconfig.core.Microconfig;
+import io.microconfig.core.configtypes.ConfigType;
+import io.microconfig.core.configtypes.ConfigTypeFilter;
+import io.microconfig.core.configtypes.ConfigTypeImpl;
+import io.microconfig.core.properties.*;
+import io.microconfig.core.properties.repository.ComponentGraph;
+import io.microconfig.core.properties.repository.ConfigFile;
+import io.microconfig.core.properties.repository.Include;
+import io.microconfig.core.properties.repository.Includes;
+import io.microconfig.core.properties.resolvers.placeholder.Placeholder;
 import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
@@ -17,23 +17,23 @@ import io.microconfig.plugin.microconfig.MicroconfigInitializer;
 
 import java.io.File;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Stream;
 
-import static io.microconfig.core.environments.Component.bySourceFile;
-import static io.microconfig.core.properties.Property.parse;
-import static io.microconfig.core.properties.io.ioservice.selector.FileFormat.PROPERTIES;
-import static io.microconfig.core.properties.io.ioservice.selector.FileFormat.YAML;
-import static io.microconfig.core.properties.sources.FileSource.fileSource;
-import static io.microconfig.factory.configtypes.StandardConfigTypes.APPLICATION;
-import static io.microconfig.plugin.microconfig.FilePosition.positionFromFileSource;
+import static io.microconfig.core.configtypes.ConfigTypeFilters.configTypeWithExtensionOf;
+import static io.microconfig.core.configtypes.ConfigTypeFilters.configTypeWithName;
+import static io.microconfig.core.configtypes.StandardConfigType.APPLICATION;
+import static io.microconfig.core.properties.ConfigFormat.PROPERTIES;
+import static io.microconfig.core.properties.ConfigFormat.YAML;
+import static io.microconfig.core.properties.resolvers.placeholder.PlaceholderBorders.findPlaceholderIn;
+import static io.microconfig.core.properties.serializers.PropertySerializers.asString;
+import static io.microconfig.utils.StringUtils.dotCountIn;
 import static java.lang.Math.max;
 import static java.util.Arrays.stream;
-import static java.util.Comparator.comparing;
 import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toMap;
+import static java.util.stream.Collectors.toSet;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
 
@@ -43,112 +43,125 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     @Override
     public File findIncludeSource(String includeLine, int currentColumn, File currentFile, File projectDir) {
         Supplier<Include> parseInclude = () -> {
-            List<Include> includes = Include.parse(includeLine, "");
+            List<Include> includes = Includes.from(includeLine).withDefaultEnv(detectEnvOr(currentFile).orElse(""));
             if (includes.size() == 1) return includes.get(0);
 
-            int position = currentColumn;
-            int componentIndex = -1;
-            do {
-                ++componentIndex;
-                position = includeLine.lastIndexOf(',', max(0, position - 1));
-            } while (position > 0);
-
+            int componentIndex = getIncludedComponentIndex(includeLine, currentColumn);
             return includes.get(componentIndex);
         };
 
         Include include = parseInclude.get();
-        return findSourceFile(include.getComponent(), include.getEnv(), currentFile, projectDir);
+        return findSourceFile(include.getComponent(), include.getEnvironment(), currentFile, initializer.getMicroconfig(projectDir));
     }
 
     @Override
     public FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir) {
-        MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
+        Placeholder placeholder = parsePlaceholder(placeholderValue, currentFile);
 
-        Supplier<Placeholder> parsePlaceholder = () -> {
-            Placeholder p = Placeholder.parse(new StringBuilder(placeholderValue)).toPlaceholder(detectEnvOr(currentFile, anyEnv(factory)));
-            return p.isSelfReferenced() ? p.changeComponent(currentFile.getParentFile().getName()) : p;
-        };
+        Microconfig microconfig = initializer.getMicroconfig(projectDir);
+        ConfigTypeFilter configTypeFilter = placeholder.getConfigType().isEmpty() ? configTypeWithExtensionOf(currentFile) : configTypeWithName(placeholder.getConfigType());
 
-        Placeholder placeholder = parsePlaceholder.get();
-        ConfigType configType = chooseConfigType(placeholder, currentFile, projectDir);
-        PlaceholderResolver resolver = factory.newPlaceholderResolver(factory.newFileBasedProvider(configType), configType);
-        Optional<Property> resolved = resolver.resolveToProperty(placeholder);
+        Optional<Property> resolved = microconfig
+                .environments()
+                .getOrCreateByName(placeholder.getEnvironment())
+                .getOrCreateComponentWithName(placeholder.getComponent())
+                .getPropertiesFor(configTypeFilter)
+                .getPropertyWithKey(placeholder.getKey());
 
-        if (resolved.isPresent() && resolved.get().getSource() instanceof FileSource) {
-            return positionFromFileSource((FileSource) resolved.get().getSource());
-        }
-
-        return new FilePosition(findSourceFile(placeholder.getComponent(), detectEnvOr(currentFile, () -> ""), currentFile, projectDir), 0);
+        return resolved.map(Property::getDeclaringComponent)
+                .filter(dc -> dc instanceof FileBasedComponent)
+                .map(FileBasedComponent.class::cast)
+                .map(FilePosition::positionFromFileSource)
+                .orElseGet(() -> {
+                    File sourceFile = findSourceFile(placeholder.getComponent(), placeholder.getEnvironment(), currentFile, microconfig);
+                    return new FilePosition(sourceFile, 0);
+                });
     }
 
-    private ConfigType chooseConfigType(Placeholder placeholder, File currentFile, File projectDir) {
-        return placeholder.getConfigType()
-                .map(t -> initializer.configType(t, projectDir))
-                .orElseGet(() -> initializer.detectConfigType(currentFile, projectDir));
+    private Placeholder parsePlaceholder(String placeholderValue, File currentFile) {
+        Placeholder placeholder = findPlaceholderIn(placeholderValue)
+                .orElseThrow(() -> new IllegalStateException("Can't parse " + placeholderValue))
+                .toPlaceholder("", detectEnvOr(currentFile).orElse(""));
+        return placeholder.isSelfReferenced() ? placeholder.withComponent(currentFile.getParentFile().getName()) : placeholder;
+    }
+
+    private File findSourceFile(String component, String env, File currentFile, Microconfig microconfig) {
+        List<ConfigFile> configFiles = microconfig.dependencies()
+                .componentGraph()
+                .getConfigFilesOf(component, env, configTypeOf(currentFile, microconfig));
+        return configFiles.get(configFiles.size() - 1).getFile();
     }
 
     @Override
     public Map<String, String> resolvePlaceholderForEachEnv(String placeholderValue, File currentFile, File projectDir) {
-        return resolveFullLineForEachEnv("key=" + placeholderValue, currentFile, projectDir);
+        return resolveFullLineForEachEnv(placeholderValue, currentFile, projectDir);
     }
 
     @Override
     public Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir) {
-        ConfigType configType = initializer.detectConfigType(currentFile, projectDir);
-        MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
-        PropertyResolver propertyResolver = ((PropertyResolverHolder) factory.newConfigProvider(configType)).getResolver();
-
-        Property property = parse(currentLine, "", fileSource(currentFile, 0, false));
-        UnaryOperator<String> resolveProperty = env -> {
+        String component = currentFile.getParentFile().getName();
+        Microconfig microconfig = initializer.getMicroconfig(projectDir);
+        String configType = configTypeOf(currentFile, microconfig).getName();
+        Resolver resolver = microconfig.resolver();
+        UnaryOperator<String> resolveValue = env -> {
             try {
-                Property p = property.withNewEnv(env);
-                return propertyResolver.resolve(p, new EnvComponent(p.getSource().getComponent(), p.getEnvContext()));
+                DeclaringComponent root = new DeclaringComponentImpl(configType, component, env);
+                return resolver.resolve(currentLine, root, root);
             } catch (RuntimeException e) {
                 return "ERROR";
             }
         };
 
-        return envs(currentLine, currentFile, factory)
-                .collect(toMap(identity(), resolveProperty, (k1, k2) -> k1, TreeMap::new));
+        return envsFor(currentLine, currentFile, microconfig)
+                .collect(toMap(identity(), resolveValue, (k1, k2) -> k1, TreeMap::new));
     }
 
     @Override
     public File findAnyComponentFile(String component, String env, File projectDir) {
-        try {
-            return findFile(component, env, containsConfigTypeExtension(APPLICATION.getType()), projectDir);
-        } catch (RuntimeException e) {
-            return findFile(component, env, f -> true, projectDir);
+        Microconfig microconfig = initializer.getMicroconfig(projectDir);
+        ComponentGraph configFileRepository = microconfig.dependencies().componentGraph();
+        List<ConfigFile> configFiles = configFileRepository.getConfigFilesOf(component, env, APPLICATION);
+        if (configFiles.isEmpty()) {
+            configFiles = configFileRepository.getConfigFilesOf(component, env, compositeConfigType(microconfig));
         }
+        return configFiles.get(configFiles.size() - 1).getFile();
     }
 
     @Override
-    public ConfigOutput buildConfigsForService(File currentFile, File projectDir, String env) {
-        MicroconfigFactory factory = initializer.getMicroconfigFactory(projectDir);
+    public ConfigOutput buildConfigs(File currentFile, File projectDir, String env) {
+        Microconfig microconfig = initializer.getMicroconfig(projectDir);
+        TypedProperties properties = microconfig.environments()
+                .getOrCreateByName(env)
+                .getOrCreateComponentWithName(currentFile.getParentFile().getName()) //todo alias
+                .getPropertiesFor(configTypeWithExtensionOf(currentFile))
+                .first()
+                .resolveBy(microconfig.resolver());
 
-        ConfigType configType = initializer.detectConfigType(currentFile, projectDir);
-        Collection<Property> properties = factory
-                .newConfigProvider(configType)
-                .getProperties(bySourceFile(currentFile), env)
-                .values();
-
-        File resultFile = factory.getFilenameGenerator(configType)
-                .fileFor(currentFile.getParentFile().getName(), env, properties);
-        String output = factory
-                .getConfigIoService()
-                .writeTo(resultFile)
-                .serialize(properties);
-        return new ConfigOutput(resultFile.getName().endsWith(YAML.extension()) ? YAML : PROPERTIES, output);
+        return new ConfigOutput(
+                properties.getProperties().stream().anyMatch(p -> p.getConfigFormat() == YAML) ? YAML : PROPERTIES,
+                properties.save(asString())
+        );
     }
 
     @Override
-    public MicroconfigInitializer getMicroconfigInitializer() {
-        return initializer;
+    public Set<String> getEnvs(File projectDir) {
+        return initializer.getMicroconfig(projectDir)
+                .environments()
+                .environmentNames();
     }
 
-    private Stream<String> envs(String currentLine, File currentFile, MicroconfigFactory factory) {
-        if (!Placeholder.parse(new StringBuilder(currentLine)).isValid()) return of("");
+    @Override
+    public Optional<String> detectEnvOr(File currentFile) {
+        String name = currentFile.getName();
+        int start = name.indexOf('.');
+        int end = name.indexOf('.', start + 1);
+        return end > 0 ? Optional.of(name.substring(start + 1, end)) : Optional.empty();
+    }
 
-        if (currentFile.getName().indexOf('.') != currentFile.getName().lastIndexOf('.')) {
+    private Stream<String> envsFor(String currentLine, File currentFile, Microconfig microconfig) {
+        if (!findPlaceholderIn(currentLine).isPresent()) return of("");
+
+        if (isEnvSpecificConfig(currentFile)) {
             String[] parts = currentFile
                     .getName()
                     .split("\\.");
@@ -158,62 +171,42 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                     .limit(parts.length - 2);
         }
 
-        return concat(of(""),
-                factory.getEnvironmentProvider()
-                        .getEnvironmentNames()
-                        .stream()
+        return concat(
+                of(""),
+                microconfig.environments().environmentNames().stream()
         );
     }
 
-    private File findSourceFile(String component, String env, File currentFile, File projectDir) {
-        return findFile(component, env, containsConfigTypeExtension(initializer.detectConfigType(currentFile, projectDir)), projectDir);
+    private boolean isEnvSpecificConfig(File currentFile) {
+        return dotCountIn(currentFile.getName()) > 1;
     }
 
-    private Predicate<File> containsConfigTypeExtension(ConfigType configType) {
-        return file -> configType.getSourceExtensions()
-                .stream()
-                .anyMatch(ext -> file.getName().endsWith(ext));
+    private int getIncludedComponentIndex(String includeLine, int currentColumn) {
+        int position = currentColumn;
+        int componentIndex = -1;
+        do {
+            ++componentIndex;
+            position = includeLine.lastIndexOf(',', max(0, position - 1));
+        } while (position > 0);
+        return componentIndex;
     }
 
-    private File findFile(String component, String env, Predicate<File> predicate, File projectDir) {
-        Supplier<Comparator<File>> priorityByEnv = () -> {
-            Comparator<File> comparator = comparing(f1 -> f1.getName().contains(env + ".") ? 0 : 1);
-            return comparator.thenComparing(f -> f.getName().length());
-        };
-
-        return initializer.getMicroconfigFactory(projectDir)
-                .getComponentTree()
-                .getConfigFiles(component, predicate)
-                .min(priorityByEnv.get())
-                .orElseThrow(() -> new IllegalStateException("Component not found: " + component));
+    private ConfigType compositeConfigType(Microconfig microconfig) {
+        Set<String> allConfigTypeExtensions = microconfig.dependencies()
+                .configTypeRepository()
+                .getConfigTypes().stream()
+                .flatMap(ct -> ct.getSourceExtensions().stream())
+                .collect(toSet());
+        return new ConfigTypeImpl("fake", allConfigTypeExtensions, "fake");
     }
 
-    @Override
-    public String detectEnvOr(File currentFile, Supplier<String> defaultEnv) {
-        String name = currentFile.getName();
-        int start = name.indexOf('.');
-        int end = name.indexOf('.', start + 1);
-        if (end > 0) {
-            return name.substring(start + 1, end);
-        }
+    private ConfigType configTypeOf(File currentFile, Microconfig microconfig) {
+        List<ConfigType> supportedConfigTypes = microconfig.dependencies()
+                .configTypeRepository()
+                .getConfigTypes();
 
-        return defaultEnv.get();
-    }
-
-    private Supplier<String> anyEnv(MicroconfigFactory factory) {
-        return () -> {
-            return factory.getEnvironmentProvider()
-                    .getEnvironmentNames()
-                    .stream()
-                    .findFirst()
-                    .orElse(""); //otherwise will fail for env-specific prop
-        };
-    }
-
-    @Override
-    public Set<String> getEnvs(File projectDir) {
-        return initializer.getMicroconfigFactory(projectDir)
-                .getEnvironmentProvider()
-                .getEnvironmentNames();
+        return configTypeWithExtensionOf(currentFile)
+                .selectTypes(supportedConfigTypes)
+                .get(0);
     }
 }

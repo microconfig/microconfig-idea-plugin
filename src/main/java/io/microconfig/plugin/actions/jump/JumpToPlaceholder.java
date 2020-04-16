@@ -5,7 +5,7 @@ import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.PluginContext;
 import lombok.RequiredArgsConstructor;
 
-import static io.microconfig.plugin.actions.resolve.PlaceholderBorders.borders;
+import static io.microconfig.plugin.actions.resolve.PlaceholderBorder.borders;
 
 @RequiredArgsConstructor
 public class JumpToPlaceholder implements ActionHandler {

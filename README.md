@@ -1,11 +1,9 @@
 # Microconfig IntelliJ IDEA plugin
 
+![JetBrains IntelliJ plugins](https://img.shields.io/jetbrains/plugin/d/12064-microconfig-io?style=for-the-badge)
+
+
 IntelliJ IDEA plugin for Microconfig that allows navigating to #include and placeholders' sources, resolving placeholders and other useful stuff.
-
-### Installation
-Install plugin by name `Microconfig.io` from Idea `Settings -> Plugins -> Marketplace`
-
-Or download plugin zip file from https://plugins.jetbrains.com/plugin/12064-microconfig-io and import it via <br> `Settings -> Plugins -> Install plugin from disk...`
 
 ### Plugin usage
 Plugin adds it's submenu in `Main Menu -> Tools -> Microconfig`. Also the same menu appears in `RightClick` menu.
@@ -45,7 +43,11 @@ Preview window allows you to see resulting configs for different environments.
  
 ![preview](doc/preview.png)
 
-![preview](doc/preview_light.png)
 
-# Compatibility
+### Installation
+Install plugin by name `Microconfig.io` from Idea `Settings -> Plugins -> Marketplace`
+
+Or download plugin zip file from https://plugins.jetbrains.com/plugin/12064-microconfig-io and import it via <br> `Settings -> Plugins -> Install plugin from disk...`
+
+### Compatibility
 The plugin is compatible with any JetBrains IDE: IntelliJ IDEA,  PhpStorm,  WebStorm,  PyCharm,  RubyMine,  AppCode,  CLion, GoLand,  DataGrip,  Rider, MPS,  Android Studio

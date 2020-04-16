@@ -1,44 +1,27 @@
 package io.microconfig.plugin.actions.jump;
 
-import io.microconfig.core.environments.Component;
 import io.microconfig.plugin.actions.handler.ActionHandler;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
 import io.microconfig.plugin.microconfig.PluginContext;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
-import java.util.function.Predicate;
+
+import static io.microconfig.utils.FileUtils.getName;
 
 @RequiredArgsConstructor
 public class JumpFromEnv implements ActionHandler {
     @Override
     public void onAction(PluginContext context, MicroconfigApi api) {
-        String component = context.currentToken();
+        String component = context.currentToken(); //todo alias
         if (component.isEmpty()) return;
 
         String env = envName(context);
-        api.getMicroconfigInitializer()
-                .getMicroconfigFactory(context.projectDir())
-                .getEnvironmentProvider()
-                .getByName(env)
-                .getAllComponents()
-                .stream()
-                .filter(nameOrTypeEquals(component))
-                .findFirst()
-                .map(c -> findAnyComponentFile(c, env, context, api))
-                .ifPresent(context::navigateTo);
+        File someComponentFile = api.findAnyComponentFile(component, env, context.projectDir());
+        context.navigateTo(someComponentFile);
     }
 
     private String envName(PluginContext context) {
-        String name = context.currentFile().getName();
-        return name.substring(0, name.lastIndexOf('.'));
-    }
-
-    private Predicate<Component> nameOrTypeEquals(String componentName) {
-        return c -> c.getType().equals(componentName) || c.getName().equals(componentName);
-    }
-
-    private File findAnyComponentFile(Component c, String env, PluginContext context, MicroconfigApi api) {
-        return api.findAnyComponentFile(c.getType(), env, context.projectDir());
+        return getName(context.currentFile());
     }
 }

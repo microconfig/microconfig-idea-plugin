@@ -1,17 +1,11 @@
 package io.microconfig.plugin.microconfig;
 
-
-import io.microconfig.factory.ConfigType;
-import io.microconfig.factory.MicroconfigFactory;
+import io.microconfig.core.Microconfig;
 
 import java.io.File;
 
 public interface MicroconfigInitializer {
-    MicroconfigFactory getMicroconfigFactory(File projectDir);
-
-    ConfigType detectConfigType(File file, File projectDir);
+    Microconfig getMicroconfig(File projectDir);
 
     File findConfigRootDir(File projectDir);
-
-    ConfigType configType(String configType, File projectDir);
 }

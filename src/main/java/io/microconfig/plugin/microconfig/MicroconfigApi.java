@@ -2,8 +2,8 @@ package io.microconfig.plugin.microconfig;
 
 import java.io.File;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
-import java.util.function.Supplier;
 
 public interface MicroconfigApi {
     File findIncludeSource(String includeLine, int currentColumn, File currentFile, File projectDir);
@@ -12,21 +12,13 @@ public interface MicroconfigApi {
 
     FilePosition findPlaceholderSource(String placeholderValue, File currentFile, File projectDir);
 
-    /**
-     * @return resolved placeholder values for each env: env -> value
-     */
     Map<String, String> resolvePlaceholderForEachEnv(String placeholderValue, File currentFile, File projectDir);
 
-    /**
-     * @return full line with resolved placeholder values for each env: env -> line
-     */
     Map<String, String> resolveFullLineForEachEnv(String currentLine, File currentFile, File projectDir);
 
-    ConfigOutput buildConfigsForService(File currentFile, File projectDir, String env);
+    Optional<String> detectEnvOr(File currentFile);
 
-    String detectEnvOr(File currentFile, Supplier<String> defaultEnv);
+    Set<String> getEnvs(File projectDir);
 
-    Set<String> getEnvs(File currentFile);
-
-    MicroconfigInitializer getMicroconfigInitializer();
+    ConfigOutput buildConfigs(File currentFile, File projectDir, String env);
 }

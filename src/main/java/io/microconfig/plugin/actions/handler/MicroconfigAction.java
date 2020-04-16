@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public abstract class MicroconfigAction extends AnAction {
     @Override
-    public void actionPerformed(AnActionEvent event) {
+    public final void actionPerformed(AnActionEvent event) {
         PluginContext context = new PluginContext(event);
         if (context.notFull()) return;
 
