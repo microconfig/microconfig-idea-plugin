@@ -18,22 +18,22 @@ public class VirtualFileReader implements FsReader {
     @Override
     public String readFully(File file) {
         return FileDocumentManager.
-                getInstance()
-                .getDocument(toVirtualFile(file))
-                .getText();
+            getInstance()
+            .getDocument(toVirtualFile(file))
+            .getText();
     }
 
     @Override
     public List<String> readLines(File file) {
         return lines(file)
-                .collect(toList());
+            .collect(toList());
     }
 
     @Override
     public Optional<String> firstLineOf(File file, Predicate<String> predicate) {
         return lines(file)
-                .filter(predicate)
-                .findFirst();
+            .filter(predicate)
+            .findFirst();
     }
 
     private Stream<String> lines(File file) {

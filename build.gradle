@@ -32,7 +32,7 @@ patchPluginXml {
 }
 
 dependencies {
-    implementation 'io.microconfig:microconfig-core:3.12.0:all'
+    implementation 'io.microconfig:microconfig-cli:4.0.1:all'
 
     compileOnly "org.projectlombok:lombok:1.18.12"
     annotationProcessor "org.projectlombok:lombok:1.18.12"
