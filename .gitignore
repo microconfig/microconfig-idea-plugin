@@ -19,6 +19,7 @@
 lib
 target/
 build/
+out/
 
 # Package Files #
 *.jar
