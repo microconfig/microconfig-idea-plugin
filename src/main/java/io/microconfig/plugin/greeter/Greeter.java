@@ -24,7 +24,7 @@ import static com.intellij.ui.BalloonLayoutData.fullContent;
 public class Greeter implements StartupActivity {
     private static final String displayId = "io.microconfig.plugin";
     private static final String message = "<br/>Thank you for using <b><a href=\"https://microconfig.io\">Microconfig.IO</a></b>!<br/>" +
-            "If you have any questions or ideas you can join our <b><a href=\"https://join.slack.com/t/microconfig/shared_invite/zt-couuwwuo-vt5miXcv5RMmuXlNv1oKEQ\">Slack</a></b>";
+            "If you have any questions or ideas you can join our <b><a href=\"https://join.slack.com/t/microconfig/shared_invite/zt-dflf2m0n-wOPVfAmk5eiHPn_9Omff7Q\">Slack</a></b>";
 
     @SuppressWarnings("UnstableApiUsage")
     @Override
