@@ -8,18 +8,10 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.extensions.PluginId;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.startup.StartupActivity;
-import com.intellij.openapi.ui.popup.Balloon;
-import com.intellij.openapi.wm.IdeFrame;
-import com.intellij.openapi.wm.WindowManager;
-import com.intellij.ui.awt.RelativePoint;
-
-import java.awt.*;
 
 import static com.intellij.notification.NotificationDisplayType.STICKY_BALLOON;
 import static com.intellij.notification.NotificationListener.URL_OPENING_LISTENER;
 import static com.intellij.notification.NotificationType.INFORMATION;
-import static com.intellij.notification.impl.NotificationsManagerImpl.createBalloon;
-import static com.intellij.ui.BalloonLayoutData.fullContent;
 
 public class Greeter implements StartupActivity {
     private static final String displayId = "io.microconfig.plugin";
@@ -36,26 +28,7 @@ public class Greeter implements StartupActivity {
         if (descriptor != null && !descriptor.getVersion().equals(settings.getVersion())) {
             settings.setVersion(descriptor.getVersion());
             Notification notification = createNotification();
-            IdeFrame frame = WindowManager.getInstance().getIdeFrame(project);
-            if (frame == null) {
-                notification.notify(project);
-                return;
-            }
-            Rectangle bounds = frame.getComponent().getBounds();
-            RelativePoint target = new RelativePoint(frame.getComponent(), new Point(bounds.x + bounds.width, 20));
-
-            try {
-                Balloon balloon = createBalloon(
-                        frame,
-                        notification,
-                        true, // showCallout
-                        false, // hideOnClickOutside
-                        fullContent(),
-                        project);
-                balloon.show(target, Balloon.Position.atLeft);
-            } catch (RuntimeException e) {
-                notification.notify(project);
-            }
+            notification.notify(project);
         }
     }
 

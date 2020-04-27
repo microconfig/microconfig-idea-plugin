@@ -89,7 +89,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         List<ConfigFile> configFiles = microconfig.dependencies()
                 .componentGraph()
                 .getConfigFilesOf(component, env, configTypeOf(currentFile, microconfig));
-        return configFiles.get(configFiles.size() - 1).getFile();
+
+        return configFiles.get(env.isEmpty() ? 0 : configFiles.size() - 1).getFile();
     }
 
     @Override

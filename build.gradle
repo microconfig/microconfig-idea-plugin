@@ -2,6 +2,8 @@ plugins {
     id 'org.jetbrains.intellij' version '0.4.2'
 }
 
+apply from: 'lib.gradle'
+
 group 'io.micoconfig'
 version '1.0.0'
 sourceCompatibility = 1.8
@@ -23,19 +25,20 @@ intellij {
 
 patchPluginXml {
     changeNotes """
-      &#183; microconfig-core update to 4.0.1<br>
+      &#183; microconfig-core update to 4.1.0<br>
       &#183; Spread the word about microconfig if you enjoy using it :)<br>
       """
 }
 
 dependencies {
-    implementation 'io.microconfig:microconfig-cli:4.0.1:all'
+    implementation platform(lib.spring_bom)
 
-    compileOnly "org.projectlombok:lombok:1.18.12"
-    annotationProcessor "org.projectlombok:lombok:1.18.12"
+    implementation lib.microconfig
+
+    compileOnly lib.lombok
+    annotationProcessor lib.lombok
     
-    testImplementation 'org.junit.jupiter:junit-jupiter-engine:5.6.0',
-            "org.assertj:assertj-core:3.11.1"
+    testImplementation lib.junit, lib.mokito
 }
 
 test {
