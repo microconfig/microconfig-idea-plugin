@@ -109,7 +109,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
                 DeclaringComponent root = new DeclaringComponentImpl(configType, component, env);
                 return resolver.resolve(currentLine, root, root);
             } catch (RuntimeException e) {
-                return "ERROR";
+                return "Can't resolve";
             }
         };
 
