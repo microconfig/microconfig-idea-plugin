@@ -12,17 +12,21 @@ import com.intellij.openapi.util.WriteExternalException;
 import lombok.Getter;
 import lombok.Setter;
 import org.jdom.Element;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 
-import static io.microconfig.plugin.run.RunnerState.*;
+import static io.microconfig.plugin.run.RunnerState.DESTINATION;
+import static io.microconfig.plugin.run.RunnerState.ENV;
+import static io.microconfig.plugin.run.RunnerState.GROUPS;
+import static io.microconfig.plugin.run.RunnerState.SERVICES;
 
 @Getter
 @Setter
 public class RunConfig extends RunConfigurationBase implements RunnerSettings {
     private static final String MICROCONFIG_RUN_CONFIG = "MicroconfigRunConfig";
-    private final RunConfigEditor editor;
+    private RunConfigEditor editor;
 
     private String env = "dev";
     private String groups = "";
@@ -35,8 +39,8 @@ public class RunConfig extends RunConfigurationBase implements RunnerSettings {
         this.destination = new File(project.getBasePath(), "/build/configs/").getAbsolutePath();
     }
 
-
     @Override
+    @NotNull
     public SettingsEditor<RunConfig> getConfigurationEditor() {
         return editor;
     }
