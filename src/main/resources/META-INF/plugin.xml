@@ -2,9 +2,10 @@
     <idea-version since-build="180.*"/>
     <id>io.microconfig.idea-plugin</id>
     <name>Microconfig.io</name>
-    <vendor email="support@microconfig.io" url="http://microconfig.io">Microconfig.IO</vendor>
+    <vendor email="hello@microconfig.io" url="http://microconfig.io">Microconfig.IO</vendor>
 
     <description><![CDATA[
+    Microservice configuration made easy<br>
     Plugin for Microconfig.io framework<br>
     &#183; <em> Easy navigation between configuration components</em><br>
     &#183; <em> Hints of placeholder values</em><br>

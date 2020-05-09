@@ -5,7 +5,7 @@ plugins {
 apply from: 'lib.gradle'
 
 group 'io.micoconfig'
-version '1.0.0'
+version '1.1.0'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -25,7 +25,8 @@ intellij {
 
 patchPluginXml {
     changeNotes """
-      &#183; microconfig-core update to 4.1.0<br>
+      &#183; microconfig-core update to 4.1.2<br>
+      &#183; Moustache support in templates<br>
       &#183; Spread the word about microconfig if you enjoy using it :)<br>
       """
 }
