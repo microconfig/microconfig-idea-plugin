@@ -64,7 +64,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         Optional<Property> resolved = microconfig
                 .environments()
                 .getOrCreateByName(placeholder.getEnvironment())
-                .getOrCreateComponentWithName(placeholder.getComponent())
+                .findComponentWithName(placeholder.getComponent())
                 .getPropertiesFor(configTypeFilter)
                 .getPropertyWithKey(placeholder.getKey());
 
@@ -133,7 +133,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         Microconfig microconfig = initializer.getMicroconfig(projectDir);
         TypedProperties properties = microconfig.environments()
                 .getOrCreateByName(env)
-                .getOrCreateComponentWithName(currentFile.getParentFile().getName()) //todo alias
+                .findComponentWithName(currentFile.getParentFile().getName()) //todo alias
                 .getPropertiesFor(configTypeWithExtensionOf(currentFile))
                 .first()
                 .resolveBy(microconfig.resolver());
