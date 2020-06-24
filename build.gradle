@@ -4,7 +4,7 @@ plugins {
 
 apply from: 'lib.gradle'
 
-group 'io.micoconfig'
+group 'io.microconfig'
 version '1.1.2'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
