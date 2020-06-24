@@ -1,5 +1,5 @@
 ext {
-    mcVersion = '4.1.2'
+    mcVersion = '4.1.5'
 
     lib = [
             spring_bom : "org.springframework.boot:spring-boot-dependencies:2.2.6.RELEASE",
