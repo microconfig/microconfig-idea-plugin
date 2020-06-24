@@ -11,7 +11,6 @@ public class RunConfigFactory extends ConfigurationFactory {
     }
 
     @Override
-    @NotNull
     public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new RunConfig(this, project);
     }
