@@ -5,7 +5,7 @@ plugins {
 apply from: 'lib.gradle'
 
 group 'io.microconfig'
-version '1.1.4'
+version '1.1.5'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
@@ -25,7 +25,7 @@ intellij {
 
 patchPluginXml {
     changeNotes """
-      &#183; microconfig-core update to 4.1.7<br>
+      &#183; microconfig-core update to 4.1.8<br>
       &#183; Spread the word about microconfig if you enjoy using it :)<br>
       """
 }
