@@ -5,6 +5,7 @@ import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.util.xmlb.XmlSerializerUtil;
 import lombok.Data;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
@@ -19,7 +20,7 @@ public class MicroconfigSettings implements PersistentStateComponent<Microconfig
     }
 
     @Override
-    public void loadState(MicroconfigSettings state) {
+    public void loadState(@NotNull MicroconfigSettings state) {
         XmlSerializerUtil.copyBean(state, this);
     }
 }

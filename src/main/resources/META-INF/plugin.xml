@@ -1,7 +1,7 @@
 <idea-plugin>
-    <idea-version since-build="180.*"/>
+    <idea-version  since-build="193.5233.102"/>
     <id>io.microconfig.idea-plugin</id>
-    <name>Microconfig.io</name>
+    <name>Microconfig.IO</name>
     <vendor email="hello@microconfig.io" url="http://microconfig.io">Microconfig.IO</vendor>
 
     <description><![CDATA[

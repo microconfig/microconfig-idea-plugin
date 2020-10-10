@@ -10,6 +10,7 @@ import io.microconfig.core.properties.repository.ConfigFile;
 import io.microconfig.core.properties.repository.Include;
 import io.microconfig.core.properties.repository.Includes;
 import io.microconfig.core.properties.resolvers.placeholder.Placeholder;
+import io.microconfig.plugin.actions.preview.UnresolvedPlaceholderStrategy;
 import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.FilePosition;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
@@ -130,7 +131,9 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
     @Override
     public ConfigOutput buildConfigs(File currentFile, File projectDir, String env) {
-        Microconfig microconfig = initializer.getMicroconfig(projectDir);
+        Microconfig microconfig = initializer.getMicroconfig(projectDir)
+                .withAdditionalPlaceholderResolvers(List.of(new UnresolvedPlaceholderStrategy()));;
+        microconfig.logger(false);
         TypedProperties properties = microconfig.environments()
                 .getOrCreateByName(env)
                 .findComponentWithName(currentFile.getParentFile().getName()) //todo alias

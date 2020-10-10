@@ -17,6 +17,10 @@ import static java.util.Optional.empty;
 import static java.util.Optional.of;
 
 public class FileUtil {
+    public static File toFile(String path) {
+        return new File(path);
+    }
+
     public static File toFile(VirtualFile virtualFile) {
         return new File(virtualFile.getPath());
     }

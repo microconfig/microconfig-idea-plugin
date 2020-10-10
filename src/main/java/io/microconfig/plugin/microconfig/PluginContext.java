@@ -37,7 +37,7 @@ public class PluginContext {
     }
 
     public File projectDir() {
-        return toFile(project.getBaseDir());
+        return toFile(project.getBasePath());
     }
 
     public File currentFile() {

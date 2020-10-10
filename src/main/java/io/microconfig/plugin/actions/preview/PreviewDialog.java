@@ -38,7 +38,7 @@ class PreviewDialog extends DialogWrapper {
     private final PreviewText previewText;
 
     public static void create(PluginContext ctx, MicroconfigApi api) {
-        PreviewDialog dialog = new PreviewDialog(ctx, api);
+        var dialog = new PreviewDialog(ctx, api);
         dialog.init();
         dialog.show();
     }
