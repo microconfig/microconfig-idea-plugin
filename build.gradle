@@ -5,7 +5,7 @@ plugins {
 apply from: 'lib.gradle'
 
 group 'io.microconfig'
-version '1.3.2'
+version '1.3.3'
 sourceCompatibility = 11
 targetCompatibility = 11
 
@@ -25,6 +25,7 @@ intellij {
 
 patchPluginXml {
     changeNotes """
+      &#183; fix "Jump to Component" crash<br>
       &#183; microconfig-core update to 4.5.0<br>
       &#183; Spread the word about microconfig if you enjoy using it :)<br>
       """

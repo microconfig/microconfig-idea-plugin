@@ -87,6 +87,7 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private File findSourceFile(String component, String env, File currentFile, Microconfig microconfig) {
+        microconfig.environments();
         List<ConfigFile> configFiles = microconfig.dependencies()
                 .componentGraph()
                 .getConfigFilesOf(component, env, configTypeOf(currentFile, microconfig));
