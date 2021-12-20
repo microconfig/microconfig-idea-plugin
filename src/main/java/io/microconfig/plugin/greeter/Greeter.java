@@ -9,10 +9,10 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.ide.plugins.PluginManagerCore.getPlugin;
 import static com.intellij.ide.plugins.PluginManagerCore.isPluginInstalled;
-import static com.intellij.notification.NotificationDisplayType.STICKY_BALLOON;
+import static com.intellij.notification.NotificationGroup.balloonGroup;
 import static com.intellij.notification.NotificationListener.URL_OPENING_LISTENER;
 import static com.intellij.notification.NotificationType.INFORMATION;
-import static com.intellij.openapi.components.ServiceManager.getService;
+import static com.intellij.openapi.application.ApplicationManager.getApplication;
 
 public class Greeter implements StartupActivity {
     private static final String displayId = "io.microconfig.plugin";
@@ -24,7 +24,7 @@ public class Greeter implements StartupActivity {
         var pluginId = PluginId.getId("io.microconfig.idea-plugin");
         if (!isPluginInstalled(pluginId)) return;
 
-        var settings = getService(MicroconfigSettings.class);
+        var settings =  getApplication().getService(MicroconfigSettings.class);
         var descriptor = getPlugin(pluginId);
 
         if (descriptor != null && !descriptor.getVersion().equals(settings.getVersion())) {
@@ -35,7 +35,7 @@ public class Greeter implements StartupActivity {
     }
 
     private Notification createNotification() {
-        NotificationGroup group = new NotificationGroup(displayId, STICKY_BALLOON, true);
+        NotificationGroup group = balloonGroup(displayId);
         return group.createNotification("Microconfig plugin updated", message, INFORMATION, URL_OPENING_LISTENER);
     }
 }

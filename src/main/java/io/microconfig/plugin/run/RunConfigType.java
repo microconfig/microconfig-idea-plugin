@@ -5,7 +5,7 @@ import com.intellij.openapi.util.IconLoader;
 
 public class RunConfigType extends ConfigurationTypeBase {
     public RunConfigType() {
-        super("RunConfigType", "Microconfig", "Generate Config", IconLoader.getIcon("/logo.png"));
+        super("RunConfigType", "Microconfig", "Generate Config", IconLoader.findIcon("/logo.png"));
         addFactory(new RunConfigFactory(this));
     }
 }

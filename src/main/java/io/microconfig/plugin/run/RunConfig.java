@@ -24,7 +24,7 @@ import static io.microconfig.plugin.run.RunnerState.SERVICES;
 
 @Getter
 @Setter
-public class RunConfig extends RunConfigurationBase implements RunnerSettings {
+public class RunConfig extends RunConfigurationBase<RunnerState> implements RunnerSettings {
     private static final String MICROCONFIG_RUN_CONFIG = "MicroconfigRunConfig";
     private RunConfigEditor editor;
 
