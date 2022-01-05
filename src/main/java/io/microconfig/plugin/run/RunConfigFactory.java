@@ -11,6 +11,11 @@ public class RunConfigFactory extends ConfigurationFactory {
     }
 
     @Override
+    public @NotNull String getId() {
+        return "Microconfig";
+    }
+
+    @Override
     public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new RunConfig(this, project);
     }
