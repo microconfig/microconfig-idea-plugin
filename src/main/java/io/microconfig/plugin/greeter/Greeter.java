@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static com.intellij.ide.plugins.PluginManagerCore.getPlugin;
 import static com.intellij.ide.plugins.PluginManagerCore.isPluginInstalled;
-import static com.intellij.notification.NotificationGroup.balloonGroup;
+import static com.intellij.notification.NotificationDisplayType.BALLOON;
 import static com.intellij.notification.NotificationListener.URL_OPENING_LISTENER;
 import static com.intellij.notification.NotificationType.INFORMATION;
 import static com.intellij.openapi.application.ApplicationManager.getApplication;
@@ -19,12 +19,14 @@ public class Greeter implements StartupActivity {
     private static final String message = "<br/>Thank you for using <b><a href=\"https://microconfig.io\">Microconfig.IO</a></b>!<br/>" +
             "If you have any questions or ideas you can join our <b><a href=\"https://join.slack.com/t/microconfig/shared_invite/zt-dflf2m0n-wOPVfAmk5eiHPn_9Omff7Q\">Slack</a></b>";
 
+    private static final NotificationGroup NOTIFICATION_GROUP = new NotificationGroup(displayId, BALLOON, true);
+
     @Override
     public void runActivity(@NotNull Project project) {
         var pluginId = PluginId.getId("io.microconfig.idea-plugin");
         if (!isPluginInstalled(pluginId)) return;
 
-        var settings =  getApplication().getService(MicroconfigSettings.class);
+        var settings = getApplication().getService(MicroconfigSettings.class);
         var descriptor = getPlugin(pluginId);
 
         if (descriptor != null && !descriptor.getVersion().equals(settings.getVersion())) {
@@ -35,7 +37,6 @@ public class Greeter implements StartupActivity {
     }
 
     private Notification createNotification() {
-        NotificationGroup group = balloonGroup(displayId);
-        return group.createNotification("Microconfig plugin updated", message, INFORMATION, URL_OPENING_LISTENER);
+        return NOTIFICATION_GROUP.createNotification("Microconfig plugin updated", message, INFORMATION, URL_OPENING_LISTENER);
     }
 }

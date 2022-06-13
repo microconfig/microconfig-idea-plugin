@@ -5,7 +5,7 @@ plugins {
 apply from: 'lib.gradle'
 
 group 'io.microconfig'
-version '1.4.1'
+version '1.4.2'
 sourceCompatibility = 11
 targetCompatibility = 11
 
@@ -25,8 +25,7 @@ intellij {
 
 patchPluginXml {
     changeNotes """
-      &#183; Updated to IntelliJ 2020.1<br>
-      &#183; Fixed IDE warning<br>
+      &#183; Update microconfig core to 4.6.0<br>
       &#183; Spread the word about microconfig if you enjoy using it :)<br>
       """
 }
