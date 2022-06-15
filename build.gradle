@@ -5,7 +5,7 @@ plugins {
 apply from: 'lib.gradle'
 
 group 'io.microconfig'
-version '1.4.2'
+version '1.5.0'
 sourceCompatibility = 11
 targetCompatibility = 11
 
@@ -16,6 +16,9 @@ apply plugin: 'java'
 repositories {
     mavenLocal()
     mavenCentral()
+    maven {
+        url "https://repo.spring.io/release"
+    }
 }
 
 intellij {
@@ -25,7 +28,8 @@ intellij {
 
 patchPluginXml {
     changeNotes """
-      &#183; Update microconfig core to 4.6.0<br>
+      &#183; Update microconfig core to 4.7.0<br>
+      &#183; Added multi-env build. Just use * or env1,env2 in build config.<br>
       &#183; Spread the word about microconfig if you enjoy using it :)<br>
       """
 }

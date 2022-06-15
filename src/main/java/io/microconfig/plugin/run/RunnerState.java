@@ -24,6 +24,7 @@ import static io.microconfig.utils.StringUtils.isEmpty;
 public class RunnerState extends CommandLineState {
     static final String ROOT = "r";
     static final String ENV = "e";
+    static final String ENVS = "envs";
     static final String GROUPS = "g";
     static final String SERVICES = "s";
     static final String DESTINATION = "d";
@@ -65,7 +66,11 @@ public class RunnerState extends CommandLineState {
 
         Project project = getEnvironment().getProject();
         addParam.accept('-' + ROOT, escapeParam(new MicroconfigInitializerImpl().findConfigRootDir(new File(project.getBasePath())).getAbsolutePath()));
-        addParam.accept('-' + ENV, trim(configuration.getEnv()));
+
+        String env = trim(configuration.getEnv());
+        String envParam = env.contains("*") || env.contains(",") ? ENVS : ENV;
+        addParam.accept('-' + envParam, env);
+
         addParam.accept('-' + GROUPS, trim(configuration.getGroups()));
         addParam.accept('-' + SERVICES, trim(configuration.getServices()));
         addParam.accept('-' + DESTINATION, escapeParam(configuration.getDestination()));
