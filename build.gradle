@@ -5,7 +5,7 @@ plugins {
 apply from: 'lib.gradle'
 
 group 'io.microconfig'
-version '1.5.0'
+version '1.6.0'
 sourceCompatibility = 11
 targetCompatibility = 11
 
@@ -28,8 +28,8 @@ intellij {
 
 patchPluginXml {
     changeNotes """
-      &#183; Update microconfig core to 4.7.0<br>
-      &#183; Added multi-env build. Just use * or env1,env2 in build config.<br>
+      &#183; Update microconfig core to 4.9.0<br>
+      &#183; Added support for multi-line yaml values.<br>
       &#183; Spread the word about microconfig if you enjoy using it :)<br>
       """
 }
