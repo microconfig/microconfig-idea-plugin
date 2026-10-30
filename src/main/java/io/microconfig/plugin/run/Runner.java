@@ -9,6 +9,7 @@ import com.intellij.execution.runners.GenericProgramRunner;
 import com.intellij.execution.ui.RunContentDescriptor;
 import org.jetbrains.annotations.NotNull;
 
+import static com.intellij.execution.executors.DefaultRunExecutor.EXECUTOR_ID;
 import static com.intellij.execution.runners.DefaultProgramRunnerKt.executeState;
 
 public class Runner extends GenericProgramRunner<RunnerSettings> {
@@ -20,7 +21,7 @@ public class Runner extends GenericProgramRunner<RunnerSettings> {
 
     @Override
     public boolean canRun(String executorId, @NotNull RunProfile profile) {
-        return executorId.equals("Run") && profile instanceof RunConfig;
+        return executorId.equals(EXECUTOR_ID) && profile instanceof RunConfig;
     }
 
     @Override

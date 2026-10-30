@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Data
-@State(name = "MicroconfigSettings", storages = @Storage("microconfig.xml"), defaultStateAsResource = true)
+@State(name = "MicroconfigSettings", storages = @Storage("microconfig.xml"))
 public class MicroconfigSettings implements PersistentStateComponent<MicroconfigSettings> {
     private String version = "0.0.0";
 
