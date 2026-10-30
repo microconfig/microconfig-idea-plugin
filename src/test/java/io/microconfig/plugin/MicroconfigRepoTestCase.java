@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * Runs a test inside a headless IDE with a project in its own temp dir.
  * Test microconfig repo from resources is copied into the project dir, so plugin works with it as with a real project.
  */
-@RunInEdt
+@RunInEdt(writeIntent = true)
 public abstract class MicroconfigRepoTestCase {
     protected CodeInsightTestFixture fixture;
     protected File projectDir;

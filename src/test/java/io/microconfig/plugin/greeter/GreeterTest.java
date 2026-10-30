@@ -19,7 +19,7 @@ class GreeterTest extends MicroconfigRepoTestCase {
         List<Notification> notifications = subscribeToNotifications();
         getApplication().getService(MicroconfigSettings.class).setVersion("0.0.0");
 
-        new Greeter().runActivity(project());
+        new Greeter().greet(project());
         PlatformTestUtil.dispatchAllEventsInIdeEventQueue();
 
         assertEquals(1, notifications.size());
