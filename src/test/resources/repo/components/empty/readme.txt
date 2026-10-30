@@ -1,0 +1,1 @@
+component without config files

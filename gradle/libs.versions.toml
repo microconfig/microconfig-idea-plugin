@@ -3,6 +3,7 @@ microconfig = "4.9.6"
 spring-boot = "4.1.2"
 lombok = "1.18.48"
 intellij-platform = "2.19.0"
+junit4 = "4.13.2"
 
 [libraries]
 spring-boot-bom = { module = "org.springframework.boot:spring-boot-dependencies", version.ref = "spring-boot" }
@@ -12,6 +13,7 @@ junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine" }
 junit-jupiter-params = { module = "org.junit.jupiter:junit-jupiter-params" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 mockito = { module = "org.mockito:mockito-junit-jupiter" }
+junit4 = { module = "junit:junit", version.ref = "junit4" }
 
 [bundles]
 junit = ["junit-jupiter-engine", "junit-jupiter-params"]
