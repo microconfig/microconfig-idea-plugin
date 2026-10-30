@@ -1,5 +1,7 @@
 package io.microconfig.plugin;
 
+import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.FileDocumentManager;
 import com.intellij.openapi.fileEditor.FileEditorManager;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
@@ -8,6 +10,7 @@ import com.intellij.openapi.vfs.VirtualFile;
 import com.intellij.testFramework.fixtures.CodeInsightTestFixture;
 import com.intellij.testFramework.fixtures.IdeaTestFixtureFactory;
 import com.intellij.testFramework.junit5.RunInEdt;
+import io.microconfig.plugin.microconfig.PluginContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
@@ -68,6 +71,12 @@ public abstract class MicroconfigRepoTestCase {
         int index = text.indexOf(textBeforeCaret);
         assertTrue(index >= 0, "'" + textBeforeCaret + "' not found in " + path);
         fixture.getEditor().getCaretModel().moveToOffset(index + textBeforeCaret.length());
+    }
+
+    protected PluginContext editorContext() {
+        Editor editor = fixture.getEditor();
+        VirtualFile file = FileDocumentManager.getInstance().getFile(editor.getDocument());
+        return new PluginContext(project(), editor, editor.getCaretModel().getPrimaryCaret(), file);
     }
 
     protected File selectedFile() {

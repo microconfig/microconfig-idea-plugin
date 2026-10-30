@@ -5,10 +5,10 @@ import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.editor.EditorFactory;
 import com.intellij.openapi.editor.ex.EditorEx;
 import com.intellij.openapi.fileTypes.FileType;
+import com.intellij.openapi.project.DumbAwareAction;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
-import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.EditorTextField;
 import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
@@ -20,13 +20,11 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 
+import static com.intellij.openapi.actionSystem.CommonShortcuts.ESCAPE;
 import static com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE;
 import static io.microconfig.core.properties.ConfigFormat.YAML;
 import static io.microconfig.plugin.microconfig.ConfigOutput.getFileType;
-import static java.awt.KeyboardFocusManager.getCurrentKeyboardFocusManager;
-import static java.awt.event.KeyEvent.VK_ESCAPE;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
@@ -44,7 +42,7 @@ class PreviewDialog extends DialogWrapper {
         dialog.show();
     }
 
-    private PreviewDialog(PluginContext context, MicroconfigApi api) {
+    PreviewDialog(PluginContext context, MicroconfigApi api) {
         super(context.getProject());
 
         this.previewText = new PreviewText(
@@ -52,11 +50,10 @@ class PreviewDialog extends DialogWrapper {
                 context.getProject(),
                 getFileType(YAML));
 
-        BuildConfigsListener listener = new BuildConfigsListener(context, api, this);
+        BuildConfigsListener listener = new BuildConfigsListener(context, api);
         this.envPane = initEnvPane(context, api, listener);
         listener.updatePreviewText();
-        getCurrentKeyboardFocusManager().addKeyEventDispatcher(listener);
-        Disposer.register(getDisposable(), () -> getCurrentKeyboardFocusManager().removeKeyEventDispatcher(listener));
+        closeOnEscapeIn(previewText);
     }
 
     @Nullable
@@ -113,6 +110,11 @@ class PreviewDialog extends DialogWrapper {
         return panel;
     }
 
+    private void closeOnEscapeIn(JComponent component) {
+        DumbAwareAction.create(e -> doCancelAction())
+                .registerCustomShortcutSet(ESCAPE, component, getDisposable());
+    }
+
     private static class PreviewText extends EditorTextField {
         private PreviewText(Document document, Project project, FileType fileType) {
             super(document, project, fileType, true, false);
@@ -128,15 +130,16 @@ class PreviewDialog extends DialogWrapper {
     }
 
     @RequiredArgsConstructor
-    private class BuildConfigsListener implements ActionListener, KeyEventDispatcher {
+    private class BuildConfigsListener implements ActionListener {
         private final PluginContext context;
         private final MicroconfigApi api;
-        private final PreviewDialog dialog;
 
         @Override
         public void actionPerformed(ActionEvent e) {
             lastEnv = (String) envsComboBox.getSelectedItem();
+            Dimension size = getSize();
             updatePreviewText();
+            setSize(size.width, size.height);
         }
 
         private void updatePreviewText() {
@@ -146,11 +149,9 @@ class PreviewDialog extends DialogWrapper {
                     + "[" + env + "]"
                     + " result configuration"
             );
-            Dimension size = getSize();
             ConfigOutput configOutput = buildConfigs(env);
             previewText.setText(configOutput.getText());
             previewText.setFileType(configOutput.fileType());
-            setSize(size.width, size.height);
             moveToTop();
         }
 
@@ -168,14 +169,6 @@ class PreviewDialog extends DialogWrapper {
             } catch (RuntimeException e) {
                 return new ConfigOutput(YAML, e.getMessage());
             }
-        }
-
-        @Override
-        public boolean dispatchKeyEvent(KeyEvent e) {
-            if (e.getKeyCode() == VK_ESCAPE) {
-                dialog.close(0);
-            }
-            return false;
         }
     }
 }

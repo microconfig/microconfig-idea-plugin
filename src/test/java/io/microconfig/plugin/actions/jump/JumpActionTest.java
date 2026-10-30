@@ -1,5 +1,6 @@
 package io.microconfig.plugin.actions.jump;
 
+import com.intellij.openapi.fileEditor.FileEditorManager;
 import io.microconfig.plugin.MicroconfigRepoTestCase;
 import org.junit.jupiter.api.Test;
 
@@ -33,5 +34,10 @@ class JumpActionTest extends MicroconfigRepoTestCase {
         fixture.performEditorAction(JUMP_ACTION);
 
         assertEquals(repoFile("components/eureka/application.yaml"), selectedFile());
+        assertEquals(1, selectedCaretLine());
+    }
+
+    private int selectedCaretLine() {
+        return FileEditorManager.getInstance(project()).getSelectedTextEditor().getCaretModel().getLogicalPosition().line;
     }
 }

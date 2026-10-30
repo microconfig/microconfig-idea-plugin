@@ -5,19 +5,19 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.editor.Caret;
 import com.intellij.openapi.editor.Document;
 import com.intellij.openapi.editor.Editor;
+import com.intellij.openapi.fileEditor.OpenFileDescriptor;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.vfs.VirtualFile;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 import java.io.File;
-import java.util.function.IntPredicate;
-import java.util.function.IntSupplier;
 
 import static com.intellij.openapi.actionSystem.CommonDataKeys.*;
 import static io.microconfig.plugin.utils.FileUtil.*;
 import static java.lang.Character.isAlphabetic;
 import static java.lang.Character.isDigit;
+import static java.lang.Math.min;
 
 @RequiredArgsConstructor
 public class PluginContext {
@@ -60,34 +60,38 @@ public class PluginContext {
 
     public String currentToken() {
         String line = currentLine();
-        int column = currentColumn();
+        int column = min(currentColumn(), line.length());
+        return line.substring(tokenStart(line, column), tokenEnd(line, column));
+    }
 
-        IntPredicate isAllowedNameSymbol = c -> isAlphabetic(c)
-                || isDigit(c)
-                || c == '_'
-                || c == '-';
+    private int tokenStart(String line, int column) {
+        int start = column;
+        while (start > 0 && isNameSymbol(line.charAt(start - 1))) start--;
+        return start;
+    }
 
-        IntSupplier startIndex = () -> {
-            for (int i = column - 1; i >= 0; i--) {
-                if (!isAllowedNameSymbol.test(line.charAt(i))) return i;
-            }
-            return -1;
-        };
-        IntSupplier endIndex = () -> {
-            for (int i = column - 1; i < line.length(); i++) {
-                if (!isAllowedNameSymbol.test(line.charAt(i))) return i;
-            }
-            return line.length();
-        };
+    private int tokenEnd(String line, int column) {
+        int end = column;
+        while (end < line.length() && isNameSymbol(line.charAt(end))) end++;
+        return end;
+    }
 
-        int start = startIndex.getAsInt();
-        int end = endIndex.getAsInt();
-        return start < end ? line.substring(start + 1, end) : "";
+    private boolean isNameSymbol(char c) {
+        return isAlphabetic(c) || isDigit(c) || c == '_' || c == '-';
     }
 
     public void navigateTo(File file) {
-        toPsiFile(project, toVirtualFile(file))
-                .navigate(true);
+        new OpenFileDescriptor(project, existingVirtualFile(file)).navigate(true);
+    }
+
+    public void navigateTo(File file, int line) {
+        new OpenFileDescriptor(project, existingVirtualFile(file), line, 0).navigate(true);
+    }
+
+    private VirtualFile existingVirtualFile(File file) {
+        VirtualFile virtualFile = toVirtualFile(file);
+        if (virtualFile == null) throw new IllegalStateException("Can't find file '" + file + "'");
+        return virtualFile;
     }
 
     public void showInfoHint(String message) {
