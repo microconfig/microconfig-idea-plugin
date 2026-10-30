@@ -8,6 +8,7 @@ import com.intellij.openapi.fileTypes.FileType;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.ComboBox;
 import com.intellij.openapi.ui.DialogWrapper;
+import com.intellij.openapi.util.Disposer;
 import com.intellij.ui.EditorTextField;
 import io.microconfig.plugin.microconfig.ConfigOutput;
 import io.microconfig.plugin.microconfig.MicroconfigApi;
@@ -55,6 +56,7 @@ class PreviewDialog extends DialogWrapper {
         this.envPane = initEnvPane(context, api, listener);
         listener.updatePreviewText();
         getCurrentKeyboardFocusManager().addKeyEventDispatcher(listener);
+        Disposer.register(getDisposable(), () -> getCurrentKeyboardFocusManager().removeKeyEventDispatcher(listener));
     }
 
     @Nullable
@@ -172,7 +174,6 @@ class PreviewDialog extends DialogWrapper {
         public boolean dispatchKeyEvent(KeyEvent e) {
             if (e.getKeyCode() == VK_ESCAPE) {
                 dialog.close(0);
-                getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
             }
             return false;
         }

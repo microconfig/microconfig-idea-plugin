@@ -1,8 +1,8 @@
 <idea-plugin>
-    <idea-version  since-build="193.5233.102"/>
+    <idea-version since-build="223"/>
     <id>io.microconfig.idea-plugin</id>
     <name>Microconfig.IO</name>
-    <vendor email="hello@microconfig.io" url="http://microconfig.io">Microconfig.IO</vendor>
+    <vendor email="hello@microconfig.io" url="https://microconfig.io">Microconfig.IO</vendor>
 
     <description><![CDATA[
     Microservice configuration made easy<br>
@@ -23,6 +23,7 @@
         <applicationService serviceImplementation="io.microconfig.plugin.greeter.MicroconfigSettings"/>
         <programRunner implementation="io.microconfig.plugin.run.Runner"/>
         <postStartupActivity implementation="io.microconfig.plugin.greeter.Greeter"/>
+        <notificationGroup id="io.microconfig.plugin" displayType="BALLOON" isLogByDefault="true"/>
     </extensions>
 
     <actions>

@@ -26,7 +26,6 @@ import static io.microconfig.plugin.run.RunnerState.SERVICES;
 @Setter
 public class RunConfig extends RunConfigurationBase<RunnerState> implements RunnerSettings {
     private static final String MICROCONFIG_RUN_CONFIG = "MicroconfigRunConfig";
-    private RunConfigEditor editor;
 
     private String env = "dev";
     private String groups = "";
@@ -35,14 +34,13 @@ public class RunConfig extends RunConfigurationBase<RunnerState> implements Runn
 
     public RunConfig(RunConfigFactory factory, Project project) {
         super(project, factory, "Generate " + project.getName());
-        this.editor = new RunConfigEditor();
         this.destination = new File(project.getBasePath(), "/build/configs/").getAbsolutePath();
     }
 
     @Override
     @NotNull
     public SettingsEditor<RunConfig> getConfigurationEditor() {
-        return editor;
+        return new RunConfigEditor();
     }
 
     @Override
@@ -71,7 +69,6 @@ public class RunConfig extends RunConfigurationBase<RunnerState> implements Runn
         this.groups = valueOrEmpty(runConfig.getAttributeValue(GROUPS));
         this.services = valueOrEmpty(runConfig.getAttributeValue(SERVICES));
         this.destination = valueOrEmpty(runConfig.getAttributeValue(DESTINATION));
-        editor.resetEditorFrom(this);
     }
 
     @Nullable

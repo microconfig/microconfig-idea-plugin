@@ -1,48 +1,59 @@
 plugins {
-    id 'org.jetbrains.intellij' version '0.5.0'
+    id 'java'
+    id 'idea'
+    alias(libs.plugins.intellij.platform)
 }
 
-apply from: 'lib.gradle'
+group = 'io.microconfig'
+version = '1.7.0'
 
-group 'io.microconfig'
-version '1.6.2'
-sourceCompatibility = 11
-targetCompatibility = 11
-
-apply plugin: 'idea'
-apply plugin: 'org.jetbrains.intellij'
-apply plugin: 'java'
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
 
 repositories {
-    mavenLocal()
     mavenCentral()
-    maven {
-        url "https://repo.spring.io/release"
+    intellijPlatform {
+        defaultRepositories()
     }
 }
 
-intellij {
-    version 'IC-2020.1'
-    updateSinceUntilBuild false
-}
-
-patchPluginXml {
-    changeNotes """
-      &#183; Update microconfig core to 4.9.3<br>
-      &#183; Few fixes on multiline yaml parsing<br>
-      &#183; Spread the word about microconfig if you enjoy using it :)<br>
-      """
+intellijPlatform {
+    pluginConfiguration {
+        ideaVersion {
+            sinceBuild = '223'
+            untilBuild = provider { null }
+        }
+        changeNotes = """
+          &#183; Update microconfig core to ${libs.versions.microconfig.get()}<br>
+          &#183; Requires IntelliJ 2022.3+ (Java 17)<br>
+          &#183; Spread the word about microconfig if you enjoy using it :)<br>
+          """
+    }
+    pluginVerification {
+        ides {
+            create('IC', '2022.3.3')
+            create('IU', '2026.2.3')
+        }
+    }
 }
 
 dependencies {
-    implementation platform(lib.spring_bom)
+    intellijPlatform {
+        intellijIdeaCommunity '2022.3'
+    }
 
-    implementation lib.microconfig
+    implementation platform(libs.spring.boot.bom)
 
-    compileOnly lib.lombok
-    annotationProcessor lib.lombok
-    
-    testImplementation lib.junit, lib.mokito
+    implementation(variantOf(libs.microconfig) { classifier('all') }) { transitive = false }
+
+    compileOnly libs.lombok
+    annotationProcessor libs.lombok
+
+    testImplementation platform(libs.spring.boot.bom)
+    testImplementation libs.bundles.junit, libs.mockito
+    testRuntimeOnly libs.junit.platform.launcher
 }
 
 test {

@@ -16,9 +16,11 @@ public class MicroconfigInitializerImpl implements MicroconfigInitializer {
     @Override
     public Microconfig getMicroconfig(File projectDir) {
         File configRoot = findConfigRootDir(projectDir);
-        return searchConfigsIn(configRoot)
+        Microconfig microconfig = searchConfigsIn(configRoot)
                 .withDestinationDir(new File(projectDir, "build/output"))
                 .withFsReader(new VirtualFileReader());
+        microconfig.environments(); // component graph reads env profiles through a lazy env repository initialized here
+        return microconfig;
     }
 
     @Override

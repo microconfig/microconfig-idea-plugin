@@ -1,6 +1,6 @@
 package io.microconfig.plugin.actions.resolve;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static io.microconfig.plugin.actions.resolve.PlaceholderBorder.borders;
 import static org.junit.jupiter.api.Assertions.*;

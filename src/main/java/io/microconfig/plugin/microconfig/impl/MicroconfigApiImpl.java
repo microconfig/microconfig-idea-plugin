@@ -87,12 +87,18 @@ public class MicroconfigApiImpl implements MicroconfigApi {
     }
 
     private File findSourceFile(String component, String env, File currentFile, Microconfig microconfig) {
-        microconfig.environments();
         List<ConfigFile> configFiles = microconfig.dependencies()
                 .componentGraph()
                 .getConfigFilesOf(component, env, configTypeOf(currentFile, microconfig));
+        requireConfigFiles(configFiles, component);
 
         return configFiles.get(env.isEmpty() ? 0 : configFiles.size() - 1).getFile();
+    }
+
+    private void requireConfigFiles(List<ConfigFile> configFiles, String component) {
+        if (configFiles.isEmpty()) {
+            throw new IllegalStateException("Can't find config files of component '" + component + "'");
+        }
     }
 
     @Override
@@ -127,13 +133,14 @@ public class MicroconfigApiImpl implements MicroconfigApi {
         if (configFiles.isEmpty()) {
             configFiles = configFileRepository.getConfigFilesOf(component, env, compositeConfigType(microconfig));
         }
+        requireConfigFiles(configFiles, component);
         return configFiles.get(configFiles.size() - 1).getFile();
     }
 
     @Override
     public ConfigOutput buildConfigs(File currentFile, File projectDir, String env) {
         Microconfig microconfig = initializer.getMicroconfig(projectDir)
-                .withAdditionalPlaceholderResolvers(List.of(new UnresolvedPlaceholderStrategy()));;
+                .withAdditionalPlaceholderResolvers(List.of(new UnresolvedPlaceholderStrategy()));
         microconfig.logger(false);
         TypedProperties properties = microconfig.environments()
                 .getOrCreateByName(env)
@@ -212,6 +219,8 @@ public class MicroconfigApiImpl implements MicroconfigApi {
 
         return configTypeWithExtensionOf(currentFile)
                 .selectTypes(supportedConfigTypes)
-                .get(0);
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Unsupported config type of '" + currentFile.getName() + "'"));
     }
 }

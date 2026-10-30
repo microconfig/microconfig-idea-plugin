@@ -19,12 +19,4 @@ public class RunConfigFactory extends ConfigurationFactory {
     public RunConfiguration createTemplateConfiguration(@NotNull Project project) {
         return new RunConfig(this, project);
     }
-
-    @Override
-    public RunConfiguration createConfiguration(String name, RunConfiguration template) {
-        RunConfig newConfiguration = (RunConfig) template.clone();
-        newConfiguration.setName(name);
-        newConfiguration.setEditor(new RunConfigEditor());
-        return newConfiguration;
-    }
 }
