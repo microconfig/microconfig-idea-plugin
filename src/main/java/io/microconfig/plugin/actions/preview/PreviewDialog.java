@@ -25,8 +25,6 @@ import static com.intellij.openapi.actionSystem.CommonShortcuts.ESCAPE;
 import static com.intellij.openapi.editor.ScrollType.MAKE_VISIBLE;
 import static io.microconfig.core.properties.ConfigFormat.YAML;
 import static io.microconfig.plugin.microconfig.ConfigOutput.getFileType;
-import static java.util.stream.Stream.concat;
-import static java.util.stream.Stream.of;
 import static javax.swing.GroupLayout.Alignment.BASELINE;
 
 class PreviewDialog extends DialogWrapper {
@@ -75,9 +73,13 @@ class PreviewDialog extends DialogWrapper {
     }
 
     private JComponent initEnvPane(PluginContext context, MicroconfigApi api, ActionListener listener) {
-        envsComboBox.setModel(new DefaultComboBoxModel<>(concat(of(""), api.getEnvs(context.projectDir()).stream()).toArray(String[]::new)));
-        envsComboBox.setSelectedItem(api.detectEnvOr(context.currentFile()).orElseGet(() -> lastEnv));
+        var envs = api.getEnvs(context.projectDir()).stream().filter(env -> !env.isEmpty()).toList();
+        envsComboBox.setModel(new DefaultComboBoxModel<>(envs.toArray(String[]::new)));
         envsComboBox.setEditable(true);
+        envsComboBox.setSelectedItem(api.detectEnvOr(context.currentFile()).orElseGet(() ->
+                !lastEnv.isEmpty() && envs.contains(lastEnv)
+                        ? lastEnv
+                        : envs.stream().findFirst().orElse("")));
         envsComboBox.addActionListener(listener);
 
         JLabel envLabel = new JLabel("Environment: ");

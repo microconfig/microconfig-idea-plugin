@@ -24,7 +24,7 @@ class GreeterTest extends MicroconfigRepoTestCase {
 
         assertEquals(1, notifications.size());
         assertEquals("Microconfig plugin updated", notifications.get(0).getTitle());
-        assertEquals(2, notifications.get(0).getActions().size());
+        assertEquals(1, notifications.get(0).getActions().size());
     }
 
     private List<Notification> subscribeToNotifications() {

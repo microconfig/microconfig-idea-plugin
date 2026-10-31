@@ -1,5 +1,5 @@
 <idea-plugin>
-    <idea-version since-build="233"/>
+    <idea-version since-build="241"/>
     <id>io.microconfig.idea-plugin</id>
     <name>Microconfig.IO</name>
     <vendor email="hello@microconfig.io" url="https://microconfig.io">Microconfig.IO</vendor>

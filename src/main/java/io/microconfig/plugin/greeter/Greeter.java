@@ -19,10 +19,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 
 public class Greeter implements ProjectActivity {
     private static final String displayId = "io.microconfig.plugin";
-    private static final String message = "<br/>Thank you for using <b>Microconfig.IO</b>!<br/>" +
-            "If you have any questions or ideas you can join our <b>Slack</b>";
+    private static final String message = "<br/>Thank you for using <b>Microconfig.IO</b>!<br/>";
     private static final String siteUrl = "https://microconfig.io";
-    private static final String slackUrl = "https://join.slack.com/t/microconfig/shared_invite/zt-dflf2m0n-wOPVfAmk5eiHPn_9Omff7Q";
 
     @Override
     public Object execute(@NotNull Project project, @NotNull Continuation<? super Unit> continuation) {
@@ -53,7 +51,6 @@ public class Greeter implements ProjectActivity {
         return NotificationGroupManager.getInstance()
                 .getNotificationGroup(displayId)
                 .createNotification("Microconfig plugin updated", message, INFORMATION)
-                .addAction(new BrowseNotificationAction("Microconfig.IO", siteUrl))
-                .addAction(new BrowseNotificationAction("Join Slack", slackUrl));
+                .addAction(new BrowseNotificationAction("Microconfig.IO", siteUrl));
     }
 }
