@@ -19,10 +19,10 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.modules.lang</depends>
     <extensions defaultExtensionNs="com.intellij">
-        <configurationType implementation="io.microconfig.plugin.run.RunConfigType"/>
-        <applicationService serviceImplementation="io.microconfig.plugin.greeter.MicroconfigSettings"/>
-        <programRunner implementation="io.microconfig.plugin.run.Runner"/>
-        <postStartupActivity implementation="io.microconfig.plugin.greeter.Greeter"/>
+        <configurationType implementation="io.microconfig.plugin.run.impl.RunConfigType"/>
+        <applicationService serviceImplementation="io.microconfig.plugin.greeter.impl.MicroconfigSettings"/>
+        <programRunner implementation="io.microconfig.plugin.run.impl.Runner"/>
+        <postStartupActivity implementation="io.microconfig.plugin.greeter.impl.Greeter"/>
         <notificationGroup id="io.microconfig.plugin" displayType="BALLOON" isLogByDefault="true"/>
     </extensions>
 
@@ -30,17 +30,17 @@
         <group id="Microconfig.PluginMenu" text="Microconfig" description="Microconfig menu" popup="true">
             <add-to-group group-id="ToolsMenu" anchor="last"/>
             <add-to-group group-id="EditorPopupMenu" anchor="last"/>
-            <action id="Microconfig.JumpToAction" class="io.microconfig.plugin.actions.jump.JumpAction"
+            <action id="Microconfig.JumpToAction" class="io.microconfig.plugin.actions.jump.impl.JumpAction"
                     text="Jump to Component"
                     description="Jumps to component">
                 <keyboard-shortcut first-keystroke="F10" keymap="$default"/>
             </action>
-            <action id="Microconfig.ResolveAction" class="io.microconfig.plugin.actions.resolve.ResolveAction"
+            <action id="Microconfig.ResolveAction" class="io.microconfig.plugin.actions.resolve.impl.ResolveAction"
                     text="Resolve Property"
                     description="Resolves property value for all ENVs">
                 <keyboard-shortcut first-keystroke="control F10" keymap="$default"/>
             </action>
-            <action id="Microconfig.PreviewAction" class="io.microconfig.plugin.actions.preview.PreviewAction"
+            <action id="Microconfig.PreviewAction" class="io.microconfig.plugin.actions.preview.impl.PreviewAction"
                     text="Preview Component"
                     description="Generates a preview for current component">
                 <keyboard-shortcut first-keystroke="control shift F10" keymap="$default"/>

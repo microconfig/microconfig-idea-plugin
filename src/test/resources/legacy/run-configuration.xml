@@ -1,0 +1,4 @@
+<configuration name="Production configs" type="RunConfigType" factoryName="Microconfig">
+    <MicroconfigRunConfig e="prod" g="main" s="payments" d="/tmp/configs with spaces"/>
+    <method v="2"/>
+</configuration>

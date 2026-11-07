@@ -13,6 +13,7 @@
 .mtj.tmp/
 
 .gradle
+.kotlin/
 .idea
 *.iml
 *.iml
