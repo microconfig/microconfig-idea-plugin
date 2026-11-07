@@ -44,6 +44,13 @@ intellijPlatform {
     pluginVerification {
         ides { recommended() }
     }
+    publishing {
+        token = providers.fileContents(layout.projectDirectory.file("token.txt"))
+            .asText.map { it.trim() }
+        channels = providers.gradleProperty("marketplaceChannel")
+            .map { listOf(it) }
+            .orElse(listOf("default"))
+    }
 }
 
 dependencies {
@@ -73,4 +80,8 @@ tasks.processResources {
 tasks.test {
     useJUnitPlatform()
     exclude("**/*IT.class")
+}
+
+tasks.publishPlugin {
+    dependsOn(tasks.test)
 }
