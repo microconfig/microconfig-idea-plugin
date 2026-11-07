@@ -19,6 +19,7 @@ java {
 kotlin {
     compilerOptions {
         jvmTarget = JvmTarget.JVM_17
+        // IDEA 2024.1 bundles Kotlin stdlib 1.9.22.
         apiVersion = KotlinVersion.KOTLIN_1_9
     }
 }
