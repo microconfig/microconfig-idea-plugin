@@ -1,5 +1,5 @@
 [versions]
-microconfig = "5.0.0"
+microconfig = "5.0.2"
 kotlin = "2.3.21"
 spring-boot = "4.1.2"
 intellij-platform = "2.19.0"
